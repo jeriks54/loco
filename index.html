@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoCo — Lines of Code</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <main id="app">
+    <section id="screen-title" class="screen">
+      <div class="title-card">
+        <h1>LoCo</h1>
+        <p class="subtitle">Lines of Code</p>
+        <p class="tagline">Program the robot. Escape the maze. Every line counts.</p>
+        <button id="btn-play" class="btn btn-primary btn-large">Play</button>
+      </div>
+    </section>
+
+    <section id="screen-levels" class="screen hidden">
+      <header class="screen-header">
+        <button id="btn-title" class="btn btn-ghost">← Title</button>
+        <h2>Choose a level</h2>
+        <span class="spacer"></span>
+      </header>
+      <div id="level-list" class="level-list"></div>
+    </section>
+
+    <section id="screen-game" class="screen hidden">
+      <header class="screen-header">
+        <button id="btn-back" class="btn btn-ghost">← Levels</button>
+        <h2 id="level-name"></h2>
+        <span id="level-progress" class="level-progress"></span>
+      </header>
+      <div class="game-layout">
+        <div class="board-panel">
+          <div class="canvas-wrap">
+            <canvas id="board"></canvas>
+            <div id="result-overlay" class="result-overlay hidden">
+              <p id="result-text" class="result-text"></p>
+              <div class="result-actions">
+                <button id="btn-retry" class="btn btn-primary">Retry</button>
+                <button id="btn-next" class="btn btn-primary hidden">Next level</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <aside class="side-panel">
+          <div class="panel-section">
+            <h3>Commands</h3>
+            <div id="palette" class="palette"></div>
+          </div>
+          <div class="panel-section">
+            <h3>Robot memory <span id="memory-count" class="memory-count"></span></h3>
+            <div id="program" class="program"></div>
+            <button id="btn-clear" class="btn btn-ghost btn-small">Clear program</button>
+          </div>
+          <div class="panel-section controls">
+            <button id="btn-run" class="btn btn-primary">▶ Run</button>
+            <button id="btn-reset" class="btn btn-secondary">Reset</button>
+            <div id="speed" class="speed" role="group" aria-label="Run speed">
+              <button data-speed="0.5">×½</button>
+              <button data-speed="1" class="active">×1</button>
+              <button data-speed="2">×2</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
