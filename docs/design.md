@@ -77,6 +77,7 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 - Program area renders `memory` slots; drops insert at position, slots past capacity reject the drop.
 - Implemented with Pointer Events (mouse-first; also works on touch later) rather than the HTML5 DnD API — more controllable styling and animation.
 - Click a placed block to remove it. "Clear" button empties the program.
+- Layout shell: board (canvas) and editor are self-contained panels in a flex layout — desktop shows the board left, editor right. Panels must not depend on their position, so the mobile mode (maze full-screen, program as a bottom sheet) is a layout-only change. On touch, drag will be complemented by tap-to-add.
 
 ## 6. Rendering
 
@@ -100,11 +101,33 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 
 ## 9. Workflow
 
-- Feature branches + PRs on GitHub (`jeriks54/loco`), merge to `main` → Vercel auto-deploys.
-- Conventional-ish commit messages (`feat:`, `docs:`, `fix:`, ...).
+### 9.1 Git & deploy
+
+- One feature branch per milestone (`feat/mN-...`), one PR per milestone; incremental conventional-ish commits (`feat:`, `docs:`, `fix:`, ...) referencing GitHub issues.
+- Merge only after jonas play-tests the PR's Vercel preview and explicitly approves.
+- Auto-deploy: `main` → production (Vercel); each PR gets its own preview URL — the play-test environment.
+- Progress tracked in GitHub issues, labeled per milestone (`M1`, `M2`, ...).
+
+### 9.2 Collaboration model
+
+| Role | Who | Responsibilities |
+|---|---|---|
+| Vision & design | jonas + assistant | Docs, level design intent, difficulty curve, what "fun" means |
+| Team manager | assistant | Written briefs per task, delegation, code review, integration, issue triage |
+| Implementation | Subagents | Code from briefs (docs + contracts + conventions); nothing is committed before review |
+| Play-testing — feel/fun | jonas | Plays the Vercel preview against a checklist provided by the assistant |
+| Play-testing — systematic | assistant | Checklists, edge cases, code-level verification |
+
+Principles:
+
+- One agent per cohesive task; parallel agents only where scopes are disjoint (level packs, polish passes, bug batches). Trivial fixes the team manager may apply directly.
+- Code review: the team manager reviews every delivery against docs, brief, and checklist (coding agents self-review before hand-off). For high-stakes deliveries or perception passes (graphics, level design) an independent critic agent may be added.
+- Quality via gates, not crunch: each milestone gets a short acceptance checklist agreed before play-testing; findings become ranked GitHub issues feeding the next fix round. "Awesome" is reached through repeated tight play-test loops.
+- Docs are reviewed before implementation; design decisions live in this document, not in code.
 
 ## 10. Open design questions
 
 - Robot visual identity (shape/colors) — decide during M1, keep abstract/clean.
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
+- Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — decided in Update 4; shell must stay ready for it.
