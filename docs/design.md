@@ -127,7 +127,18 @@ Principles:
 
 ## 10. Open design questions
 
-- Robot visual identity (shape/colors) — decide during M1, keep abstract/clean.
+- Robot & maze glyph specifics (how robot/maze render within the visual language of §11) — decide during M1 rendering.
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — decided in Update 4; shell must stay ready for it.
+
+## 11. Visual language
+
+Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic inside a modern mobile app** — terminal/roguelike glyph art with contemporary app polish.
+
+- **Typography:** monospace everywhere — JetBrains Mono (Google Fonts) with system-mono fallback.
+- **Palette:** modern dark — graphite/near-black surfaces, near-white text, muted grey secondary text, one neon accent (lime). Exact values live as CSS custom properties in `styles/main.css` (source of truth).
+- **Decoration:** figlet-style character logo, box-drawing frames (`┌─┐ │ └─┘`), blinking block cursor, restrained glow via text-shadow. No scanlines/CRT kitsch — it should feel 2026, not 1983.
+- **Motion:** subtle — fade-ins, cursor blink, glow pulses; must honor `prefers-reduced-motion`.
+- **Layout:** desktop-first for gameplay (requirements §3.7; mobile arrives with Update 4). The welcome screen is the exception: it must also look good on a phone (centered column there).
+- **Copy voice:** terminal boot voice — short, dry, playful; no lorem ipsum.
