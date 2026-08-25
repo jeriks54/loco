@@ -58,6 +58,12 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Later chapters unlock new blocks and larger memories in step with mazes that require them.
 - Progress (completed levels) persists in the browser.
 
+### 3.7 Layout & controls (MVP)
+
+- Desktop-first, mouse input.
+- Maze/board on the **left** as the dominant element; program editor (palette + memory) on the **right**.
+- Commands are placed by dragging them from the palette into memory.
+
 ## 4. MVP scope (v0.1)
 
 In:
@@ -75,13 +81,15 @@ Out (roadmap, §5): loops, conditionals, sensors, memory upgrades, scoring.
 
 1. **Update 2 — Loops:** `while` blocks + a chapter of levels that only fit with loops.
 2. **Update 3 — Sensing & decisions:** `if`, sensor unlocks (distance-to-wall, goal detection), memory upgrades as collectibles.
-3. **Ideas beyond:** fog of war (maze not fully visible), par/star ratings for efficient programs, level sharing.
+3. **Update 4 — Mobile:** phone layout with the maze as the default view; the program panel opens as a bottom sheet (swipe up or arrow button); tap-to-add blocks alongside drag.
+4. **Ideas beyond:** fog of war (maze not fully visible), par/star ratings for efficient programs, level sharing.
 
 ## 6. Non-functional requirements
 
 - Pure client-side: vanilla HTML/CSS/JS, no build step, deployable as static files (Vercel).
 - Runs smoothly on current Chrome/Edge/Firefox; keyboard not required for MVP.
 - Load time: instant (static assets only, no framework).
+- Desktop-first for MVP, but the UI is architected mobile-ready: panels are self-contained components (see Roadmap, Update 4).
 
 ## 7. Open questions
 
