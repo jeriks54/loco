@@ -17,10 +17,13 @@
   --muted: #7E8B98;
   --accent: #B6FF3B;         /* neon lime */
   --accent-soft: rgba(182, 255, 59, 0.14);
-  --accent-glow: rgba(182, 255, 59, 0.32); /* derived: text-shadow / hover glow */
+  --accent-glow: rgba(182, 255, 59, 0.32); /* text-shadow / hover glow */
+  --accent-dim: rgba(182, 255, 59, 0.07);  /* ambient background wash */
 
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', 'SF Mono',
     Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ---------- Minimal reset & base ---------- */
@@ -69,6 +72,17 @@ button {
   justify-content: center;
   gap: 2.5rem;
   padding: clamp(20px, 6vw, 56px);
+}
+
+/* Title screen: ambient depth — dot grid, lime halo, cool vignette */
+#screen-title {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle, rgba(232, 238, 242, 0.04) 1px, transparent 1.4px),
+    radial-gradient(46rem 30rem at 50% 16%, var(--accent-dim), transparent 65%),
+    radial-gradient(42rem 30rem at 82% 108%, rgba(99, 133, 184, 0.09), transparent 62%);
+  background-size: 22px 22px, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat;
 }
 
 .hidden,
@@ -131,17 +145,20 @@ button {
 }
 
 .btn-primary {
-  background: var(--accent);
+  position: relative;
+  overflow: hidden; /* contains the shine sweep */
+  background-color: var(--accent);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 45%);
   border-color: var(--accent);
   color: var(--bg); /* dark glyph on neon — AA+ contrast */
   font-weight: 700;
-  box-shadow: 0 0 18px var(--accent-soft); /* subtle neon, not screaming */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 18px var(--accent-soft);
 }
 
 .btn-primary:hover {
-  background: var(--accent);
+  background-color: var(--accent);
   border-color: var(--accent);
-  box-shadow: 0 0 28px var(--accent-glow);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4), 0 0 30px var(--accent-glow);
 }
 
 .btn-large {
@@ -183,6 +200,18 @@ button {
   text-shadow: 0 0 16px var(--accent-glow);
 }
 
+/* Robot mascot — the game's first character */
+.robot {
+  font-size: 0.95rem;
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+.robot-eyes {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent-glow);
+}
+
 .tagline {
   color: var(--muted);
   font-size: clamp(0.85rem, 2.6vw, 1rem);
@@ -214,12 +243,26 @@ button {
   max-width: 26rem;
 }
 
+/* ambient line typed on load (src/main.js) */
+.boot-ticker {
+  min-height: 1.5em;
+  margin: 0 0 0.9rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  text-align: left;
+}
+
 /* CSS-border + corner-glyph hybrid: reads as an ASCII frame at any width */
 .frame {
   position: relative;
   border: 1px solid var(--border);
-  padding: 0.8rem 1.25rem;
+  border-radius: 2px;
+  padding: 0.9rem 1.25rem;
   text-align: center;
+  background: rgba(18, 24, 31, 0.55);
+  box-shadow: 0 0 30px rgba(182, 255, 59, 0.04);
 }
 
 .frame .corner {
@@ -255,10 +298,18 @@ button {
 }
 
 .frame .version {
-  color: var(--muted);
-  font-size: 0.75rem;
+  margin-bottom: 0.45rem;
+}
+
+.frame .version .pill {
+  display: inline-block;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 0.08em;
-  margin-bottom: 0.3rem;
+  color: var(--muted);
+  background: rgba(26, 34, 44, 0.5);
 }
 
 .frame .hint {
@@ -269,12 +320,27 @@ button {
 /* ---------- Motion (decorative only, opt-in) ---------- */
 
 @media (prefers-reduced-motion: no-preference) {
-  .title-card {
-    animation: rise-in 0.6s ease-out both;
+  /* Entrance choreography: staggered rise, then ambient life */
+  .ascii-logo {
+    animation: rise-in 0.55s var(--ease-out) 0.05s both,
+      breathe 5s ease-in-out 1.8s infinite;
+  }
+
+  .robot {
+    animation: rise-in 0.55s var(--ease-out) 0.18s both,
+      bob 3.6s ease-in-out 2s infinite;
+  }
+
+  .tagline {
+    animation: rise-in 0.55s var(--ease-out) 0.3s both;
+  }
+
+  .title-card .btn-primary {
+    animation: rise-in 0.55s var(--ease-out) 0.42s both;
   }
 
   .title-footer {
-    animation: rise-in 0.6s ease-out 0.15s both;
+    animation: rise-in 0.55s var(--ease-out) 0.55s both;
   }
 
   .cursor {
@@ -283,7 +349,29 @@ button {
 
   .btn {
     transition: background-color 0.15s ease, border-color 0.15s ease,
-      box-shadow 0.15s ease;
+      box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active {
+    transform: translateY(1px);
+  }
+
+  /* Shine sweep across the primary button on hover */
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.3) 48%, transparent 62%);
+    transform: translateX(-130%);
+    pointer-events: none;
+  }
+
+  .btn-primary:hover::after {
+    animation: sweep 0.8s ease;
   }
 
   @keyframes rise-in {
@@ -305,6 +393,35 @@ button {
     55%,
     100% {
       opacity: 0;
+    }
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      text-shadow: 0 0 12px var(--accent-soft);
+    }
+    50% {
+      text-shadow: 0 0 30px var(--accent-glow);
+    }
+  }
+
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+
+  @keyframes sweep {
+    from {
+      transform: translateX(-130%);
+    }
+    to {
+      transform: translateX(130%);
     }
   }
 }

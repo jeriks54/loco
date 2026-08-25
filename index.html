@@ -14,24 +14,32 @@
   <main id="app">
     <section id="screen-title" class="screen">
       <div class="title-card">
-        <pre class="ascii-logo" aria-hidden="true">██╗      ██████╗  ██████╗ ██████╗ 
+        <pre class="ascii-logo" aria-hidden="true">██╗      ██████╗  ██████╗ ██████╗
 ██║     ██╔═══██╗██╔════╝██╔═══██╗
 ██║     ██║   ██║██║     ██║   ██║
 ██║     ██║   ██║██║     ██║   ██║
 ███████╗╚██████╔╝╚██████╗╚██████╔╝
 ╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝ </pre>
         <h1 class="sr-only">LoCo — Lines of Code</h1>
+        <pre class="robot" aria-hidden="true">    ▫
+  ┌───┐
+  │<span class="robot-eyes">▪ ▪</span>│
+ ╔╧═══╧╗
+ ║  ►  ║
+ ╚╦═══╦╝
+  ╨   ╨ </pre>
         <p class="tagline">Program the robot. Escape the maze. Every line counts.<span class="cursor" aria-hidden="true">▮</span></p>
         <button id="btn-play" class="btn btn-primary btn-large">▶ START</button>
         <pre class="boot-log" hidden aria-live="polite"></pre>
       </div>
       <footer class="title-footer">
+        <pre class="boot-ticker" aria-hidden="true"><span id="ticker-text"></span></pre>
         <div class="frame">
           <span class="corner corner-tl" aria-hidden="true">┌</span>
           <span class="corner corner-tr" aria-hidden="true">┐</span>
           <span class="corner corner-bl" aria-hidden="true">└</span>
           <span class="corner corner-br" aria-hidden="true">┘</span>
-          <p class="version">v0.0.1</p>
+          <p class="version"><span class="pill">v0.0.1</span></p>
           <p class="hint">&gt; insert blocks. escape maze.</p>
         </div>
       </footer>
