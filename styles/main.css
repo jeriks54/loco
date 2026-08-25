@@ -88,9 +88,11 @@ button {
   background-repeat: repeat, no-repeat, no-repeat;
 }
 
+/* !important: later component rules (e.g. .result-overlay's display:flex)
+   must never be able to out-cascade the hidden utility */
 .hidden,
 [hidden] {
-  display: none;
+  display: none !important;
 }
 
 /* Visually hidden, accessible to screen readers */
@@ -425,6 +427,430 @@ button {
     }
     to {
       transform: translateX(130%);
+    }
+  }
+}
+
+/* ============================================================
+   Level select + game screen (M1 playable core)
+   Same tokens, same voice (design.md §11): mono for terminal/
+   ASCII elements, sans for human copy, mint accent for active
+   states. Desktop-first layout per requirements §3.7: board
+   left and dominant, editor right.
+   ============================================================ */
+
+/* Non-title screens are app frames: content on top, not centered */
+#screen-levels,
+#screen-game {
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.screen-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.screen-header h2 {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.screen-header .spacer {
+  flex: 1;
+}
+
+.level-progress {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ---------- Level select ---------- */
+
+.level-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+.level-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.level-item:hover {
+  background: var(--surface-2);
+  border-color: var(--muted);
+}
+
+.level-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.level-item .level-id {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.level-item .level-item-name {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+}
+
+.level-item .level-mem {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* ---------- Game layout: board left dominant, editor right ---------- */
+
+.game-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 1rem;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.board-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  min-width: 0;
+  min-height: 0;
+}
+
+.canvas-wrap {
+  position: relative; /* anchor for the result overlay */
+  line-height: 0;
+  border-radius: 10px;
+}
+
+#board {
+  display: block;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+/* Result overlay (terminal boot voice, brief §6) */
+.result-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  line-height: 1.5;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  border-radius: 10px;
+}
+
+.result-text {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--text);
+  text-shadow: 0 0 12px var(--accent-soft);
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.result-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* ---------- Side panel (palette + robot memory + controls) ---------- */
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+  min-height: 0;
+}
+
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.panel-section h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.memory-count {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+/* Command chips (palette and filled program slots) */
+.block-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5ch;
+  padding: 0.42rem 0.7rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text);
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none; /* Pointer Events own the gesture */
+  white-space: nowrap;
+}
+
+.block-chip .chip-glyph {
+  color: var(--accent);
+}
+
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.palette .block-chip:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-soft);
+}
+
+.palette.locked .block-chip {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+/* Program = exactly `memory` slots */
+.program {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.5rem;
+  min-height: 56px;
+  padding: 0.5rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5ch;
+  height: 40px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.slot.empty {
+  width: 44px;
+  border: 1px dashed var(--border);
+}
+
+.slot.filled {
+  padding: 0 0.6rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.slot.filled .chip-glyph {
+  color: var(--accent);
+}
+
+.slot.filled:hover {
+  border-color: var(--muted);
+}
+
+/* program pointer — the block currently executing */
+.slot.current {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow), inset 0 0 8px var(--accent-soft);
+}
+
+.program.locked .slot.filled {
+  cursor: default;
+}
+
+/* drop hints while dragging */
+.program.drop-ready {
+  border-color: var(--muted);
+}
+
+.slot.drop-hint {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* floating chip clone under the pointer */
+.drag-ghost {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  transform: translate(-50%, -60%) scale(1.06);
+  opacity: 0.95;
+  cursor: grabbing;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), 0 0 12px var(--accent-soft);
+}
+
+/* Run / Reset / speed */
+.panel-section.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.speed {
+  grid-column: 1 / -1;
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.speed button {
+  appearance: none;
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+.speed button + button {
+  border-left: 1px solid var(--border);
+}
+
+.speed button:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.speed button.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+  text-shadow: 0 0 8px var(--accent-glow);
+}
+
+.btn-small {
+  min-height: 36px;
+  min-width: 36px;
+  padding: 0.3em 1em;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+/* ---------- Game motion (decorative, honors reduced motion) ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .level-item,
+  .block-chip,
+  .slot,
+  .speed button {
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+      box-shadow 0.2s ease, color 0.15s ease;
+  }
+
+  .slot.filled:hover {
+    transform: translateY(-1px);
+  }
+
+  /* capacity reject flash — the program box says "no" */
+  .program.reject {
+    animation: reject-flash 0.42s ease;
+  }
+
+  @keyframes reject-flash {
+    0%,
+    100% {
+      border-color: var(--border);
+      box-shadow: none;
+    }
+    35% {
+      border-color: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+  }
+
+  /* freshly dropped block pops in */
+  .slot.pop {
+    animation: slot-pop 0.18s var(--ease-out);
+  }
+
+  @keyframes slot-pop {
+    from {
+      opacity: 0.4;
+      transform: scale(0.85);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
     }
   }
 }
