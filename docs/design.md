@@ -128,6 +128,7 @@ Principles:
 ## 10. Open design questions
 
 - Robot board sprite: M1 shipped a facing chevron; upgrade to a proper glyph robot (welcome-mascot lineage, canvas-rendered, no image assets) tracked in issue #8 (label `roadmap`).
+- Program-as-lines: the name says *Lines of Code* but M1's editor shows chips in boxes; reconcile — likely render the program as numbered mono lines (`01 move`, …) — tracked in issue #9 (label `roadmap`).
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — decided in Update 4; shell must stay ready for it.
