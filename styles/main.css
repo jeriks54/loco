@@ -1,0 +1,310 @@
+/* ============================================================
+   LoCo — main.css
+   Visual language (design.md §11, locked): ASCII aesthetic
+   inside a modern mobile app. Monospace type, graphite dark,
+   one neon-lime accent. This file is the source of truth for
+   the palette.
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
+
+:root {
+  --bg: #0B0F14;             /* near-black graphite */
+  --surface: #12181F;
+  --surface-2: #1A222C;
+  --border: #26303B;
+  --text: #E8EEF2;
+  --muted: #7E8B98;
+  --accent: #B6FF3B;         /* neon lime */
+  --accent-soft: rgba(182, 255, 59, 0.14);
+  --accent-glow: rgba(182, 255, 59, 0.32); /* derived: text-shadow / hover glow */
+
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', 'SF Mono',
+    Menlo, Consolas, 'Liberation Mono', monospace;
+}
+
+/* ---------- Minimal reset & base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden; /* safety net: no horizontal scroll, ever */
+}
+
+h1,
+h2,
+h3,
+p,
+pre {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Screens ---------- */
+
+.screen {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: clamp(20px, 6vw, 56px);
+}
+
+.hidden,
+[hidden] {
+  display: none;
+}
+
+/* Visually hidden, accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px; /* touch target */
+  min-width: 48px;
+  padding: 0.55em 1.2em;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:hover {
+  background: var(--surface-2);
+  border-color: var(--muted);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg); /* dark glyph on neon — AA+ contrast */
+  font-weight: 700;
+  box-shadow: 0 0 18px var(--accent-soft); /* subtle neon, not screaming */
+}
+
+.btn-primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 28px var(--accent-glow);
+}
+
+.btn-large {
+  min-height: 56px;
+  padding: 0.8em 2.2em;
+  font-size: 1.125rem;
+  letter-spacing: 0.06em;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.btn-ghost:hover {
+  background: transparent;
+  border-color: var(--muted);
+  color: var(--text);
+}
+
+/* ---------- Title screen ---------- */
+
+.title-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 40rem;
+  text-align: center;
+}
+
+/* figlet logo — 34 columns; fluid size keeps it inside 320 px */
+.ascii-logo {
+  font-size: clamp(0.6rem, 3.8vw, 1.25rem);
+  line-height: 1.1;
+  color: var(--accent);
+  text-shadow: 0 0 16px var(--accent-glow);
+}
+
+.tagline {
+  color: var(--muted);
+  font-size: clamp(0.85rem, 2.6vw, 1rem);
+  letter-spacing: 0.02em;
+}
+
+.cursor {
+  display: inline-block;
+  margin-left: 0.5ch;
+  color: var(--accent);
+}
+
+/* placeholder terminal output, revealed by src/main.js */
+.boot-log {
+  width: 100%;
+  min-height: 3em; /* reserve two lines so typing doesn't jump the layout */
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---------- Footer with ASCII frame ---------- */
+
+.title-footer {
+  width: 100%;
+  max-width: 26rem;
+}
+
+/* CSS-border + corner-glyph hybrid: reads as an ASCII frame at any width */
+.frame {
+  position: relative;
+  border: 1px solid var(--border);
+  padding: 0.8rem 1.25rem;
+  text-align: center;
+}
+
+.frame .corner {
+  position: absolute;
+  background: var(--bg); /* masks the border line under the glyph */
+  color: var(--muted);
+  line-height: 1;
+  padding: 0 0.15ch;
+}
+
+.corner-tl {
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.corner-tr {
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+.corner-bl {
+  bottom: 0;
+  left: 0;
+  transform: translate(-50%, 50%);
+}
+
+.corner-br {
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, 50%);
+}
+
+.frame .version {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+
+.frame .hint {
+  color: var(--text);
+  font-size: 0.8125rem;
+}
+
+/* ---------- Motion (decorative only, opt-in) ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .title-card {
+    animation: rise-in 0.6s ease-out both;
+  }
+
+  .title-footer {
+    animation: rise-in 0.6s ease-out 0.15s both;
+  }
+
+  .cursor {
+    animation: blink 1.1s infinite;
+  }
+
+  .btn {
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes blink {
+    0%,
+    54% {
+      opacity: 1;
+    }
+    55%,
+    100% {
+      opacity: 0;
+    }
+  }
+}

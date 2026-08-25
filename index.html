@@ -3,18 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B0F14">
   <title>LoCo — Lines of Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
   <main id="app">
     <section id="screen-title" class="screen">
       <div class="title-card">
-        <h1>LoCo</h1>
-        <p class="subtitle">Lines of Code</p>
-        <p class="tagline">Program the robot. Escape the maze. Every line counts.</p>
-        <button id="btn-play" class="btn btn-primary btn-large">Play</button>
+        <pre class="ascii-logo" aria-hidden="true">██╗      ██████╗  ██████╗ ██████╗ 
+██║     ██╔═══██╗██╔════╝██╔═══██╗
+██║     ██║   ██║██║     ██║   ██║
+██║     ██║   ██║██║     ██║   ██║
+███████╗╚██████╔╝╚██████╗╚██████╔╝
+╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝ </pre>
+        <h1 class="sr-only">LoCo — Lines of Code</h1>
+        <p class="tagline">Program the robot. Escape the maze. Every line counts.<span class="cursor" aria-hidden="true">▮</span></p>
+        <button id="btn-play" class="btn btn-primary btn-large">▶ START</button>
+        <pre class="boot-log" hidden aria-live="polite"></pre>
       </div>
+      <footer class="title-footer">
+        <div class="frame">
+          <span class="corner corner-tl" aria-hidden="true">┌</span>
+          <span class="corner corner-tr" aria-hidden="true">┐</span>
+          <span class="corner corner-bl" aria-hidden="true">└</span>
+          <span class="corner corner-br" aria-hidden="true">┘</span>
+          <p class="version">v0.0.1</p>
+          <p class="hint">&gt; insert blocks. escape maze.</p>
+        </div>
+      </footer>
     </section>
 
     <section id="screen-levels" class="screen hidden">
