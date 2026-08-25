@@ -127,7 +127,7 @@ Principles:
 
 ## 10. Open design questions
 
-- Robot & maze glyph specifics (how robot/maze render within the visual language of §11) — decide during M1 rendering.
+- Robot board sprite: M1 shipped a facing chevron; upgrade to a proper glyph robot (welcome-mascot lineage, canvas-rendered, no image assets) tracked in issue #8 (label `roadmap`).
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — decided in Update 4; shell must stay ready for it.
