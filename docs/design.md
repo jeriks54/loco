@@ -138,8 +138,8 @@ Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic i
 
 - **Typography:** two voices — clean system sans for human-facing copy (subtitle, tagline, buttons, tab labels); JetBrains Mono for terminal/ASCII elements (maze art, boot log/ticker, version).
 - **Palette:** warm green-tinted charcoal surfaces, near-white text, muted grey-green secondary text, one mint neon accent. Reference: `docs/reference/welcome-mockup.png`. Exact values live as CSS custom properties in `styles/main.css` (source of truth).
-- **Decoration:** line-art SVG logo (hollow outline letters, hexagon "o"s, mint glow); ASCII maze teaser with the robot and a glowing path to an `[EXIT]` badge; box-drawing wall fragments; blinking robot eyes. No code-rain background, no scanlines/CRT kitsch — it should feel 2026, not 1983.
-- **Welcome structure (per reference):** logo → subtitle → maze teaser → tagline → outline-glow "Start Game" + secondary "Tutorial" → bottom tab bar (Settings / High Scores) with mini version. Not-yet-built modules answer with a terminal "not found" joke.
+- **Decoration:** figlet-style ASCII logo (block glyphs, mint glow — user preferred it over a line-art SVG variant, 2026-08-25); ASCII maze teaser with the robot and a glowing path to an `[EXIT]` badge; box-drawing wall fragments; blinking robot eyes. No code-rain background, no scanlines/CRT kitsch — it should feel 2026, not 1983.
+- **Welcome structure (per reference):** figlet logo → maze teaser → tagline → outline-glow "Start Game" + secondary "Tutorial" → bottom tab bar (Settings / High Scores) with mini version. No subtitle line. Not-yet-built modules answer with a terminal "not found" joke.
 - **Motion:** subtle — fade-ins, cursor blink, glow pulses; must honor `prefers-reduced-motion`.
 - **Layout:** desktop-first for gameplay (requirements §3.7; mobile arrives with Update 4). The welcome screen is the exception: it must also look good on a phone (centered column there).
 - **Copy voice:** terminal boot voice — short, dry, playful; no lorem ipsum.

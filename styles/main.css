@@ -211,28 +211,13 @@ button {
   text-align: center;
 }
 
-/* Line-art logo: hollow outline letters, hexagon o's, mint glow */
-.logo {
-  width: min(78vw, 320px);
-  height: auto;
-  filter: drop-shadow(0 0 8px var(--accent-glow));
-}
-
-.logo polygon,
-.logo path {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 3;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-
-.subtitle {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: clamp(1.25rem, 5vw, 1.75rem);
-  letter-spacing: 0.01em;
-  color: var(--text);
+/* figlet logo — 34 columns; fluid size keeps it inside 320 px */
+.ascii-logo {
+  font-family: var(--font-mono);
+  font-size: clamp(0.6rem, 3.8vw, 1.25rem);
+  line-height: 1.1;
+  color: var(--accent);
+  text-shadow: 0 0 16px var(--accent-glow);
 }
 
 /* Maze teaser: mono ASCII art, walls muted, path + exit glowing */
@@ -360,34 +345,30 @@ button {
 
 @media (prefers-reduced-motion: no-preference) {
   /* Entrance choreography: staggered rise, then ambient life */
-  .logo {
+  .ascii-logo {
     animation: rise-in 0.55s var(--ease-out) 0.05s both,
       breathe 5s ease-in-out 1.8s infinite;
   }
 
-  .subtitle {
-    animation: rise-in 0.55s var(--ease-out) 0.16s both;
-  }
-
   .maze {
-    animation: rise-in 0.55s var(--ease-out) 0.27s both;
+    animation: rise-in 0.55s var(--ease-out) 0.22s both;
   }
 
   .tagline {
-    animation: rise-in 0.55s var(--ease-out) 0.38s both;
+    animation: rise-in 0.55s var(--ease-out) 0.33s both;
   }
 
   .title-card .btn-primary {
-    animation: rise-in 0.55s var(--ease-out) 0.48s both;
+    animation: rise-in 0.55s var(--ease-out) 0.43s both;
   }
 
   .title-card .btn-secondary {
-    animation: rise-in 0.55s var(--ease-out) 0.56s both;
+    animation: rise-in 0.55s var(--ease-out) 0.51s both;
   }
 
   .boot-ticker,
   .tab-bar {
-    animation: rise-in 0.55s var(--ease-out) 0.66s both;
+    animation: rise-in 0.55s var(--ease-out) 0.61s both;
   }
 
   .btn {
@@ -431,10 +412,10 @@ button {
   @keyframes breathe {
     0%,
     100% {
-      filter: drop-shadow(0 0 5px var(--accent-soft));
+      text-shadow: 0 0 10px var(--accent-soft);
     }
     50% {
-      filter: drop-shadow(0 0 14px var(--accent-glow));
+      text-shadow: 0 0 26px var(--accent-glow);
     }
   }
 
