@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0B0F14">
+  <meta name="theme-color" content="#232827">
   <title>LoCo — Lines of Code</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,35 +14,44 @@
   <main id="app">
     <section id="screen-title" class="screen">
       <div class="title-card">
-        <pre class="ascii-logo" aria-hidden="true">██╗      ██████╗  ██████╗ ██████╗
-██║     ██╔═══██╗██╔════╝██╔═══██╗
-██║     ██║   ██║██║     ██║   ██║
-██║     ██║   ██║██║     ██║   ██║
-███████╗╚██████╔╝╚██████╗╚██████╔╝
-╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝ </pre>
+        <svg class="logo" viewBox="0 0 330 104" aria-hidden="true">
+          <polygon points="10,8 34,8 34,70 64,70 64,94 10,94" />
+          <polygon points="88,16 130,16 151,52 130,88 88,88 67,52" />
+          <path d="M 224,22 A 40 40 0 1 0 224,82" />
+          <polygon points="256,16 298,16 319,52 298,88 256,88 235,52" />
+        </svg>
         <h1 class="sr-only">LoCo — Lines of Code</h1>
-        <pre class="robot" aria-hidden="true">    ▫
-  ┌───┐
-  │<span class="robot-eyes">▪ ▪</span>│
- ╔╧═══╧╗
- ║  ►  ║
- ╚╦═══╦╝
-  ╨   ╨ </pre>
-        <p class="tagline">Program the robot. Escape the maze. Every line counts.<span class="cursor" aria-hidden="true">▮</span></p>
-        <button id="btn-play" class="btn btn-primary btn-large">▶ START</button>
+        <p class="subtitle">Lines of Code</p>
+        <pre class="maze" aria-hidden="true"><span class="w"> #─#  #───#  #─#  #──#
+ #      │      #     │
+ #─# #──┼──# #──# #──┤
+   │ #  │   │  # │   #
+ #─┼──# │ #─┼─# ────┤
+ # │    </span><span class="r">▫</span><span class="w">    │  │    #
+ #─┼─  </span><span class="r">───┐</span><span class="w">  ─┼──┼───
+   │   </span><span class="r">│</span><span class="robot-eyes">▪ ▪</span><span class="r">│</span><span class="w">   │  │   #
+ #─┼─  </span><span class="r">╔╧═╧╗</span><span class="w"> ─┼──┼───
+ # │   </span><span class="r">║ ► ║</span><span class="p"> ████ </span><span class="w"> ╞═
+ #─┼─  </span><span class="r">╚╦═╦╝</span><span class="w">  ─┼──  ─┤ </span><span class="exit-badge">EXIT</span><span class="w">
+   │    </span><span class="r">╨ ╨</span><span class="w">    │  </span><span class="p">██</span><span class="w">   │
+ #─┼──#──#──#──┼──</span><span class="p">██</span><span class="w">───┘</span></pre>
+        <p class="tagline">Can you escape the maze using<br>minimal commands?</p>
+        <button id="btn-play" class="btn btn-primary btn-large" data-module="maze">Start Game</button>
+        <button id="btn-tutorial" class="btn btn-secondary" data-module="tutorial">Tutorial</button>
         <pre class="boot-log" hidden aria-live="polite"></pre>
       </div>
-      <footer class="title-footer">
-        <pre class="boot-ticker" aria-hidden="true"><span id="ticker-text"></span></pre>
-        <div class="frame">
-          <span class="corner corner-tl" aria-hidden="true">┌</span>
-          <span class="corner corner-tr" aria-hidden="true">┐</span>
-          <span class="corner corner-bl" aria-hidden="true">└</span>
-          <span class="corner corner-br" aria-hidden="true">┘</span>
-          <p class="version"><span class="pill">v0.0.1</span></p>
-          <p class="hint">&gt; insert blocks. escape maze.</p>
-        </div>
-      </footer>
+      <pre class="boot-ticker" aria-hidden="true"><span id="ticker-text"></span></pre>
+      <nav class="tab-bar" aria-label="Main">
+        <button class="tab" data-module="settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M18.8 5.2l-2.1 2.1M7.3 16.7l-2.1 2.1" /></svg>
+          <span>Settings</span>
+        </button>
+        <span class="version-mini">v0.0.1</span>
+        <button class="tab" data-module="scores">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4ZM17 5h3.5a3.5 3.5 0 0 1-3.5 4M7 5H3.5A3.5 3.5 0 0 0 7 9M12 13v4M8 20h8M8 20c0-2 1.8-3 4-3s4 1 4 3" /></svg>
+          <span>High Scores</span>
+        </button>
+      </nav>
     </section>
 
     <section id="screen-levels" class="screen hidden">

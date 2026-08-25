@@ -1,22 +1,23 @@
 /* ============================================================
    LoCo — main.js (M1 placeholder boot wiring)
-   Title-screen interactions: START button boot-log sequence,
-   ambient boot ticker, robot mascot blinking. No router, no
-   state, no imports yet — screen switching arrives later with
-   ui/screens.js.
+   Title-screen interactions: module buttons play a terminal
+   boot-log sequence, ambient boot ticker, robot mascot
+   blinking. No router, no state, no imports yet — screen
+   switching arrives later with ui/screens.js.
    ============================================================ */
 
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+const M1_PENDING_LINE = '> update M1 pending — stand by_';
 const BOOT_LINES = [
   '> loading maze.module .......... not found',
-  '> update M1 pending — stand by_',
+  M1_PENDING_LINE,
 ];
 const TICKER_LINE = '> loco.system v0.0.1 — ready_';
 
 const FIRST_LINE_DELAY_MS = 420;
 const LINE_INTERVAL_MS = 560;
-const REENABLE_DELAY_MS = 240; // pause after the last line before re-enabling START
+const REENABLE_DELAY_MS = 240; // pause after the last line before re-enabling
 
 const TICKER_START_DELAY_MS = 650;
 const TICKER_CHAR_MS = 22;
@@ -27,26 +28,31 @@ const BLINK_GAP_MS = 140;
 const EYES_OPEN = '▪ ▪';
 const EYES_CLOSED = '─ ─';
 
-const btnPlay = document.getElementById('btn-play');
 const bootLog = document.querySelector('.boot-log');
 const tickerText = document.getElementById('ticker-text');
 const robotEyes = document.querySelector('.robot-eyes');
+const moduleButtons = document.querySelectorAll('[data-module]');
 
-function playBootSequence() {
-  btnPlay.disabled = true;
+function playBootSequence(button) {
+  const moduleName = button.dataset.module;
+  const lines = moduleName === 'maze'
+    ? BOOT_LINES
+    : [`> loading ${moduleName}.module .......... not found`, M1_PENDING_LINE];
+
+  button.disabled = true;
   bootLog.textContent = '';
   bootLog.hidden = false;
   blink(2); // the robot noticed you pressed something
 
-  BOOT_LINES.forEach((line, index) => {
+  lines.forEach((line, index) => {
     window.setTimeout(() => {
       bootLog.textContent += (index > 0 ? '\n' : '') + line;
     }, FIRST_LINE_DELAY_MS + index * LINE_INTERVAL_MS);
   });
 
   window.setTimeout(() => {
-    btnPlay.disabled = false;
-  }, FIRST_LINE_DELAY_MS + BOOT_LINES.length * LINE_INTERVAL_MS + REENABLE_DELAY_MS);
+    button.disabled = false;
+  }, FIRST_LINE_DELAY_MS + lines.length * LINE_INTERVAL_MS + REENABLE_DELAY_MS);
 }
 
 function typeTicker() {
@@ -85,9 +91,9 @@ function scheduleBlink() {
   }, delay);
 }
 
-if (btnPlay && bootLog) {
-  btnPlay.addEventListener('click', playBootSequence);
-}
+moduleButtons.forEach((button) => {
+  button.addEventListener('click', () => playBootSequence(button));
+});
 
 typeTicker();
 scheduleBlink();
