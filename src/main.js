@@ -1,10 +1,14 @@
 /* ============================================================
-   LoCo — main.js (M1 boot wiring)
+   LoCo — main.js (M1 boot wiring, M2 loop outcomes + progress)
    Wires screens, level registry, and the game screen's
    state / executor / scene / editor / HUD into one flow.
    Welcome-screen interactions (module boot-log joke, ambient
    ticker, robot blink) are kept intact — except Start Game,
    which now opens the level select (brief §7).
+   M2: the terminal-event fan-out also covers the loop-era
+   'syntax' (refused run) and 'runaway' (tick cap) outcomes.
+   Progress (design.md §7) is loaded at boot, saved on goal,
+   and reflected in the level list's completion marks.
    ============================================================ */
 
 import { levels } from './levels/index.js';
@@ -14,6 +18,7 @@ import { createScene } from './render/scene.js';
 import { createEditor } from './ui/editor.js';
 import { createHud } from './ui/hud.js';
 import { createScreens, renderLevelList } from './ui/screens.js';
+import { loadProgress, markCompleted } from './persist.js';
 
 /* ---------- Welcome screen (kept from the warm-up) ---------- */
 
@@ -108,6 +113,7 @@ scheduleBlink();
 /* ---------- Game flow (M1 playable core) ---------- */
 
 const levelListEl = document.getElementById('level-list');
+let progress = loadProgress();
 
 let currentIndex = -1;
 let state = null;
@@ -151,11 +157,16 @@ function handleEvent(type, payload) {
     return;
   }
   scene.handleEvent(type, payload); // moved / turned / crashed / goal
-  if (type === 'crashed' || type === 'finished' || type === 'goal') {
+  if (type === 'crashed' || type === 'finished' || type === 'goal' || type === 'syntax' || type === 'runaway') {
     editor.setRunning(false);
     editor.clearHighlight();
     hud.setRunning(false);
     hud.showResult(type, { hasNext: currentIndex < levels.length - 1 });
+    if (type === 'goal') {
+      // save progress and refresh the already-rendered level list
+      progress = markCompleted(levels[currentIndex].id);
+      renderLevelList(levelListEl, levels, (index) => loadLevel(index), progress);
+    }
   }
 }
 
@@ -205,4 +216,4 @@ document.getElementById('btn-clear').addEventListener('click', () => {
   if (editor) editor.clearProgram();
 });
 
-renderLevelList(levelListEl, levels, (index) => loadLevel(index));
+renderLevelList(levelListEl, levels, (index) => loadLevel(index), progress);

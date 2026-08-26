@@ -3,13 +3,16 @@
    Run/Reset, speed group x1/2 x1 x2, and the terminal result
    overlay in the board panel. Copy is terminal boot voice
    (design.md §11). Next level only appears after reaching the
-   goal (and never on the last level).
+   goal (and never on the last level). M2 adds the two loop-era
+   outcomes: refused (unbalanced) runs and the runaway guard.
    ============================================================ */
 
 const RESULT_COPY = {
   crashed: '> CRASHED — robot met a wall.',
   finished: '> FELL SHORT — robot stopped before the exit.',
   goal: '> LEVEL COMPLETE.',
+  syntax: '> SYNTAX ERROR — every loop needs its matching end.',
+  runaway: '> DIZZY — robot got dizzy, run stopped.',
 };
 
 const pad2 = (n) => String(n).padStart(2, '0');

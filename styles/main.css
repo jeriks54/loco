@@ -536,6 +536,36 @@ button {
   color: var(--muted);
 }
 
+/* Chapter headers — mono, terminal voice (M2 task C) */
+.chapter-header {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* terminal prompt in front of the heading, accent like boot-log */
+.chapter-header::before {
+  content: "> ";
+  color: var(--accent);
+}
+
+/* extra breathing room between chapters (the list's gap already
+   separates a header from its own levels) */
+.chapter-header:not(:first-child) {
+  margin-top: 1rem;
+}
+
+/* completion mark — accent check on cleared levels */
+.level-item .level-done {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent-soft);
+}
+
 /* ---------- Game layout: board left dominant, editor right ---------- */
 
 .game-layout {
@@ -639,7 +669,8 @@ button {
   color: var(--accent);
 }
 
-/* Command chips (palette and filled program slots) */
+/* Command chips (palette + drag ghost; lines mode renders the
+   program as mono lines instead of chips) */
 .block-chip {
   display: inline-flex;
   align-items: center;
@@ -680,12 +711,12 @@ button {
   border-color: var(--border);
 }
 
-/* Program = exactly `memory` slots */
+/* Program = numbered mono lines, one per memory slot (lines mode).
+   Column grows with `memory` — never clipped, comfortable at 12+. */
 .program {
   display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 3px;
   min-height: 56px;
   padding: 0.5rem;
   background: var(--bg);
@@ -693,56 +724,137 @@ button {
   border-radius: 10px;
 }
 
-.slot {
+.line {
+  display: flex;
+  align-items: center;
+  gap: 0.8ch;
+  min-height: 1.65rem;
+  padding: 0.05rem 0.4rem;
+  padding-left: calc(0.4rem + var(--indent, 0) * 0.85rem);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.line-no {
+  flex: none;
+  min-width: 2ch;
+  text-align: right;
+  color: var(--muted);
+  opacity: 0.6;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.line-code {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5ch;
-  height: 40px;
-  border-radius: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  gap: 0.7ch;
+  min-width: 0;
 }
 
-.slot.empty {
-  width: 44px;
-  border: 1px dashed var(--border);
-}
-
-.slot.filled {
-  padding: 0 0.6rem;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+.line-token {
   color: var(--text);
-  cursor: pointer;
 }
 
-.slot.filled .chip-glyph {
+/* loop keywords read like code structure */
+.line-token.kw {
   color: var(--accent);
 }
 
-.slot.filled:hover {
-  border-color: var(--muted);
+.line.empty .line-no {
+  opacity: 0.3;
 }
 
-/* program pointer — the block currently executing */
-.slot.current {
-  border-color: var(--accent);
-  box-shadow: 0 0 12px var(--accent-glow), inset 0 0 8px var(--accent-soft);
+.line.empty .line-token.placeholder {
+  color: var(--muted);
+  opacity: 0.35;
 }
 
-.program.locked .slot.filled {
+.line.filled {
+  cursor: pointer;
+}
+
+.line.filled:hover {
+  background: var(--surface);
+}
+
+/* program pointer — the line currently executing */
+.line.current {
+  background: var(--accent-dim);
+  box-shadow: inset 0 0 0 1px var(--accent), 0 0 12px var(--accent-soft);
+}
+
+.line.current .line-no {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.program.locked .line.filled {
   cursor: default;
 }
 
-/* drop hints while dragging */
+/* repeat-count steppers on the repeat line (+/−, no typing) */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45ch;
+}
+
+.repeat-count {
+  min-width: 2ch;
+  text-align: center;
+  color: var(--accent);
+}
+
+.step-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.step-btn:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.step-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.step-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* steppers are inert while a run is in progress */
+.program.locked .stepper {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* drop hints while dragging — insertion caret above the target line */
 .program.drop-ready {
   border-color: var(--muted);
 }
 
-.slot.drop-hint {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+.line.drop-hint {
+  background: var(--accent-dim);
+  box-shadow: 0 -2px 0 0 var(--accent);
 }
 
 /* floating chip clone under the pointer */
@@ -811,14 +923,11 @@ button {
 @media (prefers-reduced-motion: no-preference) {
   .level-item,
   .block-chip,
-  .slot,
+  .line,
+  .step-btn,
   .speed button {
     transition: background-color 0.15s ease, border-color 0.15s ease,
       box-shadow 0.2s ease, color 0.15s ease;
-  }
-
-  .slot.filled:hover {
-    transform: translateY(-1px);
   }
 
   /* capacity reject flash — the program box says "no" */
@@ -838,19 +947,19 @@ button {
     }
   }
 
-  /* freshly dropped block pops in */
-  .slot.pop {
-    animation: slot-pop 0.18s var(--ease-out);
+  /* freshly dropped line pops in */
+  .line.pop {
+    animation: line-pop 0.18s var(--ease-out);
   }
 
-  @keyframes slot-pop {
+  @keyframes line-pop {
     from {
-      opacity: 0.4;
-      transform: scale(0.85);
+      opacity: 0.35;
+      transform: translateY(-2px);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(0);
     }
   }
 }

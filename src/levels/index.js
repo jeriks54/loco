@@ -4,5 +4,6 @@
    ============================================================ */
 
 import { chapter1 } from './chapter1.js';
+import { chapter2 } from './chapter2.js';
 
-export const levels = [...chapter1];
+export const levels = [...chapter1, ...chapter2];
