@@ -1,10 +1,12 @@
 /* ============================================================
-   LoCo — main.js (M1 boot wiring)
+   LoCo — main.js (M1 boot wiring, M2 loop outcomes)
    Wires screens, level registry, and the game screen's
    state / executor / scene / editor / HUD into one flow.
    Welcome-screen interactions (module boot-log joke, ambient
    ticker, robot blink) are kept intact — except Start Game,
    which now opens the level select (brief §7).
+   M2: the terminal-event fan-out also covers the loop-era
+   'syntax' (refused run) and 'runaway' (tick cap) outcomes.
    ============================================================ */
 
 import { levels } from './levels/index.js';
@@ -151,7 +153,7 @@ function handleEvent(type, payload) {
     return;
   }
   scene.handleEvent(type, payload); // moved / turned / crashed / goal
-  if (type === 'crashed' || type === 'finished' || type === 'goal') {
+  if (type === 'crashed' || type === 'finished' || type === 'goal' || type === 'syntax' || type === 'runaway') {
     editor.setRunning(false);
     editor.clearHighlight();
     hud.setRunning(false);
