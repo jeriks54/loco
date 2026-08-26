@@ -74,9 +74,9 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 ## 5. Drag & drop editor
 
 - Palette shows the blocks unlocked for the current level; dragging a block creates a **copy** (blocks are reusable, memory is the limit).
-- Program area renders `memory` slots; drops insert at position, slots past capacity reject the drop.
+- Program area renders the program as **numbered mono lines**, one per memory slot ("program-as-lines", shipped with M2 / issue #9); loop bodies indent per nesting depth and `repeat` lines carry ± steppers for the count (no typing). Drops insert a line at position; over-capacity drops reject.
 - Implemented with Pointer Events (mouse-first; also works on touch later) rather than the HTML5 DnD API — more controllable styling and animation.
-- Click a placed block to remove it. "Clear" button empties the program.
+- Click a placed line to remove it. "Clear" button empties the program.
 - Layout shell: board (canvas) and editor are self-contained panels in a flex layout — desktop shows the board left, editor right. Panels must not depend on their position, so the mobile mode (maze full-screen, program as a bottom sheet) is a layout-only change. On touch, drag will be complemented by tap-to-add.
 
 ## 6. Rendering
@@ -128,7 +128,6 @@ Principles:
 ## 10. Open design questions
 
 - Robot board sprite: M1 shipped a facing chevron; upgrade to a proper glyph robot (welcome-mascot lineage, canvas-rendered, no image assets) tracked in issue #8 (label `roadmap`).
-- Program-as-lines: the name says *Lines of Code* but M1's editor shows chips in boxes; reconcile — likely render the program as numbered mono lines (`01 move`, …) — tracked in issue #9 (label `roadmap`).
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — decided in Update 4; shell must stay ready for it.
