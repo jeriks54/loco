@@ -94,10 +94,10 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 | Milestone | Deliverable |
 |---|---|
 | **M0** | Requirements + design docs (this) — *awaiting review* |
-| **M1** | Playable core: renderer + editor + executor + 3 placeholder levels |
-| **M2 (MVP)** | 10–15 hand-crafted levels, tuning, level select, persistence → `v0.1` |
-| **M3** | Update 2: `while` loops + loop chapter |
-| **M4** | Update 3: `if`, sensors, memory upgrades |
+| **M1** | Playable core: renderer + editor + executor + placeholder levels (grew to 7 chapter-1 levels post-merge) |
+| **M2 (MVP)** | Update 2 pulled forward (decision D1, `level-design.md`): `repeat`/`while`/`end` loops + chapter-2 pack, lines-mode editor (issue #9), persistence, level-select polish → `v0.1` |
+| **M3** | Update 3: `if`, sensors, memory upgrades |
+| **M4** | Update 4: mobile layout |
 
 ## 9. Workflow
 
