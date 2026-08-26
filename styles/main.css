@@ -536,6 +536,36 @@ button {
   color: var(--muted);
 }
 
+/* Chapter headers — mono, terminal voice (M2 task C) */
+.chapter-header {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* terminal prompt in front of the heading, accent like boot-log */
+.chapter-header::before {
+  content: "> ";
+  color: var(--accent);
+}
+
+/* extra breathing room between chapters (the list's gap already
+   separates a header from its own levels) */
+.chapter-header:not(:first-child) {
+  margin-top: 1rem;
+}
+
+/* completion mark — accent check on cleared levels */
+.level-item .level-done {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent-soft);
+}
+
 /* ---------- Game layout: board left dominant, editor right ---------- */
 
 .game-layout {
