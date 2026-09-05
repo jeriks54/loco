@@ -137,8 +137,12 @@ Decisions:
   overflows a ~390px viewport for any level 11+ cells wide — ch2-01 (16), ch2-05 (14),
   ch2-06 (14), ch2-07 (12) and ch2-08 (16), five of the fifteen levels: 16 × 28 = 448px
   against ~307px of usable panel width, silently clipped by `body { overflow-x: hidden }`.
-  Lower the floor to 18px (16 × 18 = 288px) so the whole maze always fits — chosen over
-  pan/pinch-zoom to keep mobile to a single gesture.
+  Lowered to **14px**, not the 18px first proposed: manager verification against the real CSS
+  measured 18px as still clamping below ~342px of viewport width, clipping ch2-01/ch2-08 by
+  22px at 320px (SE1) and four levels by up to 62px at 280px (Fold cover), where the crop cuts
+  ch2-08's EXIT badge. 14px fits a 280px viewport and costs nothing at 360px+, where the
+  computed tile is 19–22 and the floor never binds. Chosen over pan/pinch-zoom to keep mobile
+  to a single gesture.
 
 Constraints for whoever builds it:
 

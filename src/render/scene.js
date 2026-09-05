@@ -9,7 +9,7 @@
    Colors come straight from the CSS design tokens.
    ============================================================ */
 
-const MIN_TILE = 18;
+const MIN_TILE = 14;
 const MAX_TILE = 64;
 const TILE_DESKTOP = 48; // target when the panel has room (brief §4)
 

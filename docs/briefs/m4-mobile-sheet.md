@@ -73,7 +73,7 @@ Export `createSheet({ root, grip, chevron, body, onDetentChange })` returning `{
 
 Two changes, both small:
 
-1. **`MIN_TILE` 28 → 18.** Rationale: at 28px, **every level 11 cells wide or more** overflows a ~307px usable panel width on a 390px phone — ch2-01 (16), ch2-05 (14), ch2-06 (14), ch2-07 (12) and ch2-08 (16), five of the fifteen levels — and `body { overflow-x: hidden }` silently clips the result. A 16-wide grid needs 448px of canvas at 28px tiles; at 18px it needs 288px and fits. 18px is a floor that only ever binds on narrow screens — desktop panels are wide enough that `fit()` picks a larger tile regardless, so desktop is unaffected. The overlay model helps on the height axis too: the board is sized against full height minus a 56px peek bar rather than minus a 70svh sheet, so the height term stops binding on tall levels.
+1. **`MIN_TILE` 28 → 14.** Rationale: at 28px, **every level 11 cells wide or more** overflows a ~307px usable panel width on a 390px phone — ch2-01 (16), ch2-05 (14), ch2-06 (14), ch2-07 (12) and ch2-08 (16), five of the fifteen levels — and `body { overflow-x: hidden }` silently clips the result. **The floor is 14, not the 18 first proposed here:** manager verification against the shipped CSS measured 18px as still clamping below ~342px of viewport width, clipping ch2-01/ch2-08 by 22px at 320px and four levels by up to 62px at 280px, where the crop cuts ch2-08's EXIT badge. 14px fits a 280px viewport (226 ÷ 16 = 14.1) and costs nothing at 360px+, where the computed tile is 19–22 and the floor never binds. The overlay model helps on the height axis too: the board is sized against full height minus a 56px peek bar rather than minus a 70svh sheet, so height never binds for these levels.
 2. **Early-return from `fit()` when nothing changed.** Cache the last computed `tile`, `dpr`, `cols` and `rows`; if all four match, return before touching `canvas.width` / `canvas.height`. With the overlay model the board no longer resizes on detent changes, so this is a safety net rather than the primary defence — but it is still required: mobile browsers fire resize on address-bar show/hide and on rotation, and every one of those events would otherwise reallocate the canvas backing store and force a full redraw.
 
 ## `styles/main.css` — layout
@@ -141,7 +141,7 @@ How JS and CSS express the two detents, so `sheet.js` and `main.css` agree witho
 2. All 15 levels play exactly as before; no console errors.
 
 **Mobile / narrow:**
-3. At 390×844 and 360×640, the board is fully visible with the sheet collapsed — **no horizontal clipping on any level**, including the widest (ch2-01 and ch2-08 at 16 cells) and the four others that overflowed at the old 28px floor.
+3. At 390×844, 375×667, 360×640, 320×568 and 280×653, the board is fully visible with the sheet collapsed — **no horizontal clipping on any level**, including the widest (ch2-01 and ch2-08 at 16 cells). Verified by manager arithmetic for all 15 levels at all five widths.
 4. **The board's pixel size is identical in both detents** — expanding or collapsing does not rescale the maze.
 5. Grip drag slides the sheet and snaps to the nearest detent; a tap on the grip toggles; the chevron toggles and its `aria-expanded` tracks reality.
 6. A palette chip drag never moves the sheet; a sheet drag never spawns a drag ghost.

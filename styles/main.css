@@ -963,3 +963,340 @@ button {
     }
   }
 }
+
+/* ============================================================
+   Bottom sheet (M4) — docs/briefs/m4-mobile-sheet.md
+   Under 900px the aside stops being the layout's right column
+   and becomes a floating overlay: board on top, program panel in
+   a two-detent sheet. Everything below is additive — the desktop
+   cascade above is untouched, and the only rules that reach the
+   desktop are ones that style elements the desktop never shows.
+   ============================================================ */
+
+/* ---------- Sheet — inert above the breakpoint ---------- */
+
+/* The peek bar duplicates Run, Reset and the memory count, so above
+   the breakpoint it is not rendered at all rather than merely hidden:
+   a second Run button in the tab order would be a desktop regression. */
+.sheet-grip,
+.sheet-peek {
+  display: none;
+}
+
+/* With grip and peek unrendered, .sheet-body is the aside's only flex
+   item and has to reproduce the pre-M4 .side-panel column exactly —
+   same gap, same section order, no box of its own. Deliberately no
+   min-height: 0: the sections used to be the shrinking flex items, so
+   their min-content height must keep limiting the shrink. */
+.sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* One ▲ glyph, flipped by CSS — sheet.js never swaps the character */
+.sheet-chevron {
+  transform: rotate(0deg);
+}
+
+.sheet-chevron[aria-expanded="true"] {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sheet-chevron {
+    transition: transform 0.2s var(--ease-out);
+  }
+}
+
+@media (max-width: 900px) {
+  /* ---------- App frame ---------- */
+
+  /* The frame, not the viewport, is the sheet's containing block: this
+     breakpoint also catches narrow desktop windows, where fixed would
+     let the sheet escape the app frame. min-height has to go — .screen
+     asks for 100vh, which is the *large* viewport, so with the URL bar
+     showing it would push the frame's bottom edge (and the sheet pinned
+     to it) below the fold. Bottom padding is zero for the same reason:
+     the sheet must reach the real bottom of the glass. */
+  #screen-game {
+    position: relative;
+    min-height: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    gap: 0.625rem;
+    padding: 0.625rem clamp(10px, 3vw, 16px) 0;
+  }
+
+  /* One column, one row: the board panel is the only grid item. The
+     sheet is absolutely positioned against #screen-game, so it takes no
+     track and never competes with the board for height. */
+  .game-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* Reserving only the *collapsed* peek height is what makes the board
+     detent-independent — scene.js's fit() measures the panel's content
+     box, so expanding the sheet can never rescale the maze. Must equal
+     --sheet-grip-h + --sheet-peek-h below, or the board resizes on a
+     detent change. */
+  .board-panel {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* 360px leaves nothing for the desktop header gap; the h2 already
+     ellipsizes and .level-progress already refuses to wrap, so the only
+     thing that can give is the chrome around them. */
+  .screen-header {
+    gap: 0.5rem;
+  }
+
+  .screen-header .btn-ghost {
+    padding: 0.4em 0.8em;
+    font-size: 0.8rem;
+  }
+
+  /* ---------- Sheet ---------- */
+
+  #sheet {
+    /* 24 + 32 = the 56px that #sheet.is-collapsed and .board-panel's
+       reserved padding both hardcode, so the collapsed sheet exactly
+       fills the space the board set aside for it. 24px is the floor:
+       the detent contract fixes the pair at 56px, and both rows have to
+       clear the WCAG 2.5.8 AA target minimum inside it. */
+    --sheet-grip-h: 24px;
+    --sheet-peek-h: 32px;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40; /* under .result-overlay (60), far under .drag-ghost (1000) */
+    gap: 0;
+    overflow: hidden; /* nothing spills while the height is mid-drag */
+    background: transparent; /* the body owns the surface, see the @supports below */
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.35);
+    transition: height 0.22s var(--ease-out);
+  }
+
+  /* Detents: sheet.js owns the classes, CSS owns the heights. No border
+     on #sheet itself so its content box is exactly the detent height —
+     a border would eat a pixel the grip and peek bar have budgeted for. */
+  #sheet.is-collapsed {
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+  }
+
+  #sheet.is-expanded {
+    height: 70vh; /* fallback where svh is unknown */
+    height: min(70svh, 70vh);
+  }
+
+  /* mid-drag the height is inline and has to follow the finger */
+  #sheet.is-dragging {
+    transition: none;
+  }
+
+  .sheet-grip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    height: var(--sheet-grip-h);
+    touch-action: none; /* Pointer Events own the gesture */
+    cursor: grab;
+    background: var(--surface-2); /* solid: a drag surface never floats over a moving maze */
+    /* inset rather than border-top: a border would eat a pixel of the 24px
+       target the chevron has to fill */
+    box-shadow: inset 0 1px 0 var(--border);
+    border-radius: 16px 16px 0 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sheet-grip:active {
+    cursor: grabbing;
+  }
+
+  /* Narrower than the grip on purpose. sheet.js refuses to start a drag
+     from the chevron so its click cannot double-toggle, which means a
+     full-width chevron would leave nothing to grab: this keeps a 44x24
+     AA-sized toggle target in the middle and exposes the rest of the
+     strip as the drag surface. */
+  .sheet-chevron {
+    appearance: none;
+    display: block;
+    width: 2.75rem;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    line-height: 1;
+    cursor: inherit;
+  }
+
+  .sheet-chevron:focus-visible {
+    /* #sheet clips, so the ring has to be drawn inside the box */
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+    color: var(--accent);
+  }
+
+  .sheet-peek {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: none;
+    height: var(--sheet-peek-h);
+    padding: 0 0.75rem;
+    background: var(--surface); /* solid, same reason as the grip */
+    border-top: 1px solid var(--border);
+  }
+
+  /* Collapsed, the peek bar *is* the sheet's bottom edge and owns the
+     home-indicator inset; expanded, the scrolling body does. The
+     transition hands the inset over in step with the sheet's height
+     instead of jumping by 34px at release. */
+  #sheet.is-collapsed .sheet-peek {
+    height: calc(var(--sheet-peek-h) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Run and Reset shrink to fit the 32px bar — the only Run/Reset on
+     mobile, since the body's own pair is hidden below. 28px still clears
+     the 24px AA target floor. */
+  .sheet-peek .btn {
+    flex: none;
+    min-height: 28px;
+    padding: 0 0.9em;
+    font-size: 0.8rem;
+    border-radius: 10px;
+  }
+
+  .sheet-peek .btn-primary {
+    box-shadow: 0 0 14px var(--accent-soft), inset 0 0 12px var(--accent-soft);
+  }
+
+  .sheet-peek .memory-count {
+    margin-left: auto;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  .sheet-body {
+    flex: 1 1 auto;
+    min-height: 0; /* required, or the body's content props the sheet open */
+    gap: 0.75rem;
+    overflow-y: auto;
+    overscroll-behavior: contain; /* scrolling the body must not rubber-band the page */
+    -webkit-overflow-scrolling: touch;
+    padding: 0.75rem;
+    background: var(--surface); /* solid fallback, replaced below where blur works */
+  }
+
+  #sheet.is-expanded .sheet-body {
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Collapsed, the body leaves the tab order and the accessibility tree
+     but keeps its layout and its scroll position — display: none would
+     forfeit both, and sheet.js clamps the drag against a measured
+     expanded height, so the body has to stay laid out. */
+  #sheet.is-collapsed .sheet-body {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Run and Reset live in the peek bar, which stays above the body in
+     both detents; the speed group is the only control left down here. */
+  .panel-section.controls [data-role="run"],
+  .panel-section.controls [data-role="reset"] {
+    display: none;
+  }
+
+  /* ---------- Result overlay spans the frame ---------- */
+
+  /* Static, so inset: 0 resolves against #screen-game rather than the
+     canvas box: at the 18px tile floor a 16-wide level's canvas is only
+     288x162, too small for the terminal copy plus Retry/Next. Not
+     fixed — the overlay has to stay inside the app frame in a narrow
+     desktop window, same rule as the sheet. */
+  .canvas-wrap {
+    position: static;
+  }
+
+  .result-overlay {
+    z-index: 60;
+    padding: 1.5rem 1rem;
+    border-radius: 0; /* it is the frame now, not the canvas card */
+  }
+
+  .result-text {
+    max-width: 30rem;
+  }
+
+  /* stacks Retry/Next rather than letting them overflow a 360px frame */
+  .result-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* ---------- Sheet motion ---------- */
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* the body fades with the sheet height instead of blinking out */
+    .sheet-body {
+      transition: visibility 0.22s var(--ease-out), opacity 0.22s var(--ease-out);
+    }
+
+    .sheet-peek {
+      transition: height 0.22s var(--ease-out), padding-bottom 0.22s var(--ease-out);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* detents snap */
+    #sheet,
+    .sheet-peek,
+    .sheet-chevron {
+      transition: none;
+    }
+  }
+}
+
+/* ---------- Sheet translucency ---------- */
+
+/* After the block above so it wins the cascade, and gated on
+   backdrop-filter: a 0.85 surface over a moving maze with nothing
+   blurring it is unreadable, so where blur is unsupported the body
+   keeps the solid var(--surface) it was given above.
+
+   0.85 is the final alpha. The section cards inside stay opaque, so the
+   mono program lines sit on solid var(--bg) exactly as they do on
+   desktop and hold AA over anything the board can put behind them —
+   --accent on --bg is 9.3:1 and --text on --bg 13.2:1, unchanged even
+   with pure --accent behind the sheet. What the blur and the 15% leak
+   show is the body's own surface: its padding and the gutters between
+   the cards. Making the cards translucent too was measured and
+   rejected: --muted on --surface is only 4.82:1 today, and with the
+   cards at 0.55 over the body's 0.85 the uppercase section headings
+   fall to ~4.6:1 over the blurred EXIT badge and ~4.2:1 over a fully
+   accent-lit tile — under the 4.5:1 floor in the worst case the brief
+   asks for, and ~3.4:1 with the cards dropped to transparent outright.
+   Buying the headings back needs ~0.97 total opacity, which is no
+   longer a see-through sheet. */
+@supports (backdrop-filter: blur(8px)) {
+  @media (max-width: 900px) {
+    #sheet.is-expanded .sheet-body {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: color-mix(in srgb, var(--surface) 85%, transparent);
+    }
+  }
+}
