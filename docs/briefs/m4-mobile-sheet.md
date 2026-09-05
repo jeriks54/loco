@@ -60,7 +60,7 @@ Export `createSheet({ root, grip, chevron, body, onDetentChange })` returning `{
 - Track vertical delta; clamp between the two detent heights; on `pointerup` snap to the **nearest** detent. If total movement is under 8px, treat it as a tap and toggle.
 - The chevron button toggles on click and is the keyboard/AT path: `aria-expanded` and `aria-controls` stay in sync with the real detent.
 - **Gesture arbitration is the main risk in this milestone.** Palette chips already use Pointer Events with `touch-action: none` plus pointer capture, and drops are hit-tested against the program list's bounding rect (`editor.js`'s `dropIndexAt`). A chip drag must never move the sheet, and a sheet drag must never start a chip drag. Verify by inspection that no listener is attached to a common ancestor of both.
-- Fire `onDetentChange` after a settle so `main.js` can let the board re-fit.
+- Fire `onDetentChange` after a settle. **`main.js` deliberately does not wire it** — under the overlay model the board is detent-independent, so a settle must not trigger a re-fit; wiring it would contradict the detent-independence check in the verification list below. The callback stays in the module's API for future use. *(This bullet originally said the callback existed "so `main.js` can let the board re-fit", which contradicted the overlay model; the implementing agent caught it and resolved it correctly.)*
 
 ## `src/main.js` — wiring
 

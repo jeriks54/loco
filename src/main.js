@@ -9,6 +9,10 @@
    'syntax' (refused run) and 'runaway' (tick cap) outcomes.
    Progress (design.md §7) is loaded at boot, saved on goal,
    and reflected in the level list's completion marks.
+   M4: the program panel is a bottom sheet under the width
+   breakpoint (design.md §8.1). It starts collapsed on every
+   level load and collapses when a run starts, so the maze is
+   never obscured. Sheet state is not persisted.
    ============================================================ */
 
 import { levels } from './levels/index.js';
@@ -17,6 +21,7 @@ import { createExecutor } from './game/executor.js';
 import { createScene } from './render/scene.js';
 import { createEditor } from './ui/editor.js';
 import { createHud } from './ui/hud.js';
+import { createSheet } from './ui/sheet.js';
 import { createScreens, renderLevelList } from './ui/screens.js';
 import { loadProgress, markCompleted } from './persist.js';
 
@@ -151,6 +156,17 @@ const hud = createHud({
   },
 });
 
+// No onDetentChange on purpose: the board is detent-independent (the overlay
+// model reserves only the collapsed peek height in the panel's padding, and
+// scene.js already re-fits on its own ResizeObserver), so a settle must not
+// trigger a re-fit.
+const sheet = createSheet({
+  root: document.getElementById('sheet'),
+  grip: document.getElementById('sheet-grip'),
+  chevron: document.getElementById('sheet-chevron'),
+  body: document.getElementById('sheet-body'),
+});
+
 function handleEvent(type, payload) {
   if (type === 'step') {
     editor.highlight(payload);
@@ -181,6 +197,7 @@ function loadLevel(index) {
   hud.setSpeedButtons(speed);
   hud.hideOverlay();
   hud.setRunning(false);
+  sheet.collapse(); // a level always opens with the board unobstructed
   screens.showScreen('game'); // show first so the panel has a size to fit into
   scene.render(state);
 }
@@ -193,6 +210,7 @@ function run() {
   executor = createExecutor({ state, program, onEvent: handleEvent });
   editor.setRunning(true);
   hud.setRunning(true);
+  sheet.collapse(); // the run plays out on the board, not behind an expanded sheet
   executor.start(speed);
 }
 
