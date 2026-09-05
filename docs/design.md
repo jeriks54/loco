@@ -96,7 +96,7 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 | **M0** | Requirements + design docs (this) — *awaiting review* |
 | **M1** | Playable core: renderer + editor + executor + placeholder levels (grew to 7 chapter-1 levels post-merge) |
 | **M2 (MVP)** | Update 2 pulled forward (decision D1, `level-design.md`): `repeat`/`while`/`end` loops + chapter-2 pack, lines-mode editor (issue #9), persistence, level-select polish → `v0.1` |
-| **M3** | Update 3: `if`, sensors, memory upgrades — plus `loop until <condition>` + robot sensor (issue #17), and the `repeat` → `loop` rename / chapter-2 rework (issue #16) |
+| **M3** | Update 3: sensors, memory upgrades — chapter 3 `loop until <condition>` + robot sensor (#17), chapter 4 `if` statements (#18), and the `repeat` → `loop` rename / chapter-2 rework (#16) |
 | **M4** | Update 4: mobile layout — board on top, program as a bottom sheet (decisions in §8.1) |
 
 ### 8.1 M4 — mobile layout (decided 2026-09-05, deferred — not built yet; tracked in issue #15)

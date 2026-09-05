@@ -11,9 +11,12 @@ Requirements §7 left two things to level design: the exact level count and the 
 | Chapter | Concept | New blocks | Status |
 |---|---|---|---|
 | 1 — Sequence | Programs run top to bottom; turns are relative | `move`, `turn left`, `turn right` | Shipped (7 levels, ch1-01..07) |
-| 2 — Loops | Repetition as compression; when to count, when to sense | `repeat n`, `while front clear`, `end` | **This doc** |
-| 3 — Decisions | Conditionals + sensors | `if`/`if-else`, sensor conditions | Later (requirements §5, Update 3) |
-| 4 — Mastery | Everything combined + memory upgrades as collectibles | — | Later |
+| 2 — Loops | Repetition as compression; when to count, when to sense | `repeat n`, `while front clear`, `end` | Shipped (8 levels, ch2-01..08) — **rework pending, #16**: becomes counted-loops only (`loop n`, `end`) |
+| 3 — Sensing | Conditional loops on the world; the robot reads a sensor | `loop until <condition>` | Planned — #17 (requirements §5, Update 3) |
+| 4 — Decisions | Branching on the same conditions | `if` (+ `else`?) | Planned — #18 |
+| 5 — Mastery | Everything combined + memory upgrades as collectibles | — | Later |
+
+Re-ordered 2026-09-05 (jonas): sensing was chapter 3 *and* chapter 4 was Mastery in the original map, with `if` bundled into "Decisions" alongside sensors. Split — chapter 3 now introduces the condition/sensor vocabulary inside a loop, chapter 4 reuses that same vocabulary for branching, and Mastery moves to chapter 5. Rationale: a wrong condition in `loop until` fails loudly (robot drives into a wall), so it is the cheaper place to learn the vocabulary that `if` then depends on.
 
 Re-scope note: design.md §8 planned M2 as "10–15 levels, move/turn only" with loops in M3. Since chapter 1 already has its full difficulty arc (7 levels), the proposal here folds loops into the next milestone instead of padding chapter 1 — see decision D1.
 
