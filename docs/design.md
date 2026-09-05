@@ -121,14 +121,25 @@ Decisions:
   fallback) so the maze stays visible through the sheet; grip and peek bar stay solid.
   Transparency has a legibility floor — mono lines must hold contrast over lit wall tiles and
   the glowing EXIT badge, and if they don't, opacity goes up rather than text getting lighter.
-  **Settled 2026-09-05 (option a):** the `.panel-section` cards and the `.program` box stay
-  opaque, so the maze reads through the body's padding and the gutters between cards rather
-  than directly behind the program lines. Reason, measured: `--muted` on `--surface` is only
-  4.82:1 today, so translucent cards push the uppercase section headings under WCAG AA
-  (~4.6:1 over a blurred EXIT badge, ~4.2:1 over an accent-lit tile, ~3.4:1 fully clear).
-  The middle option is on file to take later if the see-through effect proves too subtle on a
-  real phone: body 0.85 **plus** cards at `color-mix(in srgb, var(--bg) 60%, transparent)`,
-  which keeps `--muted` at 4.61:1 and accent-on-program at 8.8:1 for a ~6% leak.
+  **Settled 2026-09-05, then revised the same day on play-test.** Option (a) shipped first —
+  cards opaque, so the maze showed only through the body's padding and the gutters between
+  cards. jonas' verdict on a real phone: *"I see no transparency so I can not see the map."*
+  Correct: the three `.panel-section` cards are most of the body's area, so (a) was
+  effectively solid. Now **25% leak** — body `color-mix(in srgb, var(--surface) 50%,
+  transparent)` over the maze, cards `color-mix(in srgb, var(--bg) 50%, transparent)` over
+  the body. Measured against the real tokens: `--muted` (the uppercase section headings) is
+  **5.01:1** over the board's dark surfaces and `--text` stays **13.2:1**, because `.program`
+  keeps its opaque `var(--bg)` fill and `.block-chip` keeps `var(--surface-2)` — opacity is
+  spent where it buys legibility and given up where it doesn't. Known cost: over a pure
+  `--accent` backdrop (EXIT badge, robot glow) `--muted` falls to **2.90:1**; `blur(8px)`
+  spreads it and it is a small transient region, not a background. Dial both percentages up
+  together to trade see-through back for contrast — **0.75 / 0.70 is the most transparent pair
+  that still holds 4.5:1 even over pure accent** (7.5% leak).
+  Also fixed while revising: the translucency block was gated on
+  `@supports (backdrop-filter: blur(8px))`, but the transparency comes from `color-mix` — an
+  unrelated feature. Any browser with only `-webkit-backdrop-filter` (older iOS Safari), or
+  with `backdrop-filter` but no `color-mix` (Safari < 16.2), dropped the whole block and
+  rendered the sheet solid regardless of alpha. The gate now tests `color-mix`.
 - **Handle — grip bar with a chevron inside it.** Drag the bar to slide, tap the chevron
   to snap between detents. The chevron is the keyboard / assistive-tech path. Two detents:
   collapsed (peek) and expanded (`min(70svh, …)`, program list scrolls internally).

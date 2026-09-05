@@ -1272,31 +1272,46 @@ button {
 
 /* ---------- Sheet translucency ---------- */
 
-/* After the block above so it wins the cascade, and gated on
-   backdrop-filter: a 0.85 surface over a moving maze with nothing
-   blurring it is unreadable, so where blur is unsupported the body
-   keeps the solid var(--surface) it was given above.
+/* Gated on color-mix, NOT on backdrop-filter. Those are unrelated features,
+   and the previous gate on unprefixed backdrop-filter silently dropped this
+   whole block on any browser that only had -webkit-backdrop-filter (older iOS
+   Safari) or that had backdrop-filter but no color-mix (Safari < 16.2) —
+   leaving the sheet solid and reading as "no transparency at all". color-mix
+   is what actually produces the see-through, so color-mix is what gets
+   tested; the blur rides along inside, with both prefixes.
 
-   0.85 is the final alpha. The section cards inside stay opaque, so the
-   mono program lines sit on solid var(--bg) exactly as they do on
-   desktop and hold AA over anything the board can put behind them —
-   --accent on --bg is 9.3:1 and --text on --bg 13.2:1, unchanged even
-   with pure --accent behind the sheet. What the blur and the 15% leak
-   show is the body's own surface: its padding and the gutters between
-   the cards. Making the cards translucent too was measured and
-   rejected: --muted on --surface is only 4.82:1 today, and with the
-   cards at 0.55 over the body's 0.85 the uppercase section headings
-   fall to ~4.6:1 over the blurred EXIT badge and ~4.2:1 over a fully
-   accent-lit tile — under the 4.5:1 floor in the worst case the brief
-   asks for, and ~3.4:1 with the cards dropped to transparent outright.
-   Buying the headings back needs ~0.97 total opacity, which is no
-   longer a see-through sheet. */
-@supports (backdrop-filter: blur(8px)) {
+   25% of the board reaches the eye: the body at 0.5 over the maze, the cards
+   at 0.5 over the body. Measured against the real tokens rather than guessed:
+   --muted (the uppercase section headings) on the resulting card is 5.01:1
+   over the board's dark surfaces (--bg, --surface-2 walls) and --text stays
+   13.2:1, because .program keeps its opaque var(--bg) fill and .block-chip
+   keeps var(--surface-2). Opacity is spent where it buys legibility and given
+   up where it does not.
+
+   Known cost: over a pure --accent backdrop — the EXIT badge, the robot's
+   glow — --muted falls to 2.90:1. blur(8px) spreads that and it is a small,
+   transient region rather than a background, but it is the price of seeing
+   the map. To trade see-through back for heading contrast, raise BOTH
+   percentages together; 0.75 / 0.70 is the most transparent pair that still
+   holds 4.5:1 even over pure accent (7.5% leak).
+
+   Supersedes the option-a "cards stay opaque" decision in design.md §8.1
+   after play-test: with opaque cards the only clear pixels were the body's
+   0.75rem padding and the gaps between cards, which read as no transparency
+   at all on a real phone. */
+@supports (background: color-mix(in srgb, red 50%, transparent)) {
   @media (max-width: 900px) {
     #sheet.is-expanded .sheet-body {
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      background: color-mix(in srgb, var(--surface) 85%, transparent);
+      background: color-mix(in srgb, var(--surface) 50%, transparent);
+    }
+
+    /* The cards are most of the body's area — leaving them opaque is what
+       made the sheet look solid. .program and .block-chip inside them keep
+       their opaque fills, so the code lines and chip labels are unaffected. */
+    #sheet.is-expanded .sheet-body .panel-section {
+      background: color-mix(in srgb, var(--bg) 50%, transparent);
     }
   }
 }
