@@ -111,22 +111,57 @@ Decisions:
 - **Breakpoint — width, not orientation or pointer.** `max-width: ~900px` switches to
   board-on-top + bottom sheet. Catches portrait phones *and* narrow desktop windows.
   Landscape phones get the sheet too: ~390px of height is too cramped for the sidebar.
+- **Sheet model — floating overlay, not a push** (jonas' call, 2026-09-05). The sheet floats
+  above the board, `position: absolute` inside `#screen-game`; the board panel reserves only
+  the *collapsed* peek height, so the maze keeps **one stable size across both detents** and
+  never rescales when the sheet opens, closes or is dragged. A pushing sheet was rejected: at
+  the 70svh detent it leaves the board ~200px tall (a 16×9 level drops to ~19px tiles) and it
+  rescales continuously during the drag — unreadable exactly when the player glances at the
+  maze to plan. The expanded body is **slightly translucent** (blur where supported, solid
+  fallback) so the maze stays visible through the sheet; grip and peek bar stay solid.
+  Transparency has a legibility floor — mono lines must hold contrast over lit wall tiles and
+  the glowing EXIT badge, and if they don't, opacity goes up rather than text getting lighter.
+  **Settled 2026-09-05, then revised the same day on play-test.** Option (a) shipped first —
+  cards opaque, so the maze showed only through the body's padding and the gutters between
+  cards. jonas' verdict on a real phone: *"I see no transparency so I can not see the map."*
+  Correct: the three `.panel-section` cards are most of the body's area, so (a) was
+  effectively solid. Now **25% leak** — body `color-mix(in srgb, var(--surface) 50%,
+  transparent)` over the maze, cards `color-mix(in srgb, var(--bg) 50%, transparent)` over
+  the body. Measured against the real tokens: `--muted` (the uppercase section headings) is
+  **5.01:1** over the board's dark surfaces and `--text` stays **13.2:1**, because `.program`
+  keeps its opaque `var(--bg)` fill and `.block-chip` keeps `var(--surface-2)` — opacity is
+  spent where it buys legibility and given up where it doesn't. Known cost: over a pure
+  `--accent` backdrop (EXIT badge, robot glow) `--muted` falls to **2.90:1**; `blur(8px)`
+  spreads it and it is a small transient region, not a background. Dial both percentages up
+  together to trade see-through back for contrast — **0.75 / 0.70 is the most transparent pair
+  that still holds 4.5:1 even over pure accent** (7.5% leak).
+  Also fixed while revising: the translucency block was gated on
+  `@supports (backdrop-filter: blur(8px))`, but the transparency comes from `color-mix` — an
+  unrelated feature. Any browser with only `-webkit-backdrop-filter` (older iOS Safari), or
+  with `backdrop-filter` but no `color-mix` (Safari < 16.2), dropped the whole block and
+  rendered the sheet solid regardless of alpha. The gate now tests `color-mix`.
 - **Handle — grip bar with a chevron inside it.** Drag the bar to slide, tap the chevron
   to snap between detents. The chevron is the keyboard / assistive-tech path. Two detents:
-  collapsed (peek) and expanded (`max-height ~70vh`, program list scrolls internally).
+  collapsed (peek) and expanded (`min(70svh, …)`, program list scrolls internally).
 - **Peek bar contents — ▶ Run + Reset + memory count (`3 / 8`).** Program, collapse, run
   while watching the maze; no expand-collapse dance. Reset sits in the peek bar too so a run
   can be aborted without expanding the sheet mid-run — amended 2026-09-05 while closing out
   the M1 issues, which surfaced that `executor.stop()` has no user-facing control at all, so
   Reset is the only abort and it always rewinds. The ×½/×1/×2 speed group stays inside the
   expanded sheet.
-- **On run — sheet auto-collapses** so the board re-fits to full height. Snaps instead of
-  animating under `prefers-reduced-motion`.
+- **On run — sheet auto-collapses** so nothing obscures the maze while the robot moves. The
+  board's size does not change: with the overlay model it is detent-independent. Snaps instead
+  of animating under `prefers-reduced-motion`.
 - **Tile floor drops on narrow screens.** `MIN_TILE` (`src/render/scene.js`) is 28px, which
-  overflows a ~390px viewport for the 16-cell-wide levels (ch2-01, ch2-05, ch2-06, ch2-08):
-  16 × 28 = 448px against ~307px of usable panel width, silently clipped by
-  `body { overflow-x: hidden }`. Lower the floor to ~18px so the whole maze always fits —
-  chosen over pan/pinch-zoom to keep mobile to a single gesture.
+  overflows a ~390px viewport for any level 11+ cells wide — ch2-01 (16), ch2-05 (14),
+  ch2-06 (14), ch2-07 (12) and ch2-08 (16), five of the fifteen levels: 16 × 28 = 448px
+  against ~307px of usable panel width, silently clipped by `body { overflow-x: hidden }`.
+  Lowered to **14px**, not the 18px first proposed: manager verification against the real CSS
+  measured 18px as still clamping below ~342px of viewport width, clipping ch2-01/ch2-08 by
+  22px at 320px (SE1) and four levels by up to 62px at 280px (Fold cover), where the crop cuts
+  ch2-08's EXIT badge. 14px fits a 280px viewport and costs nothing at 360px+, where the
+  computed tile is 19–22 and the floor never binds. Chosen over pan/pinch-zoom to keep mobile
+  to a single gesture.
 
 Constraints for whoever builds it:
 
