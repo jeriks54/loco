@@ -9,7 +9,7 @@
    Colors come straight from the CSS design tokens.
    ============================================================ */
 
-const MIN_TILE = 28;
+const MIN_TILE = 18;
 const MAX_TILE = 64;
 const TILE_DESKTOP = 48; // target when the panel has room (brief §4)
 
@@ -53,6 +53,7 @@ export function createScene({ canvas }) {
   let state = null;
   let tile = TILE_DESKTOP;
   let dpr = 1;
+  let fitted = null;      // geometry the backing store was last sized for
 
   // Robot pose kept in grid space; drawing converts to pixels each frame,
   // so a mid-animation resize stays correct.
@@ -70,8 +71,17 @@ export function createScene({ canvas }) {
     const availW = panel.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     const availH = panel.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
     if (availW <= 0 || availH <= 0) return; // hidden screen — retry on resize
-    tile = Math.max(MIN_TILE, Math.min(MAX_TILE, Math.floor(Math.min(availW / state.cols, availH / state.rows))));
-    dpr = window.devicePixelRatio || 1;
+    const nextTile = Math.max(MIN_TILE, Math.min(MAX_TILE, Math.floor(Math.min(availW / state.cols, availH / state.rows))));
+    const nextDpr = window.devicePixelRatio || 1;
+    // Mobile fires resize on address-bar show/hide and rotation; assigning the
+    // backing store reallocates it and blanks the canvas, so only pay that
+    // when the geometry actually moved.
+    if (fitted
+      && fitted.tile === nextTile && fitted.dpr === nextDpr
+      && fitted.cols === state.cols && fitted.rows === state.rows) return;
+    fitted = { tile: nextTile, dpr: nextDpr, cols: state.cols, rows: state.rows };
+    tile = nextTile;
+    dpr = nextDpr;
     const w = state.cols * tile;
     const h = state.rows * tile;
     canvas.width = Math.round(w * dpr);
