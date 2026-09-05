@@ -118,9 +118,17 @@ Decisions:
   the 70svh detent it leaves the board ~200px tall (a 16×9 level drops to ~19px tiles) and it
   rescales continuously during the drag — unreadable exactly when the player glances at the
   maze to plan. The expanded body is **slightly translucent** (blur where supported, solid
-  fallback) so the maze stays visible behind the program lines; grip and peek bar stay solid.
+  fallback) so the maze stays visible through the sheet; grip and peek bar stay solid.
   Transparency has a legibility floor — mono lines must hold contrast over lit wall tiles and
   the glowing EXIT badge, and if they don't, opacity goes up rather than text getting lighter.
+  **Settled 2026-09-05 (option a):** the `.panel-section` cards and the `.program` box stay
+  opaque, so the maze reads through the body's padding and the gutters between cards rather
+  than directly behind the program lines. Reason, measured: `--muted` on `--surface` is only
+  4.82:1 today, so translucent cards push the uppercase section headings under WCAG AA
+  (~4.6:1 over a blurred EXIT badge, ~4.2:1 over an accent-lit tile, ~3.4:1 fully clear).
+  The middle option is on file to take later if the see-through effect proves too subtle on a
+  real phone: body 0.85 **plus** cards at `color-mix(in srgb, var(--bg) 60%, transparent)`,
+  which keeps `--muted` at 4.61:1 and accent-on-program at 8.8:1 for a ~6% leak.
 - **Handle — grip bar with a chevron inside it.** Drag the bar to slide, tap the chevron
   to snap between detents. The chevron is the keyboard / assistive-tech path. Two detents:
   collapsed (peek) and expanded (`min(70svh, …)`, program list scrolls internally).
