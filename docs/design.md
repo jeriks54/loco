@@ -32,7 +32,7 @@ src/
   ui/
     editor.js        program list + memory slots, drag & drop
     palette.js       available command blocks for the current level
-    hud.js           run/stop/speed controls, level result overlay
+    hud.js           run/reset/speed controls, level result overlay
     screens.js       title / level select / game screen switching
   persist.js         load/save progress in localStorage
 ```
@@ -114,9 +114,12 @@ Decisions:
 - **Handle — grip bar with a chevron inside it.** Drag the bar to slide, tap the chevron
   to snap between detents. The chevron is the keyboard / assistive-tech path. Two detents:
   collapsed (peek) and expanded (`max-height ~70vh`, program list scrolls internally).
-- **Peek bar contents — ▶ Run + memory count (`3 / 8`).** Program, collapse, run while
-  watching the maze; no expand-collapse dance. Reset and the ×½/×1/×2 speed group live
-  inside the expanded sheet.
+- **Peek bar contents — ▶ Run + Reset + memory count (`3 / 8`).** Program, collapse, run
+  while watching the maze; no expand-collapse dance. Reset sits in the peek bar too so a run
+  can be aborted without expanding the sheet mid-run — amended 2026-09-05 while closing out
+  the M1 issues, which surfaced that `executor.stop()` has no user-facing control at all, so
+  Reset is the only abort and it always rewinds. The ×½/×1/×2 speed group stays inside the
+  expanded sheet.
 - **On run — sheet auto-collapses** so the board re-fits to full height. Snaps instead of
   animating under `prefers-reduced-motion`.
 - **Tile floor drops on narrow screens.** `MIN_TILE` (`src/render/scene.js`) is 28px, which
