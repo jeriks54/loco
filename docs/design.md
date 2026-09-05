@@ -77,7 +77,7 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 - Program area renders the program as **numbered mono lines**, one per memory slot ("program-as-lines", shipped with M2 / issue #9); loop bodies indent per nesting depth and `repeat` lines carry ± steppers for the count (no typing). Drops insert a line at position; over-capacity drops reject.
 - Implemented with Pointer Events (mouse-first; also works on touch later) rather than the HTML5 DnD API — more controllable styling and animation.
 - Click a placed line to remove it. "Clear" button empties the program.
-- Layout shell: board (canvas) and editor are self-contained panels in a flex layout — desktop shows the board left, editor right. Panels must not depend on their position, so the mobile mode (maze full-screen, program as a bottom sheet) is a layout-only change. On touch, drag will be complemented by tap-to-add.
+- Layout shell: board (canvas) and editor are self-contained panels in a flex layout — desktop shows the board left, editor right. Panels must not depend on their position, so the mobile mode (maze full-screen, program as a bottom sheet) is a layout-only change — see §8.1. On touch, drag is complemented by tap-to-add (already shipped: a pointerup under the 5px drag threshold appends the block).
 
 ## 6. Rendering
 
@@ -96,8 +96,48 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 | **M0** | Requirements + design docs (this) — *awaiting review* |
 | **M1** | Playable core: renderer + editor + executor + placeholder levels (grew to 7 chapter-1 levels post-merge) |
 | **M2 (MVP)** | Update 2 pulled forward (decision D1, `level-design.md`): `repeat`/`while`/`end` loops + chapter-2 pack, lines-mode editor (issue #9), persistence, level-select polish → `v0.1` |
-| **M3** | Update 3: `if`, sensors, memory upgrades |
-| **M4** | Update 4: mobile layout |
+| **M3** | Update 3: `if`, sensors, memory upgrades — plus `loop until <condition>` + robot sensor (issue #17), and the `repeat` → `loop` rename / chapter-2 rework (issue #16) |
+| **M4** | Update 4: mobile layout — board on top, program as a bottom sheet (decisions in §8.1) |
+
+### 8.1 M4 — mobile layout (decided 2026-09-05, deferred — not built yet; tracked in issue #15)
+
+Recorded so the choices survive; implementation is roadmap work, deliberately not started.
+Driver: jonas plays on a phone and currently has to rotate to landscape, because
+`.game-layout` is a fixed `minmax(0,1fr) 340px` grid and `main.css` has no width-based
+media query at all.
+
+Decisions:
+
+- **Breakpoint — width, not orientation or pointer.** `max-width: ~900px` switches to
+  board-on-top + bottom sheet. Catches portrait phones *and* narrow desktop windows.
+  Landscape phones get the sheet too: ~390px of height is too cramped for the sidebar.
+- **Handle — grip bar with a chevron inside it.** Drag the bar to slide, tap the chevron
+  to snap between detents. The chevron is the keyboard / assistive-tech path. Two detents:
+  collapsed (peek) and expanded (`max-height ~70vh`, program list scrolls internally).
+- **Peek bar contents — ▶ Run + memory count (`3 / 8`).** Program, collapse, run while
+  watching the maze; no expand-collapse dance. Reset and the ×½/×1/×2 speed group live
+  inside the expanded sheet.
+- **On run — sheet auto-collapses** so the board re-fits to full height. Snaps instead of
+  animating under `prefers-reduced-motion`.
+- **Tile floor drops on narrow screens.** `MIN_TILE` (`src/render/scene.js`) is 28px, which
+  overflows a ~390px viewport for the 16-cell-wide levels (ch2-01, ch2-05, ch2-06, ch2-08):
+  16 × 28 = 448px against ~307px of usable panel width, silently clipped by
+  `body { overflow-x: hidden }`. Lower the floor to ~18px so the whole maze always fits —
+  chosen over pan/pinch-zoom to keep mobile to a single gesture.
+
+Constraints for whoever builds it:
+
+- **Gesture arbitration is the main risk.** Palette chips already use Pointer Events with
+  `touch-action: none` + pointer capture, and drops are hit-tested against the program
+  list's bounding rect. The sheet must be draggable *only* by its grip bar, or chip drags
+  and sheet drags fight each other. Drops outside the sheet stay no-ops (acceptable).
+- **Tap-to-add already exists** — `editor.js` treats a pointerup under the 5px threshold as
+  "append this block". That satisfies the tap half of requirements §5.3 today, append-only.
+- **Board re-fitting is free.** `fit()` + the existing `ResizeObserver` recompute from panel
+  size, and robot pose is kept in grid space, so mid-animation resize is already safe. Verify
+  no jank from continuous refit while dragging the sheet; refit on settle if there is.
+- **Small but easy to miss:** `env(safe-area-inset-bottom)` padding under the peek bar (iOS
+  home indicator), and the result overlay's Retry/Next buttons at the smallest board size.
 
 ## 9. Workflow
 
@@ -130,7 +170,8 @@ Principles:
 - Robot board sprite: M1 shipped a facing chevron; upgrade to a proper glyph robot (welcome-mascot lineage, canvas-rendered, no image assets) tracked in issue #8 (label `roadmap`).
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
-- Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — decided in Update 4; shell must stay ready for it.
+- Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — **resolved 2026-09-05**, recorded in §8.1 and tracked in issue #15 (label `roadmap`); still unbuilt, shell must stay ready for it.
+- Loop vocabulary rework — **decided 2026-09-05, deferred**: `repeat` is renamed `loop`; `while front clear` leaves chapter 2 (which becomes counted-loops only) and returns in chapter 3 as `loop until <condition>` driven by a robot sensor. Tracked in #16 (rename + chapter-2 rework; ch2-05 and ch2-06 become unsolvable without `while`, so Part B needs redesigning) and #17 (chapter-3 conditions). Settled in #17: `until` keeps its literal sense and the predicate is `blocked` — **`loop until front is blocked`** reproduces today's `while front clear` behaviour; the condition vocabulary is predicate-based, so `whileFrontClear` does not carry over.
 
 ## 11. Visual language
 

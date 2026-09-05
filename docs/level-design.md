@@ -17,6 +17,8 @@ Requirements §7 left two things to level design: the exact level count and the 
 
 Re-scope note: design.md §8 planned M2 as "10–15 levels, move/turn only" with loops in M3. Since chapter 1 already has its full difficulty arc (7 levels), the proposal here folds loops into the next milestone instead of padding chapter 1 — see decision D1.
 
+**Pending rework (decided 2026-09-05, deferred — not built).** `repeat` is to be renamed `loop`, and `while front clear` is to leave chapter 2 entirely: chapter 2 becomes the *counted-loops* chapter, and the sensing half returns in chapter 3 as `loop until <condition>` backed by a robot sensor. Tracked in issue **#16** (rename + chapter-2 rework, including ch2-05/ch2-06 which become unsolvable without `while`) and **#17** (chapter-3 conditions). §3.1 and the Part B levels below describe what is **shipped today** — do not design new chapter-2 content around `while front clear` without reading those two issues first.
+
 ## 3. Loop mechanics (proposal)
 
 ### 3.1 Blocks

@@ -80,8 +80,8 @@ Out (roadmap, §5): loops, conditionals, sensors, memory upgrades, scoring.
 ## 5. Roadmap (post-MVP)
 
 1. **Update 2 — Loops:** `while` blocks + a chapter of levels that only fit with loops.
-2. **Update 3 — Sensing & decisions:** `if`, sensor unlocks (distance-to-wall, goal detection), memory upgrades as collectibles.
-3. **Update 4 — Mobile:** phone layout with the maze as the default view; the program panel opens as a bottom sheet (swipe up or arrow button); tap-to-add blocks alongside drag.
+2. **Update 3 — Sensing & decisions:** `if`, sensor unlocks (distance-to-wall, goal detection), memory upgrades as collectibles. *Decided 2026-09-05, deferred — issues #16/#17, `design.md` §10:* chapter 3 also absorbs the sensing half of loops, reshaped as `loop until <condition>` driven by a robot sensor; meanwhile `repeat` is renamed `loop` and chapter 2 becomes counted-loops only.
+3. **Update 4 — Mobile:** phone layout with the maze as the default view; the program panel opens as a bottom sheet (swipe up or arrow button); tap-to-add blocks alongside drag. *Decided 2026-09-05, deferred — see `design.md` §8.1:* width breakpoint (~900px) rather than orientation, grip bar + chevron handle, collapsed peek bar showing Run + memory count, sheet auto-collapses when a run starts, and the canvas minimum tile size drops on narrow screens so the 16-wide levels fit.
 4. **Ideas beyond:** fog of war (maze not fully visible), par/star ratings for efficient programs, level sharing.
 
 ## 6. Non-functional requirements
