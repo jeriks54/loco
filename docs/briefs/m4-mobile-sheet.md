@@ -92,6 +92,37 @@ Under the breakpoint:
 
 Robot sprite (#8), tile types and board art (#19), all loop/`if` work (#16, #17, #18), level-select and title-screen redesign, pan/pinch-zoom, landscape-specific tuning beyond what the breakpoint already gives, persistence of sheet state. No new dependencies. No test frameworks.
 
+## DOM contract (fixed — build to this exactly)
+
+Pinned so the markup, `hud.js` and `sheet.js` cannot drift apart. Ids and classes are normative.
+
+```html
+<aside class="side-panel sheet" id="sheet">
+  <div class="sheet-grip" id="sheet-grip">
+    <button type="button" class="sheet-chevron" id="sheet-chevron"
+            aria-expanded="false" aria-controls="sheet-body"
+            aria-label="Toggle the program panel">▲</button>
+  </div>
+
+  <div class="sheet-peek" id="sheet-peek">
+    <button type="button" class="btn btn-primary"   id="btn-run-peek"   data-role="run">▶ Run</button>
+    <button type="button" class="btn btn-secondary" id="btn-reset-peek" data-role="reset">Reset</button>
+    <span class="memory-count" id="memory-count-peek" data-role="memory-count"></span>
+  </div>
+
+  <div class="sheet-body" id="sheet-body">
+    <!-- the three existing .panel-section divs, unchanged and in their current order -->
+  </div>
+</aside>
+```
+
+- The **existing** controls keep their ids and gain the same roles: `#btn-run` → `data-role="run"`, `#btn-reset` → `data-role="reset"`, `#memory-count` → `data-role="memory-count"`.
+- `hud.js` resolves **`document.querySelectorAll('[data-role="…"]')`** for each of the three roles and keeps every match in sync. It must not rely on the old single ids for those three.
+- `.sheet-grip`, `.sheet-peek` and the `.sheet` class are `display: none` above the breakpoint. `.sheet-body` above the breakpoint behaves exactly as today's `.side-panel` flex column — same order, same gap, same section styling.
+- The chevron is a single `▲` glyph, rotated 180° by CSS when `[aria-expanded="true"]` (transition suppressed under `prefers-reduced-motion`). Do not swap the character in JS.
+- `.controls` keeps only the speed group under the breakpoint: its own `[data-role="run"]` and `[data-role="reset"]` become `display: none` there, since the peek bar carries them.
+- Drag listeners attach to `#sheet-grip` only — never to `#sheet`, `#sheet-body` or any `.panel-section`.
+
 ## Acceptance checklist
 
 **Desktop (must be a no-op):**
@@ -99,7 +130,7 @@ Robot sprite (#8), tile types and board art (#19), all loop/`if` work (#16, #17,
 2. All 15 levels play exactly as before; no console errors.
 
 **Mobile / narrow:**
-3. At 390×844 and 360×640, the board is fully visible with the sheet collapsed — **no horizontal clipping on any level, including the four 16-wide ones**.
+3. At 390×844 and 360×640, the board is fully visible with the sheet collapsed — **no horizontal clipping on any level**, including the widest (ch2-01 and ch2-08 at 16 cells) and the four others that overflowed at the old 28px floor.
 4. **The board's pixel size is identical in both detents** — expanding or collapsing does not rescale the maze.
 5. Grip drag slides the sheet and snaps to the nearest detent; a tap on the grip toggles; the chevron toggles and its `aria-expanded` tracks reality.
 6. A palette chip drag never moves the sheet; a sheet drag never spawns a drag ghost.
