@@ -97,7 +97,7 @@ Robot sprite (#8), tile types and board art (#19), all loop/`if` work (#16, #17,
 Pinned so the markup, `hud.js` and `sheet.js` cannot drift apart. Ids and classes are normative.
 
 ```html
-<aside class="side-panel sheet" id="sheet">
+<aside class="side-panel sheet is-collapsed" id="sheet">
   <div class="sheet-grip" id="sheet-grip">
     <button type="button" class="sheet-chevron" id="sheet-chevron"
             aria-expanded="false" aria-controls="sheet-body"
@@ -116,12 +116,23 @@ Pinned so the markup, `hud.js` and `sheet.js` cannot drift apart. Ids and classe
 </aside>
 ```
 
-- The **existing** controls keep their ids and gain the same roles: `#btn-run` → `data-role="run"`, `#btn-reset` → `data-role="reset"`, `#memory-count` → `data-role="memory-count"`.
+- The **existing** controls keep their ids and gain the same roles: `#btn-run` → `data-role="run"`, `#btn-reset` → `data-role="reset"`. **`#memory-count` deliberately does *not* get the role** — `editor.js` already writes that element, so adding the role would leave two writers on one element and a format change in either place would make the desktop count flicker. One writer per element: the editor owns the desktop count, `hud.js` owns the peek count.
 - `hud.js` resolves **`document.querySelectorAll('[data-role="…"]')`** for each of the three roles and keeps every match in sync. It must not rely on the old single ids for those three.
 - `.sheet-grip`, `.sheet-peek` and the `.sheet` class are `display: none` above the breakpoint. `.sheet-body` above the breakpoint behaves exactly as today's `.side-panel` flex column — same order, same gap, same section styling.
 - The chevron is a single `▲` glyph, rotated 180° by CSS when `[aria-expanded="true"]` (transition suppressed under `prefers-reduced-motion`). Do not swap the character in JS.
 - `.controls` keeps only the speed group under the breakpoint: its own `[data-role="run"]` and `[data-role="reset"]` become `display: none` there, since the peek bar carries them.
 - Drag listeners attach to `#sheet-grip` only — never to `#sheet`, `#sheet-body` or any `.panel-section`.
+
+## Detent contract (fixed)
+
+How JS and CSS express the two detents, so `sheet.js` and `main.css` agree without reading each other:
+
+- Detents are **classes on `#sheet`**: `is-collapsed` (default, already in the markup) and `is-expanded`. Exactly one is present at all times.
+- CSS owns the heights: `#sheet.is-collapsed { height: calc(56px + env(safe-area-inset-bottom)); }` and `#sheet.is-expanded { height: min(70svh, 70vh); }` — declare the `vh` form first so `svh` wins where supported.
+- `#sheet` transitions `height` (~220ms ease-out), **except** when `.is-dragging` is present or under `prefers-reduced-motion: reduce`, where it snaps.
+- **During a drag** `sheet.js` sets `style.height` inline and adds `.is-dragging`; **on release** it clears the inline height, removes `.is-dragging` and sets the detent class. Inline height therefore exists only mid-drag, so CSS needs no `!important` to win.
+- `aria-expanded` on `#sheet-chevron` mirrors `is-expanded`, set by JS at the same moment the class changes.
+- `.sheet-body` is `overflow-y: auto` with `overscroll-behavior: contain`, and in the collapsed detent it must be **`visibility: hidden`** — not merely clipped, and not `display: none`. `visibility` keeps it out of the tab order and the accessibility tree while preserving layout and scroll position, and it transitions so the body fades instead of vanishing. `#sheet` carries `overflow: hidden` so nothing spills mid-drag.
 
 ## Acceptance checklist
 
