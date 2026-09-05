@@ -5,6 +5,9 @@
    (design.md §11). Next level only appears after reaching the
    goal (and never on the last level). M2 adds the two loop-era
    outcomes: refused (unbalanced) runs and the runaway guard.
+   M4 duplicates Run/Reset/memory count into the mobile sheet's
+   peek bar, so each of the three is resolved as a set of elements
+   and kept in sync.
    ============================================================ */
 
 const RESULT_COPY = {
@@ -18,8 +21,9 @@ const RESULT_COPY = {
 const pad2 = (n) => String(n).padStart(2, '0');
 
 export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
-  const runBtn = document.getElementById('btn-run');
-  const resetBtn = document.getElementById('btn-reset');
+  const runBtns = document.querySelectorAll('[data-role="run"]');
+  const resetBtns = document.querySelectorAll('[data-role="reset"]');
+  const memoryCountEls = document.querySelectorAll('[data-role="memory-count"]');
   const retryBtn = document.getElementById('btn-retry');
   const nextBtn = document.getElementById('btn-next');
   const overlayEl = document.getElementById('result-overlay');
@@ -30,15 +34,26 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
 
   let running = false;
   let programLen = 0;
+  let memoryLimit = null;
 
   function updateRunButton() {
-    runBtn.disabled = running || programLen === 0;
+    for (const btn of runBtns) btn.disabled = running || programLen === 0;
   }
 
-  runBtn.addEventListener('click', () => {
-    if (!runBtn.disabled) onRun();
-  });
-  resetBtn.addEventListener('click', () => onReset());
+  function updateMemoryCount() {
+    // main.js loads the editor before setLevel, so the first onChange lands
+    // here without a limit yet — setLevel rewrites the counts once it knows it.
+    if (memoryLimit === null) return;
+    for (const el of memoryCountEls) el.textContent = `${programLen} / ${memoryLimit}`;
+  }
+
+  for (const btn of runBtns) {
+    btn.addEventListener('click', () => {
+      if (!btn.disabled) onRun();
+    });
+  }
+  // Reset is never disabled: it is the only way to abort a run in flight.
+  for (const btn of resetBtns) btn.addEventListener('click', () => onReset());
   retryBtn.addEventListener('click', () => onRetry());
   nextBtn.addEventListener('click', () => onNext());
 
@@ -61,11 +76,14 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
     setProgramLength(len) {
       programLen = len;
       updateRunButton();
+      updateMemoryCount();
     },
 
     setLevel(level, index, total) {
       levelNameEl.textContent = level.name;
       progressEl.textContent = `${pad2(index + 1)}/${pad2(total)} · MEM ${level.memory}`;
+      memoryLimit = level.memory;
+      updateMemoryCount();
     },
 
     setSpeedButtons(speed) {
