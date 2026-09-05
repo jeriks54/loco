@@ -111,17 +111,28 @@ Decisions:
 - **Breakpoint — width, not orientation or pointer.** `max-width: ~900px` switches to
   board-on-top + bottom sheet. Catches portrait phones *and* narrow desktop windows.
   Landscape phones get the sheet too: ~390px of height is too cramped for the sidebar.
+- **Sheet model — floating overlay, not a push** (jonas' call, 2026-09-05). The sheet floats
+  above the board, `position: absolute` inside `#screen-game`; the board panel reserves only
+  the *collapsed* peek height, so the maze keeps **one stable size across both detents** and
+  never rescales when the sheet opens, closes or is dragged. A pushing sheet was rejected: at
+  the 70svh detent it leaves the board ~200px tall (a 16×9 level drops to ~19px tiles) and it
+  rescales continuously during the drag — unreadable exactly when the player glances at the
+  maze to plan. The expanded body is **slightly translucent** (blur where supported, solid
+  fallback) so the maze stays visible behind the program lines; grip and peek bar stay solid.
+  Transparency has a legibility floor — mono lines must hold contrast over lit wall tiles and
+  the glowing EXIT badge, and if they don't, opacity goes up rather than text getting lighter.
 - **Handle — grip bar with a chevron inside it.** Drag the bar to slide, tap the chevron
   to snap between detents. The chevron is the keyboard / assistive-tech path. Two detents:
-  collapsed (peek) and expanded (`max-height ~70vh`, program list scrolls internally).
+  collapsed (peek) and expanded (`min(70svh, …)`, program list scrolls internally).
 - **Peek bar contents — ▶ Run + Reset + memory count (`3 / 8`).** Program, collapse, run
   while watching the maze; no expand-collapse dance. Reset sits in the peek bar too so a run
   can be aborted without expanding the sheet mid-run — amended 2026-09-05 while closing out
   the M1 issues, which surfaced that `executor.stop()` has no user-facing control at all, so
   Reset is the only abort and it always rewinds. The ×½/×1/×2 speed group stays inside the
   expanded sheet.
-- **On run — sheet auto-collapses** so the board re-fits to full height. Snaps instead of
-  animating under `prefers-reduced-motion`.
+- **On run — sheet auto-collapses** so nothing obscures the maze while the robot moves. The
+  board's size does not change: with the overlay model it is detent-independent. Snaps instead
+  of animating under `prefers-reduced-motion`.
 - **Tile floor drops on narrow screens.** `MIN_TILE` (`src/render/scene.js`) is 28px, which
   overflows a ~390px viewport for the 16-cell-wide levels (ch2-01, ch2-05, ch2-06, ch2-08):
   16 × 28 = 448px against ~307px of usable panel width, silently clipped by
