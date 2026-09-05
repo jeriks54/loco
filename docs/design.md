@@ -134,10 +134,11 @@ Decisions:
   board's size does not change: with the overlay model it is detent-independent. Snaps instead
   of animating under `prefers-reduced-motion`.
 - **Tile floor drops on narrow screens.** `MIN_TILE` (`src/render/scene.js`) is 28px, which
-  overflows a ~390px viewport for the 16-cell-wide levels (ch2-01, ch2-05, ch2-06, ch2-08):
-  16 × 28 = 448px against ~307px of usable panel width, silently clipped by
-  `body { overflow-x: hidden }`. Lower the floor to ~18px so the whole maze always fits —
-  chosen over pan/pinch-zoom to keep mobile to a single gesture.
+  overflows a ~390px viewport for any level 11+ cells wide — ch2-01 (16), ch2-05 (14),
+  ch2-06 (14), ch2-07 (12) and ch2-08 (16), five of the fifteen levels: 16 × 28 = 448px
+  against ~307px of usable panel width, silently clipped by `body { overflow-x: hidden }`.
+  Lower the floor to 18px (16 × 18 = 288px) so the whole maze always fits — chosen over
+  pan/pinch-zoom to keep mobile to a single gesture.
 
 Constraints for whoever builds it:
 
