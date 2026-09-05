@@ -203,6 +203,19 @@ Principles:
 - Quality via gates, not crunch: each milestone gets a short acceptance checklist agreed before play-testing; findings become ranked GitHub issues feeding the next fix round. "Awesome" is reached through repeated tight play-test loops.
 - Docs are reviewed before implementation; design decisions live in this document, not in code.
 
+### 9.3 Delegation protocol (earned 2026-09-05, after two failed attempts)
+
+Subagents run **in-process** — there is no separate PID to inspect, only the transcript's last-modified time. Two whole-brief delegations hung having written nothing; the identical work split into narrow slices completed every time. These rules are the difference.
+
+- **Scope by file, not by milestone.** An agent should own one or two files and finish in well under ten tool calls. The two failures ran 12 and 17 rounds at 208k and 366k tokens; the successes ran 6, 20 and 26 rounds on one or two files each.
+- **Hand over verified facts.** Put the numbers in the prompt — level dimensions, existing constants, z-index values, the exact call sites — instead of letting the agent derive them. The first hung agent spent its rounds re-measuring what the manager had already measured.
+- **Pin interfaces before parallelising.** Parallel agents are only safe on genuinely disjoint files, and only when the shared contract is written down first: exact ids, class names, data attributes, and which side owns which property. The DOM and detent contracts are why `sheet.js` and `main.css` agreed without ever reading each other.
+- **Forbid exploration drift.** "Read only these sections; do not read X; write files early." Agents told to read everything read everything.
+- **Never let an agent run git.** No stage, commit, branch, checkout or stash. The manager reviews and commits every delivery.
+- **Stall detection.** Idle tens of seconds = working. Past ~4 min = the `streamIdleTimeoutMs` guard should have fired. Past 15 min = it has hit `QWEN_STREAM_MAX_LIFETIME_MS` and is in an invisible retry loop, still reporting `running` → stop it and relaunch smaller. Diagnose from transcript mtime plus `git status`.
+- **Read what a stalled agent found before discarding it.** The first hung agent's last act was disproving a factual claim in its own brief. The most useful output of that day came from a run that produced no files.
+- **Review is arithmetic, not reading.** Self-reports are not evidence — an M2 delivery claimed verification and failed 7 of 8 checks. Recompute independently: tile fit across every viewport, contrast against the real design tokens, brace balance, `git diff --numstat` to prove a cascade is untouched.
+
 ## 10. Open design questions
 
 - Robot board sprite: M1 shipped a facing chevron; upgrade to a proper glyph robot (welcome-mascot lineage, canvas-rendered, no image assets) tracked in issue #8 (label `roadmap`).
