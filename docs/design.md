@@ -14,6 +14,9 @@ Architecture and tech decisions for LoCo. Guiding principle from prior art (the 
 
 No bundler, no framework. If tooling ever becomes necessary, revisit — it should not be needed at this scale.
 
+Retained dependency-free verification runs with `node tests/verify.mjs`; see
+`tests/README.md` for coverage and the browser play-test checklist.
+
 ## 2. Architecture
 
 Small set of ES modules with one-way dependencies:
@@ -23,6 +26,7 @@ src/
   main.js            boot: wires screens, loads level registry
   levels/
     chapter1.js      level definitions (one module per chapter)
+    chapter2.js      eight counted-loop levels
     index.js         ordered registry of all levels
   game/
     state.js         level state: grid, robot pose, goal, memory size
@@ -34,10 +38,11 @@ src/
     palette.js       available command blocks for the current level
     hud.js           run/reset/speed controls, level result overlay
     screens.js       title / level select / game screen switching
+    sheet.js         mobile bottom-sheet gestures and detents
   persist.js         load/save progress in localStorage
 ```
 
-**Data flow:** `editor` produces a program (ordered list of block ids) → `executor` walks it against `state`, emitting events (`step`, `moved`, `turned`, `crashed`, `finished`, `goal`) → `scene` animates movement events → `editor` highlights the current block on `step` events (the program pointer) → `hud` reacts to terminal events.
+**Data flow:** `editor` produces a program (simple-command strings and counted-loop objects) → `executor` walks it against `state`, emitting events (`step`, `moved`, `turned`, `crashed`, `finished`, `goal`, `syntax`, `runaway`) → `scene` animates movement events → `editor` highlights the current block on `step` events (the program pointer) → `hud` reacts to terminal events.
 
 ## 3. Level format
 
@@ -64,20 +69,22 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 
 ## 4. Execution model
 
-- A program is an ordered array of block ids, `length <= memory`.
+- A program is an ordered array, `length <= memory`: simple commands are `move`, `turnLeft`, `turnRight`, `end` strings; counted loops are `{ id: 'loop', count }` objects.
+- `loop n` … `end` repeats the body n times and supports nesting. Count defaults to 2 and is clamped to integer 1..99 (`LOOP_MIN` / `LOOP_MAX`). Chapter 2 has counted loops only; sensing belongs to future chapter 3. No `repeat` or `whileFrontClear` aliases remain in revision #16.
+- Balance is validated before movement; unmatched openers/ends emit terminal `syntax`. The 200-executed-line guard emits terminal `runaway`.
 - The executor is a tick machine: one block per tick; a timer drives ticks so animation can pace them (speed control changes the tick interval).
 - Each tick first emits `step` with the index of the executing block — the editor uses it to highlight the current block (program pointer).
 - Crash rule: `move` into a wall or out of bounds → emit `crashed`, halt.
 - Reaching the goal tile at any point → emit `goal`, halt (win).
-- Executor is deterministic and pure w.r.t. state — easy to unit-test later.
+- Executor snapshots the program and mutates only the supplied game state; DOM-free execution is covered by the retained Node checks.
 
 ## 5. Drag & drop editor
 
 - Palette shows the blocks unlocked for the current level; dragging a block creates a **copy** (blocks are reusable, memory is the limit).
-- Program area renders the program as **numbered mono lines**, one per memory slot ("program-as-lines", shipped with M2 / issue #9); loop bodies indent per nesting depth and `repeat` lines carry ± steppers for the count (no typing). Drops insert a line at position; over-capacity drops reject.
-- Implemented with Pointer Events (mouse-first; also works on touch later) rather than the HTML5 DnD API — more controllable styling and animation.
+- Program area renders the program as **numbered mono lines**, one per memory slot ("program-as-lines", shipped with M2 / issue #9); loop bodies indent per nesting depth and `loop` lines carry ± steppers for the count (no typing). Drops insert a line at position; over-capacity drops reject.
+- Implemented with Pointer Events for mouse and touch rather than the HTML5 DnD API — more controllable styling and animation.
 - Click a placed line to remove it. "Clear" button empties the program.
-- Layout shell: board (canvas) and editor are self-contained panels in a flex layout — desktop shows the board left, editor right. Panels must not depend on their position, so the mobile mode (maze full-screen, program as a bottom sheet) is a layout-only change — see §8.1. On touch, drag is complemented by tap-to-add (already shipped: a pointerup under the 5px drag threshold appends the block).
+- Layout shell: board (canvas) and editor are self-contained panels — desktop shows the board left, editor right; the shipped mobile mode uses a floating bottom sheet at widths up to 900px (see §8.1). On touch, drag is complemented by tap-to-add (a pointerup under the 5px drag threshold appends the block).
 
 ## 6. Rendering
 
@@ -89,22 +96,30 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 
 `localStorage['loco.progress.v1'] = { completed: ['ch1-01', ...] }` — level select shows completion; nothing else stored in MVP.
 
+Revision #16 preserves all 15 level IDs and existing completion marks. Programs are
+not persisted, so the block rename requires no migration. The replacement Part B
+levels retain IDs ch2-05..08: Double Step, Beyond the Pattern, The Return Trip and
+Giant Steps. Exact grids and solutions live in `level-design.md` §4.
+
 ## 8. Milestones
 
 | Milestone | Deliverable |
 |---|---|
-| **M0** | Requirements + design docs (this) — *awaiting review* |
+| **M0** | Requirements + design docs — completed |
 | **M1** | Playable core: renderer + editor + executor + placeholder levels (grew to 7 chapter-1 levels post-merge) |
-| **M2 (MVP)** | Update 2 pulled forward (decision D1, `level-design.md`): `repeat`/`while`/`end` loops + chapter-2 pack, lines-mode editor (issue #9), persistence, level-select polish → `v0.1` |
-| **M3** | Update 3: sensors, memory upgrades — chapter 3 `loop until <condition>` + robot sensor (#17), chapter 4 `if` statements (#18), and the `repeat` → `loop` rename / chapter-2 rework (#16) |
-| **M4** | Update 4: mobile layout — board on top, program as a bottom sheet (decisions in §8.1) |
+| **M2 (MVP, historical)** | Update 2 pulled forward (decision D1, `level-design.md`): original `repeat`/`while`/`end` loops + chapter-2 pack, lines-mode editor (issue #9), persistence, level-select polish → `v0.1` |
+| **M3 (#16, current review)** | Counted-loop rename and chapter-2 Part B redesign; implementation approved 2026-09-06, awaiting PR/play-testing, not production merged. Brief: `briefs/m3-counted-loops.md` |
+| **M4 (shipped, PR #20)** | Mobile layout — board on top, program as a bottom sheet (decisions and history in §8.1) |
 
-### 8.1 M4 — mobile layout (decided 2026-09-05, deferred — not built yet; tracked in issue #15)
+Production baseline: `main` at `32a71ae`. After #16 review, the roadmap order is
+**#19 → #17 → #18**: tile types and map art, chapter-3 sensing, then chapter-4 `if`.
+Memory upgrades and explicit ladder `climb` remain future chapter-5 work.
 
-Recorded so the choices survive; implementation is roadmap work, deliberately not started.
-Driver: jonas plays on a phone and currently has to rotate to landscape, because
-`.game-layout` is a fixed `minmax(0,1fr) 340px` grid and `main.css` has no width-based
-media query at all.
+### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
+
+The following records the original decisions and measured implementation history.
+The original driver was phone play requiring landscape: the old `.game-layout`
+used a fixed `minmax(0,1fr) 340px` grid without a width-based media query.
 
 Decisions:
 
@@ -163,7 +178,7 @@ Decisions:
   computed tile is 19–22 and the floor never binds. Chosen over pan/pinch-zoom to keep mobile
   to a single gesture.
 
-Constraints for whoever builds it:
+Original implementation constraints, retained for regression review:
 
 - **Gesture arbitration is the main risk.** Palette chips already use Pointer Events with
   `touch-action: none` + pointer capture, and drops are hit-tested against the program
@@ -221,9 +236,9 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 - Robot board sprite: M1 shipped a facing chevron; upgrade to a proper glyph robot (welcome-mascot lineage, canvas-rendered, no image assets) tracked in issue #8 (label `roadmap`).
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
-- Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — **resolved 2026-09-05**, recorded in §8.1 and tracked in issue #15 (label `roadmap`); still unbuilt, shell must stay ready for it.
-- Loop vocabulary rework — **decided 2026-09-05, deferred**: `repeat` is renamed `loop`; `while front clear` leaves chapter 2 (which becomes counted-loops only) and returns in chapter 3 as `loop until <condition>` driven by a robot sensor. Tracked in #16 (rename + chapter-2 rework; ch2-05 and ch2-06 become unsolvable without `while`, so Part B needs redesigning) and #17 (chapter-3 conditions). Settled in #17: `until` keeps its literal sense and the predicate is `blocked` — **`loop until front is blocked`** reproduces today's `while front clear` behaviour; the condition vocabulary is predicate-based, so `whileFrontClear` does not carry over.
-- Map graphics + tile types — **roadmap 2026-09-05, deferred**, tracked in #19. jonas wants richer board art so new obstacle kinds become possible (holes and ladders named). Verified: this is a level-format / state / executor change, not a rendering pass — `state.js` parses only `#` `.` `S` `G` and **throws** on any other character, and the world model is a single `walls` Set behind one boolean `isBlocked()`, which cannot express "passable but fatal" (hole) or "passable and transporting" (ladder). Encouraging: only three call sites consume it (`executor.js` move + sensor, `scene.js` draw). Should land before or with #17/#18 so the condition vocabulary is not designed twice; must not block #16.
+- Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — **shipped in PR #20**, recorded in §8.1 and tracked in issue #15.
+- Loop vocabulary rework — **#16 in current review, awaiting PR/play-test**: chapter 2 now uses `loop n` / `end`, and all four Part B levels have counted-loop replacements. Production merge still requires approval. Future chapter 3 introduces `loop until <direction> <predicate>` (#17); `until` keeps its literal sense. On ordinary floor/wall corridors, `loop until front is blocked` reproduces the historical M2 `while front clear` behaviour. Holes need the separate semantics recorded in `level-design.md` §9.
+- Map graphics + tile types — **next after #16**, tracked in #19. This extends level format, state and execution as well as art: current grids accept only `# . S G`. Holes arrive with chapter 3 and are entered before a fatal outcome; `is clear` means safe to enter, so holes are neither clear nor blocked. Ladders and explicit `climb` are deferred to chapter 5. See `level-design.md` §9 for the recorded contract; #17 and #18 consume it in that order.
 
 ## 11. Visual language
 
@@ -234,5 +249,5 @@ Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic i
 - **Decoration:** figlet-style ASCII logo (block glyphs, mint glow — user preferred it over a line-art SVG variant, 2026-08-25); ASCII maze teaser with the robot and a glowing path to an `[EXIT]` badge; box-drawing wall fragments; blinking robot eyes. No code-rain background, no scanlines/CRT kitsch — it should feel 2026, not 1983.
 - **Welcome structure (per reference):** figlet logo → maze teaser → tagline → outline-glow "Start Game" + secondary "Tutorial" → bottom tab bar (Settings / High Scores) with mini version. No subtitle line. Not-yet-built modules answer with a terminal "not found" joke.
 - **Motion:** subtle — fade-ins, cursor blink, glow pulses; must honor `prefers-reduced-motion`.
-- **Layout:** desktop-first for gameplay (requirements §3.7; mobile arrives with Update 4). The welcome screen is the exception: it must also look good on a phone (centered column there).
+- **Layout:** desktop board/editor panels plus the shipped M4 mobile bottom sheet (requirements §3.7). The welcome screen uses a centered column on phones.
 - **Copy voice:** terminal boot voice — short, dry, playful; no lorem ipsum.
