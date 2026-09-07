@@ -9,16 +9,28 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-09-06
+## State as of 2026-09-07
 
-`main` = `f1d89f6`. Shipped and live in production:
+Production baseline: `main` = `32a71ae`. Shipped and live in production:
 
 - **Chapter 1 — Sequence**, 7 levels (`ch1-01..07`), move / turn left / turn right.
-- **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), `repeat n` / `while front clear` / `end`, programs rendered as numbered mono lines.
+- **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), programs rendered as numbered mono lines. The production M2 version historically uses `repeat n` / `while front clear` / `end`; the counted-only revision below is not production merged.
 - **Persistence** — `localStorage['loco.progress.v1']` stores completed level ids only. Programs are never saved, so block renames have no migration cost.
 - **M4 mobile bottom sheet** (PR #20) — under `max-width: 900px` the board fills the screen and the program panel is a floating translucent overlay sheet with a grip + chevron, a peek bar carrying Run / Reset / memory count, and auto-collapse on run. Play-tested on a Samsung S26 in Chrome.
 
 15 levels total. Widest grids are 16 cells (ch2-01, ch2-08).
+
+**Current revision #16:** `feat/m3-counted-loops`, approved for implementation on
+2026-09-06, in review awaiting PR/play-testing. The working runtime uses only
+counted `loop n` / `end` (nested, default 2, integer 1..99); `repeat` and
+`whileFrontClear` support are removed without aliases. Part B is now Double Step,
+Beyond the Pattern, The Return Trip and Giant Steps (ch2-05..08). All 15 IDs,
+chapter-1 levels, and chapter-2 Part A grids/budgets stay stable; stored completion
+marks are preserved. Production merge still requires jonas' explicit approval.
+
+Run retained checks with `node tests/verify.mjs`; see `tests/README.md` for coverage
+and browser play-testing. These use the real executor plus independent path search,
+with no test framework or dependencies.
 
 ## What's next
 
@@ -26,21 +38,22 @@ Open roadmap issues, all labeled `enhancement` + `roadmap`:
 
 | # | What | Note |
 |---|---|---|
-| **#16** | Rename `repeat` → `loop`; remove `while front clear` from chapter 2 | **Do this first.** ch2-05 and ch2-06 become *unsolvable* without `while` (no `repeat` in their palettes), so Part B needs redesigning, not just a palette edit |
+| **#16** | Counted-loop rename and chapter-2 Part B redesign | **Current review**, awaiting PR/play-test; see `docs/briefs/m3-counted-loops.md` |
 | **#19** | Tile-type system + richer map art (holes, ladders) | Infrastructure, not graphics: `state.js` throws on any tile outside `# . S G`, and the world model is one `walls` Set behind a single boolean `isBlocked()` |
-| **#17** | Chapter 3 — robot sensor + `loop until <direction> <predicate>` | Four levels already designed and verified in `docs/level-design.md` §10 |
+| **#17** | Chapter 3 — robot sensor + `loop until <direction> <predicate>` | Four levels designed and simulated in `docs/level-design.md` §10; real-executor checks follow implementation |
 | **#18** | Chapter 4 — `if` statements | Reuses chapter 3's condition model |
 | **#8** | Robot board sprite (replace the facing chevron) | Cosmetic; touches `scene.js`, so never parallel with renderer work |
 
-**Order: #16 → #19 → #17 → #18.** Chapter 3's `ch3-03` uses the renamed `loop`, and the
+**After #16 review: #19 → #17 → #18.** Chapter 3's `ch3-03` uses the renamed `loop`, and the
 condition vocabulary should not be designed before the tile types it has to describe.
 
 ## Where things are documented
 
 - `docs/design.md` — architecture (§2), level format (§3), editor (§5), milestones (§8), **M4 mobile decisions (§8.1)**, workflow + roles + **delegation protocol (§9)**, open design questions (§10), visual language (§11).
-- `docs/level-design.md` — curriculum map (§2), chapter 2 as shipped (§3–§4), difficulty/memory policy (§5), **decisions D1–D14 (§7)**, risks (§8), **chapters 3–5 mechanics (§9)** and the **four verified chapter-3 levels (§10)**.
+- `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), **decisions D1–D14 (§7)**, risks (§8), **chapters 3–5 mechanics (§9)** and the **four proposed chapter-3 levels (§10)**.
 - `docs/requirements.md` — the product requirements and the post-MVP roadmap (§5).
-- `docs/briefs/` — one implementation brief per milestone. `m4-mobile-sheet.md` is the most recent and shows the current house format, including its DOM and detent contracts.
+- `docs/briefs/` — one implementation brief per milestone. `m3-counted-loops.md` is the current #16 contract; M1/M2/M4 briefs retain their historical scope and decisions.
+- `tests/README.md` — retained Node verification and browser play-test checklist.
 
 ## Hard rules
 

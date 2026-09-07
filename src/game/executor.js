@@ -1,13 +1,13 @@
 /* ============================================================
-   LoCo — program executor (design.md §2, §4; M2 loops brief)
+   LoCo — program executor (design.md §2, §4; M3 counted-loops brief)
    Pure tick machine, DOM-free (Node-importable for tests).
    One program line per tick; base tick 600 ms scaled by speed
    (x1/2 -> 1200 ms, x1 -> 600 ms, x2 -> 300 ms).
 
    Program entries: plain strings for simple blocks,
-   { id: 'repeat', count } for repeat (count 1..99, default 2).
+   { id: 'loop', count } for loop (count 1..99, default 2).
 
-   Loops: 'repeat' / 'whileFrontClear' open a loop, 'end'
+   Loops: 'loop' opens a counted loop, 'end'
    closes the nearest open one. Balance is validated BEFORE
    running — an unbalanced program is refused with a terminal
    'syntax' event; the robot never moves and the program is
@@ -18,7 +18,7 @@
    Events via onEvent(type, payload):
      step     index of the program line about to execute —
               fires for EVERY executed line, including control
-              lines (repeat / whileFrontClear / end) and
+              lines (loop / end) and
               revisits on each loop iteration
      moved    { from:{x,y}, to:{x,y}, dir }
      turned   newDir ('N'|'E'|'S'|'W')
@@ -45,9 +45,9 @@ export const BASE_TICK_MS = 600;
 /** Runaway guard: at most this many lines may execute in one run (M2 brief). */
 export const MAX_TICKS = 200;
 
-/** Repeat-count bounds (shared contract; the editor steppers use the same). */
-export const REPEAT_MIN = 1;
-export const REPEAT_MAX = 99;
+/** Loop-count bounds (shared contract; the editor steppers use the same). */
+export const LOOP_MIN = 1;
+export const LOOP_MAX = 99;
 
 const DIR_VECTORS = {
   N: { x: 0, y: -1 },
@@ -58,9 +58,9 @@ const DIR_VECTORS = {
 const TURN_LEFT = { N: 'W', W: 'S', S: 'E', E: 'N' };
 const TURN_RIGHT = { N: 'E', E: 'S', S: 'W', W: 'N' };
 
-const SIMPLE_KINDS = new Set(['move', 'turnLeft', 'turnRight', 'whileFrontClear', 'end']);
+const SIMPLE_KINDS = new Set(['move', 'turnLeft', 'turnRight', 'end']);
 
-/** Entry token id ('repeat' for { id:'repeat', count }). */
+/** Entry token id ('loop' for { id:'loop', count }). */
 function entryId(entry) {
   return typeof entry === 'string' ? entry : entry && entry.id;
 }
@@ -69,11 +69,11 @@ function entryId(entry) {
 function normalizeLines(program) {
   return program.map((entry) => {
     const id = entryId(entry);
-    if (id === 'repeat') {
+    if (id === 'loop') {
       let count = Math.floor(Number(entry.count));
       if (!Number.isFinite(count)) count = 2; // shared-contract default
-      count = Math.min(REPEAT_MAX, Math.max(REPEAT_MIN, count));
-      return { kind: 'repeat', count };
+      count = Math.min(LOOP_MAX, Math.max(LOOP_MIN, count));
+      return { kind: 'loop', count };
     }
     if (SIMPLE_KINDS.has(id)) return { kind: id };
     throw new Error(`unknown block '${id}'`);
@@ -92,7 +92,7 @@ function analyzeLoops(lines) {
   const endOf = new Map();
   for (let i = 0; i < lines.length; i += 1) {
     const kind = lines[i].kind;
-    if (kind === 'repeat' || kind === 'whileFrontClear') {
+    if (kind === 'loop') {
       stack.push(i);
     } else if (kind === 'end') {
       if (stack.length === 0) return { ok: false, at: i };
@@ -138,12 +138,6 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
     state.robot.x = startPose.x;
     state.robot.y = startPose.y;
     state.robot.dir = startPose.dir;
-  }
-
-  /** 'while front clear': the tile one step ahead is in bounds and not a wall. */
-  function frontClear() {
-    const v = DIR_VECTORS[state.robot.dir];
-    return !isBlocked(state, state.robot.x + v.x, state.robot.y + v.y);
   }
 
   function tick() {
@@ -194,7 +188,7 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
       state.robot.dir = TURN_RIGHT[state.robot.dir];
       emit('turned', state.robot.dir);
       ip += 1;
-    } else if (line.kind === 'repeat') {
+    } else if (line.kind === 'loop') {
       if (top && top.head === ip) {
         // revisit: one more iteration completed — again or exit?
         top.remaining -= 1;
@@ -205,19 +199,8 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
           ip = balance.endOf.get(ip) + 1; // past the matching 'end'
         }
       } else {
-        frames.push({ kind: 'repeat', head: ip, remaining: line.count, bodyStart: ip + 1 });
+        frames.push({ kind: 'loop', head: ip, remaining: line.count, bodyStart: ip + 1 });
         ip += 1;
-      }
-    } else if (line.kind === 'whileFrontClear') {
-      // checked on entry and re-checked after each iteration (on revisit)
-      if (frontClear()) {
-        if (!top || top.head !== ip) {
-          frames.push({ kind: 'while', head: ip, bodyStart: ip + 1 });
-        }
-        ip += 1;
-      } else {
-        if (top && top.head === ip) frames.pop(); // exiting after iterations
-        ip = balance.endOf.get(ip) + 1; // skip the body and its 'end'
       }
     } else {
       // 'end' — validation guarantees its loop frame is on top

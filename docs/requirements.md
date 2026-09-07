@@ -34,11 +34,13 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 
 ### 3.3 Commands
 
-| Phase | Commands |
+| Chapter / status | Commands |
 |---|---|
-| MVP | `move` (1 step forward), `turn left`, `turn right` |
-| Update 2 | `while` loops |
-| Update 3 | `if` statements, sensors (e.g. distance to wall), memory upgrades |
+| 1 — shipped | `move` (1 step forward), `turn left`, `turn right` |
+| 2 — counted-only revision #16 in review | `loop n` / `end`, including nesting; count 1..99, default 2 |
+| 3 — planned #17, after tile types #19 | Robot sensor and `loop until <direction> <predicate>` |
+| 4 — planned #18 | `if` using the same condition vocabulary |
+| 5 — later | Explicit ladder `climb`, combined concepts, memory upgrades |
 
 ### 3.4 Execution
 
@@ -50,6 +52,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 
 - Robot moves into a wall or off the maze → **crash**: the run ends immediately, level is retried with the program preserved.
 - Program finishes without reaching the goal → retry (program preserved).
+- Unbalanced loops/ends refuse execution without movement; 200 executed lines trigger the runaway guard.
 
 ### 3.6 Progression
 
@@ -57,41 +60,50 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Difficulty rises via maze complexity **and** tight memory budgets.
 - Later chapters unlock new blocks and larger memories in step with mazes that require them.
 - Progress (completed levels) persists in the browser.
+- The current registry has 15 stable IDs: seven chapter-1 and eight chapter-2 levels. Revision #16 retains completion marks when replacing ch2-05..08 with Double Step, Beyond the Pattern, The Return Trip and Giant Steps.
 
-### 3.7 Layout & controls (MVP)
+### 3.7 Layout & controls
 
 - Desktop-first, mouse input.
 - Maze/board on the **left** as the dominant element; program editor (palette + memory) on the **right**.
 - Commands are placed by dragging them from the palette into memory.
+- Shipped M4 mobile layout: at widths up to 900px the program editor is a floating bottom sheet with grip/chevron, Run/Reset/memory peek bar, tap-to-add and auto-collapse on run.
 
-## 4. MVP scope (v0.1)
+## 4. Current scope (v0.1 and revision #16)
+
+Production baseline is `main` at `32a71ae`. M2 shipped loops and M4 shipped mobile;
+the counted-only chapter-2 revision #16 is in review, awaiting PR/play-testing and
+explicit production-merge approval. Historical M2 mechanics remain in its brief.
 
 In:
 
 - Grid renderer, maze with entrance/goal, animated robot
 - Drag & drop program editor with memory-slot limit
-- Executor for `move` / `turn left` / `turn right` with run/stop/speed controls
+- Executor for `move` / `turn left` / `turn right` and counted `loop` / `end` with run/reset/speed controls
 - Crash + fall-short fail states with retry
-- **~10–15 hand-crafted levels**, move/turn only, gradually shrinking memory budgets
+- **15 hand-crafted levels**: seven sequence levels and eight counted-loop levels, with per-level palettes and memory budgets
 - Level select screen; progress saved to `localStorage`
+- Mobile bottom-sheet editor and touch controls
 
-Out (roadmap, §5): loops, conditionals, sensors, memory upgrades, scoring.
+Out (roadmap, §5): conditional loops, `if`, sensors, new tile types, memory upgrades, scoring.
 
 ## 5. Roadmap (post-MVP)
 
-1. **Update 2 — Loops:** `while` blocks + a chapter of levels that only fit with loops.
-2. **Update 3 — Sensing & decisions:** `if`, sensor unlocks (distance-to-wall, goal detection), memory upgrades as collectibles. *Decided 2026-09-05, deferred — issues #16/#17/#18, `design.md` §10, `level-design.md` §2:* split across chapters. Chapter 2 becomes counted-loops only (`repeat` renamed `loop`, `while front clear` removed — #16); chapter 3 introduces the robot sensor and `loop until <condition>` (#17); chapter 4 reuses that same condition vocabulary for `if` (#18). Memory upgrades stay with Mastery, now chapter 5.
-3. **Update 4 — Mobile:** phone layout with the maze as the default view; the program panel opens as a bottom sheet (swipe up or arrow button); tap-to-add blocks alongside drag. *Decided 2026-09-05, deferred — see `design.md` §8.1:* width breakpoint (~900px) rather than orientation, grip bar + chevron handle, collapsed peek bar showing Run, Reset and the memory count, sheet auto-collapses when a run starts, and the canvas minimum tile size drops on narrow screens so the 16-wide levels fit.
-4. **Ideas beyond:** new obstacle kinds (holes, ladders) via a tile-type system + richer board art — #19, infrastructure that later chapters consume; fog of war (maze not fully visible), par/star ratings for efficient programs, level sharing.
+1. **Current review — #16:** rename historical M2 `repeat` to `loop`, remove `while front clear`, and replace chapter-2 Part B with counted-loop exercises. All IDs and completion marks stay stable. See `level-design.md` §4 and `briefs/m3-counted-loops.md`.
+2. **Next — #19:** tile-type system, holes, visible start marker and richer board art. Define safe-to-enter sensing separately from blocked movement; holes are always fatal. Ladders and explicit `climb` wait for chapter 5.
+3. **Then — #17 → #18:** chapter 3 introduces the robot sensor and `loop until <direction> <predicate>`; chapter 4 reuses the condition vocabulary for `if`. Four chapter-3 levels are designed in `level-design.md` §10; real-executor verification waits for implementation.
+4. **Mobile — shipped in PR #20:** M4's width-based bottom sheet and touch controls are current functionality. Decisions and measured history remain in `design.md` §8.1.
+5. **Ideas beyond:** chapter-5 Mastery and memory upgrades; fog of war, par/star ratings for efficient programs, level sharing.
 
 ## 6. Non-functional requirements
 
 - Pure client-side: vanilla HTML/CSS/JS, no build step, deployable as static files (Vercel).
 - Runs smoothly on current Chrome/Edge/Firefox; keyboard not required for MVP.
 - Load time: instant (static assets only, no framework).
-- Desktop-first for MVP, but the UI is architected mobile-ready: panels are self-contained components (see Roadmap, Update 4).
+- Desktop and mobile layouts use self-contained panels; the M4 bottom sheet is shipped.
+- Retain dependency-free checks with `node tests/verify.mjs`; coverage and manual checks are documented in `tests/README.md`. No test framework or dependencies are required.
 
 ## 7. Open questions
 
 - Star rating / par block-count per level? (Lean: post-MVP.)
-- Exact level count and difficulty curve per chapter — defined during level design.
+- Future chapter counts and difficulty curves — defined in `level-design.md`; the current 15 IDs remain stable through #16.
