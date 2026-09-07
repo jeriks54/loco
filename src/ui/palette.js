@@ -2,7 +2,7 @@
    LoCo — command palette (design.md §5, brief §5; M2 brief)
    Renders the level's unlocked blocks as chips: mono label +
    glyph. Pure rendering; drag handling lives in editor.js.
-   M2 adds the loop blocks (repeat / while front clear / end)
+   Counted-loop blocks (loop / end) render
    as mono code-token chips in the same chip shape.
    ============================================================ */
 
@@ -10,8 +10,7 @@ export const BLOCK_DEFS = {
   move: { label: 'move', glyph: '↑' },
   turnLeft: { label: 'turn left', glyph: '↰' },
   turnRight: { label: 'turn right', glyph: '↱' },
-  repeat: { label: 'repeat', glyph: '↻' },
-  whileFrontClear: { label: 'while front clear', glyph: '?' },
+  loop: { label: 'loop', glyph: '↻' },
   end: { label: 'end', glyph: '■' },
 };
 

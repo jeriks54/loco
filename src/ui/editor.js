@@ -8,21 +8,21 @@
    Pointer-Events drag & drop (no HTML5 DnD): pointerdown on a
    palette chip spawns a floating ghost; drop inserts a line at
    the drop position. Over-capacity drops are rejected with a
-   flash. Click a placed line to remove it. The `repeat` line
+   flash. Click a placed line to remove it. The `loop` line
    carries small +/− count steppers (1..99, no typing) that are
    inert while a run is in progress. The executing line is
    highlighted on `step` events (the program pointer).
    ============================================================ */
 
 import { renderPalette, BLOCK_DEFS } from './palette.js';
-import { REPEAT_MIN, REPEAT_MAX } from '../game/executor.js';
+import { LOOP_MIN, LOOP_MAX } from '../game/executor.js';
 
 const DRAG_THRESHOLD_PX = 5;   // below this a pointerup counts as a click (append)
 const REJECT_FLASH_MS = 420;
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
-/** Entry token id ('repeat' for { id:'repeat', count }). */
+/** Entry token id ('loop' for { id:'loop', count }). */
 function entryId(entry) {
   return typeof entry === 'string' ? entry : entry.id;
 }
@@ -48,7 +48,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       const id = entryId(entry);
       if (id === 'end') depth = Math.max(0, depth - 1);
       depths.push(depth);
-      if (id === 'repeat' || id === 'whileFrontClear') depth += 1;
+      if (id === 'loop') depth += 1;
     }
     return { depths, trailing: depth };
   }
@@ -56,18 +56,18 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
   /** Terminal-voice token markup for one line (lowercase). */
   function codeHTML(entry) {
     if (typeof entry === 'string') {
-      const kw = entry === 'whileFrontClear' || entry === 'end' ? ' kw' : '';
+      const kw = entry === 'end' ? ' kw' : '';
       return `<span class="line-token${kw}">${BLOCK_DEFS[entry].label}</span>`;
     }
-    // repeat: keyword + count with steppers
+    // loop: keyword + count with steppers
     return (
-      `<span class="line-token kw">${BLOCK_DEFS.repeat.label}</span>` +
+      `<span class="line-token kw">${BLOCK_DEFS.loop.label}</span>` +
       `<span class="stepper">` +
-      `<button type="button" class="step-btn" data-step="-1" aria-label="decrease repeat count"` +
-      `${entry.count <= REPEAT_MIN ? ' disabled' : ''}>−</button>` +
-      `<span class="repeat-count">${entry.count}</span>` +
-      `<button type="button" class="step-btn" data-step="1" aria-label="increase repeat count"` +
-      `${entry.count >= REPEAT_MAX ? ' disabled' : ''}>+</button>` +
+      `<button type="button" class="step-btn" data-step="-1" aria-label="decrease loop count"` +
+      `${entry.count <= LOOP_MIN ? ' disabled' : ''}>−</button>` +
+      `<span class="loop-count">${entry.count}</span>` +
+      `<button type="button" class="step-btn" data-step="1" aria-label="increase loop count"` +
+      `${entry.count >= LOOP_MAX ? ' disabled' : ''}>+</button>` +
       `</span>`
     );
   }
@@ -106,7 +106,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       return false;
     }
     const at = Math.max(0, Math.min(index, program.length));
-    const entry = blockId === 'repeat' ? { id: 'repeat', count: 2 } : blockId;
+    const entry = blockId === 'loop' ? { id: 'loop', count: 2 } : blockId;
     program.splice(at, 0, entry);
     renderLines();
     lineEls[at].classList.add('pop');
@@ -123,12 +123,12 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
     rejectTimer = setTimeout(() => programEl.classList.remove('reject'), REJECT_FLASH_MS);
   }
 
-  /* ---------- repeat count steppers ---------- */
+  /* ---------- loop count steppers ---------- */
 
-  function adjustRepeat(index, delta) {
+  function adjustLoop(index, delta) {
     const entry = program[index];
-    if (!entry || entry.id !== 'repeat') return;
-    const count = Math.min(REPEAT_MAX, Math.max(REPEAT_MIN, entry.count + delta));
+    if (!entry || entry.id !== 'loop') return;
+    const count = Math.min(LOOP_MAX, Math.max(LOOP_MIN, entry.count + delta));
     if (count === entry.count) return;
     entry.count = count;
     renderLines(); // re-render keeps number + disabled steppers in sync
@@ -231,7 +231,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
     const index = Number(line.dataset.index);
     const stepBtn = e.target.closest('.step-btn');
     if (stepBtn) {
-      adjustRepeat(index, Number(stepBtn.dataset.step));
+      adjustLoop(index, Number(stepBtn.dataset.step));
       return;
     }
     program.splice(index, 1);
@@ -254,7 +254,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
     },
 
     getProgram() {
-      // copies repeat entries too, so later stepper edits don't leak
+      // copies loop entries too, so later stepper edits don't leak
       // into a snapshot the executor is still running
       return program.map((entry) => (typeof entry === 'string' ? entry : { id: entry.id, count: entry.count }));
     },

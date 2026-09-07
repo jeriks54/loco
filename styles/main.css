@@ -795,14 +795,14 @@ button {
   cursor: default;
 }
 
-/* repeat-count steppers on the repeat line (+/−, no typing) */
+/* loop-count steppers on the loop line (+/−, no typing) */
 .stepper {
   display: inline-flex;
   align-items: center;
   gap: 0.45ch;
 }
 
-.repeat-count {
+.loop-count {
   min-width: 2ch;
   text-align: center;
   color: var(--accent);
