@@ -9,6 +9,7 @@ import { createLevelState } from '../src/game/state.js';
 import { createExecutor, LOOP_MIN, LOOP_MAX, MAX_TICKS } from '../src/game/executor.js';
 import { execute, shortestSequence, loop, withClock } from './helpers.mjs';
 import { solutions, loopFreeMinimums } from './chapter2-solutions.mjs';
+import './tiles.mjs';
 
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 const chapter1 = levels.filter(l => l.id.startsWith('ch1-'));

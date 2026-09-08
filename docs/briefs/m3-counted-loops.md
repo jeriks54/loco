@@ -1,8 +1,9 @@
 # M3 brief — Counted loops (#16)
 
 Jonas approved the combined rename and chapter-2 redesign on 2026-09-06.
-Branch: `feat/m3-counted-loops`. Deliver a reviewed PR and Vercel preview for
-play-testing; production merge still waits for Jonas' explicit approval.
+Branch: `feat/m3-counted-loops`. Delivered in PR #21; Jonas reported the preview
+worked well and explicitly approved merge on 2026-09-07. Merged as `6a67e86`.
+The original scope and verification contract follow.
 
 ## Purpose and scope
 
