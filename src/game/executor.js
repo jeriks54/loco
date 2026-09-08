@@ -5,9 +5,10 @@
    (x1/2 -> 1200 ms, x1 -> 600 ms, x2 -> 300 ms).
 
    Program entries: plain strings for simple blocks,
-   { id: 'loop', count } for loop (count 1..99, default 2).
+   { id: 'loop', count } for counted loop (count 1..99, default 2),
+   or the plain string 'loopUntil' for a front-wall sensed loop.
 
-   Loops: 'loop' opens a counted loop, 'end'
+   Loops: 'loop' or 'loopUntil' opens a loop, 'end'
    closes the nearest open one. Balance is validated BEFORE
    running — an unbalanced program is refused with a terminal
    'syntax' event; the robot never moves and the program is
@@ -39,7 +40,7 @@
    again after stop() or a terminal event.
    ============================================================ */
 
-import { isBlocked, tileAt } from './state.js';
+import { isBlocked, isWallAhead, tileAt } from './state.js';
 
 export const BASE_TICK_MS = 600;
 
@@ -59,7 +60,7 @@ const DIR_VECTORS = {
 const TURN_LEFT = { N: 'W', W: 'S', S: 'E', E: 'N' };
 const TURN_RIGHT = { N: 'E', E: 'S', S: 'W', W: 'N' };
 
-const SIMPLE_KINDS = new Set(['move', 'turnLeft', 'turnRight', 'end']);
+const SIMPLE_KINDS = new Set(['move', 'turnLeft', 'turnRight', 'loopUntil', 'end']);
 
 /** Entry token id ('loop' for { id:'loop', count }). */
 function entryId(entry) {
@@ -93,7 +94,7 @@ function analyzeLoops(lines) {
   const endOf = new Map();
   for (let i = 0; i < lines.length; i += 1) {
     const kind = lines[i].kind;
-    if (kind === 'loop') {
+    if (kind === 'loop' || kind === 'loopUntil') {
       stack.push(i);
     } else if (kind === 'end') {
       if (stack.length === 0) return { ok: false, at: i };
@@ -112,6 +113,9 @@ function analyzeLoops(lines) {
 export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK_MS }) {
   const lines = normalizeLines(program); // snapshot — later edits don't leak in
   const balance = analyzeLoops(lines);
+  const missingSensorAt = state.sensor === 'frontWall'
+    ? -1
+    : lines.findIndex((line) => line.kind === 'loopUntil');
   const startPose = { ...(state.start || state.robot) };
 
   let ip = 0;
@@ -194,19 +198,38 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
       state.robot.dir = TURN_RIGHT[state.robot.dir];
       emit('turned', state.robot.dir);
       ip += 1;
-    } else if (line.kind === 'loop') {
+    } else if (line.kind === 'loop' || line.kind === 'loopUntil') {
       if (top && top.head === ip) {
-        // revisit: one more iteration completed — again or exit?
-        top.remaining -= 1;
-        if (top.remaining > 0) {
-          ip = top.bodyStart;
+        if (line.kind === 'loopUntil') {
+          // Sensed loops re-check the wall before every body visit.
+          if (isWallAhead(state)) {
+            frames.pop();
+            ip = balance.endOf.get(ip) + 1;
+          } else {
+            ip = top.bodyStart;
+          }
         } else {
-          frames.pop();
-          ip = balance.endOf.get(ip) + 1; // past the matching 'end'
+          // Counted loop revisit: one more iteration completed — again or exit?
+          top.remaining -= 1;
+          if (top.remaining > 0) {
+            ip = top.bodyStart;
+          } else {
+            frames.pop();
+            ip = balance.endOf.get(ip) + 1; // past the matching 'end'
+          }
         }
       } else {
-        frames.push({ kind: 'loop', head: ip, remaining: line.count, bodyStart: ip + 1 });
-        ip += 1;
+        if (line.kind === 'loopUntil' && isWallAhead(state)) {
+          ip = balance.endOf.get(ip) + 1;
+        } else {
+          frames.push({
+            kind: line.kind,
+            head: ip,
+            ...(line.kind === 'loop' ? { remaining: line.count } : {}),
+            bodyStart: ip + 1,
+          });
+          ip += 1;
+        }
       }
     } else {
       // 'end' — validation guarantees its loop frame is on top
@@ -229,6 +252,11 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
       if (!balance.ok) {
         // run refused — robot untouched, program preserved (M2 brief)
         emit('syntax', { at: balance.at });
+        return;
+      }
+      if (missingSensorAt >= 0) {
+        // Sensed programs require the level-fitted front wall equipment.
+        emit('syntax', { at: missingSensorAt });
         return;
       }
       running = true;

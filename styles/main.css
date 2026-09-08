@@ -577,6 +577,24 @@ button {
   min-height: 0;
 }
 
+.sensor-note {
+  flex: none;
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.sensor-token {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.block-chip[data-block="loopUntil"] {
+  max-width: 100%;
+  white-space: normal;
+}
+
 .board-panel {
   display: flex;
   align-items: center;

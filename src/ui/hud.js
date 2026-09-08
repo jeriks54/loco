@@ -32,6 +32,7 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
   const speedEl = document.getElementById('speed');
   const levelNameEl = document.getElementById('level-name');
   const progressEl = document.getElementById('level-progress');
+  const sensorNote = document.getElementById('sensor-note');
 
   let running = false;
   let programLen = 0;
@@ -81,6 +82,7 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
     },
 
     setLevel(level, index, total) {
+      sensorNote.classList.toggle('hidden', level.sensor !== 'frontWall');
       levelNameEl.textContent = level.name;
       progressEl.textContent = `${pad2(index + 1)}/${pad2(total)} · MEM ${level.memory}`;
       memoryLimit = level.memory;

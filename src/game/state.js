@@ -7,8 +7,8 @@
 
 /**
  * Parse a level definition (design.md §3) into runtime state.
- * @param {{id:string, name:string, grid:string[], startDir:string, memory:number}} level
- * @returns {{cols:number, rows:number, tiles:string[], walls:Set<number>, start:{x:number,y:number,dir:string}, robot:{x:number,y:number,dir:string}, goal:{x:number,y:number}, memory:number, level:object}}
+ * @param {{id:string, name:string, grid:string[], startDir:string, memory:number, sensor?:string|null}} level
+ * @returns {{cols:number, rows:number, tiles:string[], walls:Set<number>, start:{x:number,y:number,dir:string}, robot:{x:number,y:number,dir:string}, goal:{x:number,y:number}, memory:number, sensor:string|null, level:object}}
  */
 export function createLevelState(level) {
   const rows = level.grid.length;
@@ -60,6 +60,7 @@ export function createLevelState(level) {
     robot: { ...start },
     goal,
     memory: level.memory,
+    sensor: level.sensor ?? null,
     level,
   };
 }
@@ -73,6 +74,19 @@ export function tileAt(state, x, y) {
 /** True when (x, y) is a wall or outside the grid. */
 export function isBlocked(state, x, y) {
   return x < 0 || y < 0 || x >= state.cols || y >= state.rows || state.walls.has(y * state.cols + x);
+}
+
+/** True when the adjacent tile in the robot's facing direction is blocked. */
+export function isWallAhead(state) {
+  const vectors = {
+    N: { x: 0, y: -1 },
+    E: { x: 1, y: 0 },
+    S: { x: 0, y: 1 },
+    W: { x: -1, y: 0 },
+  };
+  const vector = vectors[state.robot.dir];
+  if (!vector) return false;
+  return isBlocked(state, state.robot.x + vector.x, state.robot.y + vector.y);
 }
 
 /** True only for floor, start and goal tiles. */

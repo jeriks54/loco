@@ -48,7 +48,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       const id = entryId(entry);
       if (id === 'end') depth = Math.max(0, depth - 1);
       depths.push(depth);
-      if (id === 'loop') depth += 1;
+      if (id === 'loop' || id === 'loopUntil') depth += 1;
     }
     return { depths, trailing: depth };
   }
@@ -56,8 +56,9 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
   /** Terminal-voice token markup for one line (lowercase). */
   function codeHTML(entry) {
     if (typeof entry === 'string') {
-      const kw = entry === 'end' ? ' kw' : '';
-      return `<span class="line-token${kw}">${BLOCK_DEFS[entry].label}</span>`;
+      const kw = entry === 'end' || entry === 'loopUntil' ? ' kw' : '';
+      const sensor = entry === 'loopUntil' ? ' sensor-token' : '';
+      return `<span class="line-token${kw}${sensor}">${BLOCK_DEFS[entry].label}</span>`;
     }
     // loop: keyword + count with steppers
     return (

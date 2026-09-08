@@ -10,6 +10,7 @@ import { createExecutor, LOOP_MIN, LOOP_MAX, MAX_TICKS } from '../src/game/execu
 import { execute, shortestSequence, loop, withClock } from './helpers.mjs';
 import { solutions, loopFreeMinimums } from './chapter2-solutions.mjs';
 import './tiles.mjs';
+import './sensors.mjs';
 
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 const chapter1 = levels.filter(l => l.id.startsWith('ch1-'));
@@ -29,10 +30,10 @@ for (const file of sourceFiles) {
   assert.equal(checked.status, 0, checked.stderr);
   assert.doesNotMatch(readFileSync(path, 'utf8'), /\brepeat\b|whileFrontClear|REPEAT_MIN|REPEAT_MAX/, path);
 }
-assert.deepEqual(Object.keys(BLOCK_DEFS), ['move', 'turnLeft', 'turnRight', 'loop', 'end']);
-assert.equal(levels.length, 15);
-assert.equal(new Set(levels.map(l => l.id)).size, 15);
-assert.deepEqual(levels.map(l => l.id), [...Array.from({ length: 7 }, (_, i) => `ch1-0${i + 1}`), ...Array.from({ length: 8 }, (_, i) => `ch2-0${i + 1}`)]);
+assert.deepEqual(Object.keys(BLOCK_DEFS).sort(), ['end', 'loop', 'loopUntil', 'move', 'turnLeft', 'turnRight']);
+assert.equal(levels.length, 19);
+assert.equal(new Set(levels.map(l => l.id)).size, 19);
+assert.deepEqual(levels.map(l => l.id), [...Array.from({ length: 7 }, (_, i) => `ch1-0${i + 1}`), ...Array.from({ length: 8 }, (_, i) => `ch2-0${i + 1}`), ...Array.from({ length: 4 }, (_, i) => `ch3-0${i + 1}`)]);
 
 for (const level of levels) {
   createLevelState(level);
@@ -118,4 +119,4 @@ withClock(clock => {
 const capped = execute(corridor, [loop(1000), 'end']);
 assert.equal(capped.outcome, 'finished'); assert.equal(capped.ticks, 199);
 console.table(report);
-console.log(`PASS: ${sourceFiles.length} module syntax checks; 15 level paths; 8 palette/memory/loop checks; executor regression checks.`);
+console.log(`PASS: ${sourceFiles.length} module syntax checks; 19 level paths; 8 counted + 4 sensor solution checks; executor regression checks.`);

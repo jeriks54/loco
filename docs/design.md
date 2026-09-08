@@ -27,6 +27,7 @@ src/
   levels/
     chapter1.js      level definitions (one module per chapter)
     chapter2.js      eight counted-loop levels
+    chapter3.js      four front-wall sensing levels (M6)
     index.js         ordered registry of all levels
   game/
     state.js         level state: grid, robot pose, goal, memory size
@@ -74,6 +75,10 @@ wall/outside, while `isSafeToEnter` accepts only floor/start/goal. See the appro
 ## 4. Execution model
 
 - A program is an ordered array, `length <= memory`: simple commands are `move`, `turnLeft`, `turnRight`, `end` strings; counted loops are `{ id: 'loop', count }` objects.
+- M6 adds plain-string `loopUntil`, displayed as `loop until wall ahead`. A header
+  checks the adjacent wall before each body iteration; true skips the body.
+  Both loop types nest and share `end`. Missing front-wall equipment refuses
+  execution before movement. Counted and sensed headers each cost one tick.
 - `loop n` … `end` repeats the body n times and supports nesting. Count defaults to 2 and is clamped to integer 1..99 (`LOOP_MIN` / `LOOP_MAX`). Chapter 2 has counted loops only; sensing belongs to future chapter 3. No `repeat` or `whileFrontClear` aliases remain in revision #16.
 - Balance is validated before movement; unmatched openers/ends emit terminal `syntax`. The 200-executed-line guard emits terminal `runaway`.
 - The executor is a tick machine: one block per tick; a timer drives ticks so animation can pace them (speed control changes the tick interval).
@@ -99,6 +104,10 @@ wall/outside, while `isSafeToEnter` accepts only floor/start/goal. See the appro
 - Crash feedback: brief shake + color flash. Goal feedback: simple celebration pulse.
 - M5 adds a persistent outlined `S`, double-rim inset holes, and a 180ms shrink/fade
   after movement into a hole. Reduced motion hides immediately; reset restores.
+- M6 automatically equips `sensor: 'frontWall'` on Chapter 3 levels only. A square
+  at the robot's front is hollow for no wall and filled for a wall/boundary. It
+  rotates/fades with the robot; holes never trigger it. A short level explanation
+  wraps above the game layout, so its height is naturally excluded from board fit.
 
 ## 7. Persistence
 
@@ -118,10 +127,11 @@ Giant Steps. Exact grids and solutions live in `level-design.md` §4.
 | **M2 (MVP, historical)** | Update 2 pulled forward (decision D1, `level-design.md`): original `repeat`/`while`/`end` loops + chapter-2 pack, lines-mode editor (issue #9), persistence, level-select polish → `v0.1` |
 | **M3 (#16, shipped PR #21)** | Counted-loop rename and chapter-2 Part B redesign; play-tested and merged 2026-09-07. Brief: `briefs/m3-counted-loops.md` |
 | **M4 (shipped, PR #20)** | Mobile layout — board on top, program as a bottom sheet (decisions and history in §8.1) |
-| **M5 (#19, reviewed and play-tested)** | Tile lookup, visible start marker and fatal holes; preserves 15 levels. Node and browser checks pass; Jonas confirmed play-testing and authorized commit/push 2026-09-08. Merge pending. Contract: `briefs/m5-tile-types.md`. Ladders remain chapter-5 work |
+| **M5 (#19 first slice, shipped PR #23)** | Tile lookup, start marker and fatal holes; original 15 levels preserved. Merged 2026-09-08 as `2d4bd42`; ladders remain chapter-5 work |
+| **M6 (#17, local implementation)** | Four Chapter 3 levels, fixed front wall sensor and `loop until wall ahead`. Approved plan 2026-09-08; contract: `briefs/m6-front-wall-sensor.md` |
 
-Merged baseline: `main` at `6a67e86` (PR #21). The roadmap order is
-**#19 → #17 → #18**: tile types and map art, chapter-3 sensing, then chapter-4 `if`.
+Merged baseline: `main` at `2d4bd42` (PR #23). The roadmap order is
+**#17 → #18**: chapter-3 sensing, then chapter-4 `if`; tile groundwork is shipped.
 Memory upgrades and explicit ladder `climb` remain future chapter-5 work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
@@ -246,8 +256,9 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — **shipped in PR #20**, recorded in §8.1 and tracked in issue #15.
-- Loop vocabulary rework — **#16 shipped in PR #21**: chapter 2 uses `loop n` / `end`, and all four Part B levels have counted-loop replacements. Future chapter 3 introduces `loop until <direction> <predicate>` (#17); `until` keeps its literal sense. On ordinary floor/wall corridors, `loop until front is blocked` reproduces the historical M2 `while front clear` behaviour. Holes need the separate semantics recorded in `level-design.md` §9.
-- Map graphics + tile types — **#19 implementation approved**. M5's contract is in `briefs/m5-tile-types.md`; the branch adds `H` support to `# . S G`. Tile infrastructure and start marker arrive first, with holes introduced in chapter-3 puzzles later. Holes are entered before a fatal outcome; `is clear` means safe to enter, so holes are neither clear nor blocked. Ladders and explicit `climb` are deferred to chapter 5. See `level-design.md` §9 for the recorded semantics; #17 and #18 consume them in that order.
+- **#17 direction revised 2026-09-08:** Chapter 3 uses fixed `loop until wall ahead` and an automatically fitted front wall sensor. The older direction/predicate selectors and hole sensor are deferred. Holes appear as visible hazards but do not trigger the wall sensor. See `level-design.md` §9–10 and the M6 brief.
+- **#19 first slice shipped PR #23:** tile infrastructure, start marker and fatal holes. Ladders and explicit `climb` remain chapter-5 work.
+- **Future equipment/rewards:** sensors can eventually be acquired and mounted at selected robot locations. Candidate types: wall, hole, distance, terrain. Purchase using earned rewards versus automatic chapter rewards is deliberately undecided; do not build that system into M6.
 - Broader graphics improvement — **#22**, requested by Jonas 2026-09-07. Agree desktop/mobile mockups before changing art direction; cover board/environment, robot, motion/outcome feedback and UI coherence. Coordinate #8/#19 and preserve legibility. This work is separately scheduled; the locked visual language below remains the baseline until a new direction is approved.
 
 ## 11. Visual language

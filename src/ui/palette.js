@@ -11,6 +11,7 @@ export const BLOCK_DEFS = {
   turnLeft: { label: 'turn left', glyph: '↰' },
   turnRight: { label: 'turn right', glyph: '↱' },
   loop: { label: 'loop', glyph: '↻' },
+  loopUntil: { label: 'loop until wall ahead', glyph: '↻' },
   end: { label: 'end', glyph: '■' },
 };
 
