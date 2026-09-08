@@ -12,6 +12,7 @@
    ch1-07  3-row serpentine finale      — 12 blocks, memory 12 (exact)
 
    Grid legend: '#' wall, '.' floor, 'S' start, 'G' goal.
+   The runtime also supports 'H' fatal holes; this chapter has none.
    Grids stay <= 9x7; difficulty ramps via shape AND memory.
    ============================================================ */
 

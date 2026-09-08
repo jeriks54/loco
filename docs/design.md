@@ -42,7 +42,7 @@ src/
   persist.js         load/save progress in localStorage
 ```
 
-**Data flow:** `editor` produces a program (simple-command strings and counted-loop objects) → `executor` walks it against `state`, emitting events (`step`, `moved`, `turned`, `crashed`, `finished`, `goal`, `syntax`, `runaway`) → `scene` animates movement events → `editor` highlights the current block on `step` events (the program pointer) → `hud` reacts to terminal events.
+**Data flow:** `editor` produces a program (simple-command strings and counted-loop objects) → `executor` walks it against `state`, emitting events (`step`, `moved`, `turned`, `crashed`, `fell`, `finished`, `goal`, `syntax`, `runaway`) → `scene` animates movement events → `editor` highlights the current block on `step` events (the program pointer) → `hud` reacts to terminal events.
 
 ## 3. Level format
 
@@ -65,7 +65,11 @@ export default {
 };
 ```
 
-Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
+Grid legend: `#` wall, `.` floor, `S` start, `G` goal; M5 adds `H` fatal hole.
+M5 state adds row-major `tiles` and a separate `start` pose, retaining `walls` for
+compatibility. `tileAt` returns a type or null outside the grid; `isBlocked` means
+wall/outside, while `isSafeToEnter` accepts only floor/start/goal. See the approved
+`briefs/m5-tile-types.md` for the exact table. Existing levels contain no holes.
 
 ## 4. Execution model
 
@@ -75,6 +79,8 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 - The executor is a tick machine: one block per tick; a timer drives ticks so animation can pace them (speed control changes the tick interval).
 - Each tick first emits `step` with the index of the executing block — the editor uses it to highlight the current block (program pointer).
 - Crash rule: `move` into a wall or out of bounds → emit `crashed`, halt.
+- M5 hole rule: enter `H`, emit `moved`, then terminal `fell` in the same tick.
+  Every Run restores the stable start pose and resets the scene before execution.
 - Reaching the goal tile at any point → emit `goal`, halt (win).
 - Executor snapshots the program and mutates only the supplied game state; DOM-free execution is covered by the retained Node checks.
 
@@ -91,6 +97,8 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal.
 - Canvas is sized to the level grid with a fixed tile size (letterboxed/responsive via CSS).
 - Robot is a simple vector-drawn sprite with a facing indicator; moves/turns tween between tiles over one tick.
 - Crash feedback: brief shake + color flash. Goal feedback: simple celebration pulse.
+- M5 adds a persistent outlined `S`, double-rim inset holes, and a 180ms shrink/fade
+  after movement into a hole. Reduced motion hides immediately; reset restores.
 
 ## 7. Persistence
 
@@ -108,10 +116,11 @@ Giant Steps. Exact grids and solutions live in `level-design.md` §4.
 | **M0** | Requirements + design docs — completed |
 | **M1** | Playable core: renderer + editor + executor + placeholder levels (grew to 7 chapter-1 levels post-merge) |
 | **M2 (MVP, historical)** | Update 2 pulled forward (decision D1, `level-design.md`): original `repeat`/`while`/`end` loops + chapter-2 pack, lines-mode editor (issue #9), persistence, level-select polish → `v0.1` |
-| **M3 (#16, current review)** | Counted-loop rename and chapter-2 Part B redesign; implementation approved 2026-09-06, awaiting PR/play-testing, not production merged. Brief: `briefs/m3-counted-loops.md` |
+| **M3 (#16, shipped PR #21)** | Counted-loop rename and chapter-2 Part B redesign; play-tested and merged 2026-09-07. Brief: `briefs/m3-counted-loops.md` |
 | **M4 (shipped, PR #20)** | Mobile layout — board on top, program as a bottom sheet (decisions and history in §8.1) |
+| **M5 (#19, reviewed and play-tested)** | Tile lookup, visible start marker and fatal holes; preserves 15 levels. Node and browser checks pass; Jonas confirmed play-testing and authorized commit/push 2026-09-08. Merge pending. Contract: `briefs/m5-tile-types.md`. Ladders remain chapter-5 work |
 
-Production baseline: `main` at `32a71ae`. After #16 review, the roadmap order is
+Merged baseline: `main` at `6a67e86` (PR #21). The roadmap order is
 **#19 → #17 → #18**: tile types and map art, chapter-3 sensing, then chapter-4 `if`.
 Memory upgrades and explicit ladder `climb` remain future chapter-5 work.
 
@@ -237,8 +246,9 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — **shipped in PR #20**, recorded in §8.1 and tracked in issue #15.
-- Loop vocabulary rework — **#16 in current review, awaiting PR/play-test**: chapter 2 now uses `loop n` / `end`, and all four Part B levels have counted-loop replacements. Production merge still requires approval. Future chapter 3 introduces `loop until <direction> <predicate>` (#17); `until` keeps its literal sense. On ordinary floor/wall corridors, `loop until front is blocked` reproduces the historical M2 `while front clear` behaviour. Holes need the separate semantics recorded in `level-design.md` §9.
-- Map graphics + tile types — **next after #16**, tracked in #19. This extends level format, state and execution as well as art: current grids accept only `# . S G`. Holes arrive with chapter 3 and are entered before a fatal outcome; `is clear` means safe to enter, so holes are neither clear nor blocked. Ladders and explicit `climb` are deferred to chapter 5. See `level-design.md` §9 for the recorded contract; #17 and #18 consume it in that order.
+- Loop vocabulary rework — **#16 shipped in PR #21**: chapter 2 uses `loop n` / `end`, and all four Part B levels have counted-loop replacements. Future chapter 3 introduces `loop until <direction> <predicate>` (#17); `until` keeps its literal sense. On ordinary floor/wall corridors, `loop until front is blocked` reproduces the historical M2 `while front clear` behaviour. Holes need the separate semantics recorded in `level-design.md` §9.
+- Map graphics + tile types — **#19 implementation approved**. M5's contract is in `briefs/m5-tile-types.md`; the branch adds `H` support to `# . S G`. Tile infrastructure and start marker arrive first, with holes introduced in chapter-3 puzzles later. Holes are entered before a fatal outcome; `is clear` means safe to enter, so holes are neither clear nor blocked. Ladders and explicit `climb` are deferred to chapter 5. See `level-design.md` §9 for the recorded semantics; #17 and #18 consume them in that order.
+- Broader graphics improvement — **#22**, requested by Jonas 2026-09-07. Agree desktop/mobile mockups before changing art direction; cover board/environment, robot, motion/outcome feedback and UI coherence. Coordinate #8/#19 and preserve legibility. This work is separately scheduled; the locked visual language below remains the baseline until a new direction is approved.
 
 ## 11. Visual language
 

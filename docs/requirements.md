@@ -37,7 +37,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 | Chapter / status | Commands |
 |---|---|
 | 1 — shipped | `move` (1 step forward), `turn left`, `turn right` |
-| 2 — counted-only revision #16 in review | `loop n` / `end`, including nesting; count 1..99, default 2 |
+| 2 — shipped in PR #21 | `loop n` / `end`, including nesting; count 1..99, default 2 |
 | 3 — planned #17, after tile types #19 | Robot sensor and `loop until <direction> <predicate>` |
 | 4 — planned #18 | `if` using the same condition vocabulary |
 | 5 — later | Explicit ladder `climb`, combined concepts, memory upgrades |
@@ -69,11 +69,14 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Commands are placed by dragging them from the palette into memory.
 - Shipped M4 mobile layout: at widths up to 900px the program editor is a floating bottom sheet with grip/chevron, Run/Reset/memory peek bar, tap-to-add and auto-collapse on run.
 
-## 4. Current scope (v0.1 and revision #16)
+## 4. Current scope (through PR #21)
 
-Production baseline is `main` at `32a71ae`. M2 shipped loops and M4 shipped mobile;
-the counted-only chapter-2 revision #16 is in review, awaiting PR/play-testing and
-explicit production-merge approval. Historical M2 mechanics remain in its brief.
+Merged baseline is `main` at `6a67e86`. M2 shipped loops and M4 shipped mobile;
+the counted-only chapter-2 revision #16 was play-tested and merged in PR #21 on
+2026-09-07. Historical M2 mechanics remain in its brief. The #19 tile-system brief
+was approved for implementation on 2026-09-07; local changes are reviewed and
+automated checks pass. Jonas confirmed play-testing and authorized commit/push on
+2026-09-08; production merge remains pending.
 
 In:
 
@@ -89,11 +92,12 @@ Out (roadmap, §5): conditional loops, `if`, sensors, new tile types, memory upg
 
 ## 5. Roadmap (post-MVP)
 
-1. **Current review — #16:** rename historical M2 `repeat` to `loop`, remove `while front clear`, and replace chapter-2 Part B with counted-loop exercises. All IDs and completion marks stay stable. See `level-design.md` §4 and `briefs/m3-counted-loops.md`.
-2. **Next — #19:** tile-type system, holes, visible start marker and richer board art. Define safe-to-enter sensing separately from blocked movement; holes are always fatal. Ladders and explicit `climb` wait for chapter 5.
+1. **Shipped — #16, PR #21:** renamed historical M2 `repeat` to `loop`, removed `while front clear`, and replaced chapter-2 Part B with counted-loop exercises. All IDs and completion marks stay stable. See `level-design.md` §4 and `briefs/m3-counted-loops.md`.
+2. **Implementation approved — #19:** tile-type system, holes, visible start marker and richer board art. Define safe-to-enter sensing separately from blocked movement; holes are always fatal. Preserve all 15 levels; Chapter 3 introduces holes in puzzles. Ladders and explicit `climb` wait for chapter 5. Approved interfaces, visuals and acceptance: `briefs/m5-tile-types.md`.
 3. **Then — #17 → #18:** chapter 3 introduces the robot sensor and `loop until <direction> <predicate>`; chapter 4 reuses the condition vocabulary for `if`. Four chapter-3 levels are designed in `level-design.md` §10; real-executor verification waits for implementation.
 4. **Mobile — shipped in PR #20:** M4's width-based bottom sheet and touch controls are current functionality. Decisions and measured history remain in `design.md` §8.1.
 5. **Ideas beyond:** chapter-5 Mastery and memory upgrades; fog of war, par/star ratings for efficient programs, level sharing.
+6. **Graphics improvement — #22:** improve the game's overall visual quality beyond the current tile slice. Agree a visual direction with Jonas using desktop/mobile mockups, then improve board/environment art, robot appearance, motion/outcome feedback and UI consistency. Coordinate #8 and #19; preserve puzzle readability and reduced-motion support. Requested 2026-09-07, scheduling separate from M5.
 
 ## 6. Non-functional requirements
 

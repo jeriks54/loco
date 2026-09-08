@@ -17,6 +17,7 @@
    by construction). Par is the intended solution size, not a
    claim of global optimality or that nesting is always necessary.
    Grid legend: '#' wall, '.' floor, 'S' start, 'G' goal.
+   The runtime also supports 'H' fatal holes; this chapter has none.
    Grids may exceed M1's 9x7 cap where length is the point (R3).
    ============================================================ */
 

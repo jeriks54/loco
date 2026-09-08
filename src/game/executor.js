@@ -23,6 +23,7 @@
      moved    { from:{x,y}, to:{x,y}, dir }
      turned   newDir ('N'|'E'|'S'|'W')
      crashed  { at:{x,y}, dir }   robot tile at impact
+     fell     { at:{x,y}, dir }   robot entered a hole (terminal)
      goal     { at:{x,y} }        (terminal)
      finished {}                  program ended short of goal (terminal)
      syntax   { at:number }       (terminal) unbalanced loops/ends
@@ -38,7 +39,7 @@
    again after stop() or a terminal event.
    ============================================================ */
 
-import { isBlocked } from './state.js';
+import { isBlocked, tileAt } from './state.js';
 
 export const BASE_TICK_MS = 600;
 
@@ -111,7 +112,7 @@ function analyzeLoops(lines) {
 export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK_MS }) {
   const lines = normalizeLines(program); // snapshot — later edits don't leak in
   const balance = analyzeLoops(lines);
-  const startPose = { ...state.robot };
+  const startPose = { ...(state.start || state.robot) };
 
   let ip = 0;
   let ticks = 0;
@@ -174,6 +175,11 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
       state.robot.x = nx;
       state.robot.y = ny;
       emit('moved', { from, to: { x: nx, y: ny }, dir: state.robot.dir });
+      if (tileAt(state, nx, ny) === 'hole') {
+        halt();
+        emit('fell', { at: { x: nx, y: ny }, dir: state.robot.dir });
+        return;
+      }
       if (nx === state.goal.x && ny === state.goal.y) {
         halt();
         emit('goal', { at: { x: nx, y: ny } });

@@ -11,22 +11,33 @@ reviewed first, every time.
 
 ## State as of 2026-09-07
 
-Production baseline: `main` = `32a71ae`. Shipped and live in production:
+Merged baseline: `main` = `6a67e86` (PR #21). Shipped features:
 
 - **Chapter 1 — Sequence**, 7 levels (`ch1-01..07`), move / turn left / turn right.
-- **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), programs rendered as numbered mono lines. The production M2 version historically uses `repeat n` / `while front clear` / `end`; the counted-only revision below is not production merged.
+- **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), programs rendered as numbered mono lines. Counted `loop n` / `end` replaced historical M2 `repeat` / `while front clear` in PR #21.
 - **Persistence** — `localStorage['loco.progress.v1']` stores completed level ids only. Programs are never saved, so block renames have no migration cost.
 - **M4 mobile bottom sheet** (PR #20) — under `max-width: 900px` the board fills the screen and the program panel is a floating translucent overlay sheet with a grip + chevron, a peek bar carrying Run / Reset / memory count, and auto-collapse on run. Play-tested on a Samsung S26 in Chrome.
 
 15 levels total. Widest grids are 16 cells (ch2-01, ch2-08).
 
-**Current revision #16:** `feat/m3-counted-loops`, approved for implementation on
-2026-09-06, in review awaiting PR/play-testing. The working runtime uses only
+**Completed revision #16:** `feat/m3-counted-loops`, approved for implementation on
+2026-09-06, play-tested and merged on 2026-09-07 in PR #21 (`6a67e86`). The runtime uses only
 counted `loop n` / `end` (nested, default 2, integer 1..99); `repeat` and
 `whileFrontClear` support are removed without aliases. Part B is now Double Step,
 Beyond the Pattern, The Return Trip and Giant Steps (ch2-05..08). All 15 IDs,
 chapter-1 levels, and chapter-2 Part A grids/budgets stay stable; stored completion
-marks are preserved. Production merge still requires jonas' explicit approval.
+marks are preserved.
+
+**Current work #19:** implementation on `feat/m5-tile-types`; see
+`docs/briefs/m5-tile-types.md`. Jonas read and approved the focused tile-system,
+start-marker and hole brief on 2026-09-07. Implementation and manager review are
+complete; Node and desktop/touch checks pass. Jonas confirmed play-testing and
+authorized commit/push on 2026-09-08. Production merge remains pending.
+`node tests/tile-server.mjs` serves the
+hole workshop at localhost:4174 without changing the production level registry.
+For the game-logic and rendering coding agents, use **gpt-5.6-luna**, reasoning
+**high**, as Jonas requested to reduce usage. The manager reviews both deliveries
+and independently verifies integration; agents never run git.
 
 Run retained checks with `node tests/verify.mjs`; see `tests/README.md` for coverage
 and browser play-testing. These use the real executor plus independent path search,
@@ -38,13 +49,13 @@ Open roadmap issues, all labeled `enhancement` + `roadmap`:
 
 | # | What | Note |
 |---|---|---|
-| **#16** | Counted-loop rename and chapter-2 Part B redesign | **Current review**, awaiting PR/play-test; see `docs/briefs/m3-counted-loops.md` |
-| **#19** | Tile-type system + richer map art (holes, ladders) | Infrastructure, not graphics: `state.js` throws on any tile outside `# . S G`, and the world model is one `walls` Set behind a single boolean `isBlocked()` |
+| **#19** | Tile-type system + richer map art | **Implementation approved**: tile lookup, start marker and fatal holes; ladders stay with chapter 5 |
 | **#17** | Chapter 3 — robot sensor + `loop until <direction> <predicate>` | Four levels designed and simulated in `docs/level-design.md` §10; real-executor checks follow implementation |
 | **#18** | Chapter 4 — `if` statements | Reuses chapter 3's condition model |
 | **#8** | Robot board sprite (replace the facing chevron) | Cosmetic; touches `scene.js`, so never parallel with renderer work |
+| **#22** | Improve the game's overall graphics | Jonas requested 2026-09-07; agree visual direction with mockups, covering board, robot, feedback and UI consistency. Coordinate #8/#19; schedule separately |
 
-**After #16 review: #19 → #17 → #18.** Chapter 3's `ch3-03` uses the renamed `loop`, and the
+**Order: #19 → #17 → #18.** Chapter 3's `ch3-03` uses the shipped `loop`, and the
 condition vocabulary should not be designed before the tile types it has to describe.
 
 ## Where things are documented
@@ -52,7 +63,7 @@ condition vocabulary should not be designed before the tile types it has to desc
 - `docs/design.md` — architecture (§2), level format (§3), editor (§5), milestones (§8), **M4 mobile decisions (§8.1)**, workflow + roles + **delegation protocol (§9)**, open design questions (§10), visual language (§11).
 - `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), **decisions D1–D14 (§7)**, risks (§8), **chapters 3–5 mechanics (§9)** and the **four proposed chapter-3 levels (§10)**.
 - `docs/requirements.md` — the product requirements and the post-MVP roadmap (§5).
-- `docs/briefs/` — one implementation brief per milestone. `m3-counted-loops.md` is the current #16 contract; M1/M2/M4 briefs retain their historical scope and decisions.
+- `docs/briefs/` — one implementation brief per milestone. `m5-tile-types.md` is the current #19 proposal; `m3-counted-loops.md` records shipped #16. Earlier briefs retain their historical scope and decisions.
 - `tests/README.md` — retained Node verification and browser play-test checklist.
 
 ## Hard rules
@@ -71,4 +82,4 @@ condition vocabulary should not be designed before the tile types it has to desc
 - **Three dead buttons on the title screen.** Tutorial, Settings and High Scores all still answer with the `> loading X.module .......... not found` joke (`main.js` wires every `[data-module]` except Start Game to it). Documented as intentional in `design.md` §11, but it shipped, and Tutorial is the biggest onboarding gap for a game whose whole promise is teaching.
 - **Five M4 play-test items were never reported on** before the merge: chip-drag versus sheet-drag arbitration, right-edge clipping on ch2-01/ch2-08, the board not rescaling across detents, the desktop check across 900px, and heading legibility over the maze. The chip-drag one is the interaction that could only be verified by reading code — look there first if anything feels off.
 - **Sheet translucency is a dial, not a settled value.** Currently 25% leak. `styles/main.css`'s "Sheet translucency" comment has the measured contrast table and how to change it.
-- **The start tile is never drawn.** `S` gets an ordinary floor dot, so once the robot moves there's no trace of where it began. Folded into #19.
+- **Start marker:** merged baseline draws an ordinary floor dot; the M5 branch now draws a persistent outlined `S`, pending play-test and merge.

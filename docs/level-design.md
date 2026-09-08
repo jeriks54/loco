@@ -1,6 +1,6 @@
 # LoCo — Level Design
 
-Curriculum, concept progression, and level plan. Chapter 2’s counted-loop redesign (§3–§6) was approved for implementation on 2026-09-06 (#16). Sections 9–10 describe future chapters with recorded decisions D8–D14; implementation remains deferred. Historical M2 intent is preserved in its brief.
+Curriculum, concept progression, and level plan. Chapter 2’s counted-loop redesign (§3–§6) was play-tested and merged in PR #21 on 2026-09-07 (#16). Sections 9–10 describe future chapters with recorded decisions D8–D14. The #19 infrastructure brief, `briefs/m5-tile-types.md`, was approved for implementation on 2026-09-07; new chapter implementation remains deferred. Historical M2 intent is preserved in its brief.
 
 ## 1. Purpose
 
@@ -11,7 +11,7 @@ Requirements §7 left two things to level design: the exact level count and the 
 | Chapter | Concept | New blocks | Status |
 |---|---|---|---|
 | 1 — Sequence | Programs run top to bottom; turns are relative | `move`, `turn left`, `turn right` | Shipped (7 levels, ch1-01..07) |
-| 2 — Loops | Counted repetition as compression | `loop n`, `end` | 8 levels; counted-only revision in review (#16) |
+| 2 — Loops | Counted repetition as compression | `loop n`, `end` | Shipped (8 levels; #16, PR #21) |
 | 3 — Sensing | Conditional loops on the world; the robot reads a sensor; **holes** as the first hazard tile | `loop until <direction> <predicate>` | Planned — #17 + #19 (4 levels designed, §10) |
 | 4 — Decisions | Branching on the same conditions | `if` (+ `else`?) | Planned — #18 |
 | 5 — Mastery | Everything combined, **ladders + `climb`**, memory upgrades as collectibles | `climb` | Later — #19 |
@@ -155,11 +155,13 @@ still feels varied enough around the U-shaped third exercise.
 - Slack policy: the current chapter-2 revision gives +1 at ch2-05; other budgets equal intended par. Future chapters may add slack when introducing a new concept.
 - Later chapters: difficulty via maze ambiguity (forks, sensors needed) + mixed concepts, not just longer programs.
 
-## 6. Current implementation scope (#16)
+## 6. Shipped #16 scope and approved #19 work
 
-Rename runtime/editor vocabulary, redesign ch2-05..08, retain independent Node
-verification, and review desktop/mobile integration. See `briefs/m3-counted-loops.md`.
-No sensing, holes, ladders, new chapters, scoring or layout redesign in this revision.
+PR #21 renamed runtime/editor vocabulary, redesigned ch2-05..08 and retained
+independent Node verification plus desktop/mobile checks. See `briefs/m3-counted-loops.md`.
+Next, #19 prepares tile lookup, fatal-hole handling and start/hole rendering while
+preserving these 15 levels. Its approved contract is `briefs/m5-tile-types.md`.
+New chapter-3 puzzles and sensor blocks remain #17; ladders remain chapter 5.
 
 ## 7. Decision record (jonas)
 
@@ -198,7 +200,8 @@ Chapter 3–5 watch-items (added 2026-09-05):
 
 ### 9.1 Tile types (#19)
 
-The grid vocabulary is four characters today and `state.js` **throws** on anything else. Extend it:
+The merged baseline uses four grid characters. The approved M5 branch adds `H`
+while still rejecting unknown characters; new chapter-3 levels remain deferred:
 
 | char | tile | enterable | effect on entry | sensor reads |
 |---|---|---|---|---|
@@ -287,7 +290,7 @@ ch3-02 Two Halls (14x8)           ################
 ##############                    ################
 ```
 
-**ch3-03 depends on #16** — it uses the renamed `loop`. Chapter 3 cannot ship before this revision lands.
+**ch3-03's #16 dependency is satisfied** by PR #21's renamed `loop`. Chapter 3 still depends on #19 tile support and #17 sensor implementation.
 
 ### Verification status (2026-09-05)
 

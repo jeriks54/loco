@@ -17,6 +17,7 @@ const MOVE_MS = 220;   // < slowest tick (300 ms at x2), so tweens finish in tim
 const TURN_MS = 160;
 const CRASH_MS = 340;
 const GOAL_MS = 750;
+const FALL_MS = 180;
 
 const DIR_ANGLE = { N: -Math.PI / 2, E: 0, S: Math.PI / 2, W: Math.PI };
 
@@ -60,6 +61,9 @@ export function createScene({ canvas }) {
   const robot = { x: 0, y: 0, dir: 'E' };
   let angle = 0;          // rendered facing (radians)
   let anim = null;        // {kind:'move'|'turn', ...}
+  let pendingFall = null; // terminal fall queued behind the move tween
+  let fall = null;        // {t0, dur}; robot shrinks/fades at the destination
+  let robotHidden = false;
   const fx = { crash: -1, goal: -1 }; // start timestamps, -1 = inactive
   let frameId = null;
 
@@ -95,6 +99,7 @@ export function createScene({ canvas }) {
 
   function loopActive(now) {
     if (anim) return true;
+    if (pendingFall || fall) return true;
     if (fx.crash >= 0 && now - fx.crash < CRASH_MS) return true;
     if (fx.goal >= 0 && now - fx.goal < GOAL_MS) return true;
     return false;
@@ -134,8 +139,11 @@ export function createScene({ canvas }) {
       for (let x = 0; x < state.cols; x += 1) {
         const px = x * tile;
         const py = y * tile;
-        const isWall = state.walls.has(y * state.cols + x);
-        const isGoal = x === state.goal.x && y === state.goal.y;
+        const index = y * state.cols + x;
+        const isWall = state.walls.has(index);
+        const type = state.tiles?.[index]
+          || (isWall ? 'wall' : (x === state.goal.x && y === state.goal.y ? 'goal' : 'floor'));
+        const isGoal = type === 'goal' || (x === state.goal.x && y === state.goal.y);
 
         if (isWall) {
           ctx.fillStyle = C.surface2;
@@ -148,6 +156,28 @@ export function createScene({ canvas }) {
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText('#', px + tile / 2, py + tile / 2 + tile * 0.03);
+        } else if (type === 'hole') {
+          // A dark inset with two rims remains legible at the minimum tile size.
+          const outer = tile * 0.14;
+          const inner = tile * 0.22;
+          ctx.fillStyle = C.bg;
+          ctx.fillRect(px + outer, py + outer, tile - outer * 2, tile - outer * 2);
+          ctx.strokeStyle = C.muted;
+          ctx.lineWidth = Math.max(1, tile * 0.07);
+          ctx.strokeRect(px + outer + 0.5, py + outer + 0.5, tile - outer * 2 - 1, tile - outer * 2 - 1);
+          ctx.strokeStyle = C.border;
+          ctx.lineWidth = Math.max(1, tile * 0.06);
+          ctx.strokeRect(px + inner + 0.5, py + inner + 0.5, tile - inner * 2 - 1, tile - inner * 2 - 1);
+        } else if (type === 'start') {
+          const inset = tile * 0.19;
+          ctx.strokeStyle = C.muted;
+          ctx.lineWidth = Math.max(1, tile * 0.06);
+          ctx.strokeRect(px + inset + 0.5, py + inset + 0.5, tile - inset * 2 - 1, tile - inset * 2 - 1);
+          ctx.fillStyle = C.muted;
+          ctx.font = `700 ${Math.max(8, Math.round(tile * 0.42))}px ${MONO}`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('S', px + tile / 2, py + tile / 2 + tile * 0.02);
         } else {
           if (!isGoal) {
             // faint floor dot
@@ -206,13 +236,24 @@ export function createScene({ canvas }) {
   }
 
   function drawRobot(now) {
+    if (robotHidden) return null;
     const p = robotPixel(now);
     const a = robotAngle(now);
     const r = tile * 0.3;
+    let alpha = 1;
+    let scale = 1;
+    if (fall) {
+      const t = Math.min(1, (now - fall.t0) / fall.dur);
+      const k = easeOutCubic(t);
+      alpha = 1 - k;
+      scale = 1 - 0.75 * k;
+    }
 
     ctx.save();
     ctx.translate(p.cx, p.cy);
     ctx.rotate(a);
+    ctx.globalAlpha *= alpha;
+    ctx.scale(scale, scale);
     ctx.shadowColor = C.accentGlow;
     ctx.shadowBlur = 16;
     ctx.fillStyle = C.accent;
@@ -250,7 +291,7 @@ export function createScene({ canvas }) {
     const p = drawRobot(now);
 
     // crash accent flash over the robot tile
-    if (fx.crash >= 0) {
+    if (fx.crash >= 0 && p) {
       const t = (now - fx.crash) / CRASH_MS;
       if (t < 1) {
         ctx.save();
@@ -288,6 +329,20 @@ export function createScene({ canvas }) {
         if (anim.kind === 'turn') angle = anim.to;
         anim = null;
       }
+    }
+    if (!anim && pendingFall) {
+      if (reducedMotion) {
+        pendingFall = null;
+        fall = null;
+        robotHidden = true;
+      } else {
+        fall = { t0: now, dur: FALL_MS };
+        pendingFall = null;
+      }
+    }
+    if (fall && now - fall.t0 >= fall.dur) {
+      fall = null;
+      robotHidden = true;
     }
     if (fx.crash >= 0 && now - fx.crash >= CRASH_MS) fx.crash = -1;
     if (fx.goal >= 0 && now - fx.goal >= GOAL_MS) fx.goal = -1;
@@ -327,6 +382,9 @@ export function createScene({ canvas }) {
       robot.dir = state.robot.dir;
       angle = DIR_ANGLE[robot.dir];
       anim = null;
+      pendingFall = null;
+      fall = null;
+      robotHidden = false;
       fx.crash = -1;
       fx.goal = -1;
       refresh();
@@ -354,6 +412,17 @@ export function createScene({ canvas }) {
         invalidate();
       } else if (type === 'goal') {
         if (!reducedMotion) fx.goal = now;
+        invalidate();
+      } else if (type === 'fell') {
+        robot.dir = payload.dir;
+        if (reducedMotion) {
+          anim = null;
+          pendingFall = null;
+          fall = null;
+          robotHidden = true;
+        } else {
+          pendingFall = { at: payload.at, dir: payload.dir };
+        }
         invalidate();
       }
       // 'step' and 'finished' have no scene business

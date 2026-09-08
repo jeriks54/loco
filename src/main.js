@@ -172,8 +172,8 @@ function handleEvent(type, payload) {
     editor.highlight(payload);
     return;
   }
-  scene.handleEvent(type, payload); // moved / turned / crashed / goal
-  if (type === 'crashed' || type === 'finished' || type === 'goal' || type === 'syntax' || type === 'runaway') {
+  scene.handleEvent(type, payload); // moved / turned / crashed / fell / goal
+  if (type === 'crashed' || type === 'fell' || type === 'finished' || type === 'goal' || type === 'syntax' || type === 'runaway') {
     editor.setRunning(false);
     editor.clearHighlight();
     hud.setRunning(false);
@@ -208,6 +208,10 @@ function run() {
   stopRun();
   hud.hideOverlay();
   executor = createExecutor({ state, program, onEvent: handleEvent });
+  // Every Run starts at the level entrance, including after a fall. Reset the
+  // renderer too so an earlier fall cannot leave the robot hidden.
+  executor.reset();
+  scene.render(state);
   editor.setRunning(true);
   hud.setRunning(true);
   sheet.collapse(); // the run plays out on the board, not behind an expanded sheet

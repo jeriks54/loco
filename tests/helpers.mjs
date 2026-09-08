@@ -3,7 +3,7 @@ import { createLevelState } from '../src/game/state.js';
 import { createExecutor, MAX_TICKS } from '../src/game/executor.js';
 
 export const loop = (count) => ({ id: 'loop', count });
-export const terminals = new Set(['goal', 'crashed', 'finished', 'syntax', 'runaway']);
+export const terminals = new Set(['goal', 'crashed', 'fell', 'finished', 'syntax', 'runaway']);
 
 // Replace pacing, not the interpreter. All callbacks still come from the real
 // executor. Tests using this helper run synchronously in one Node process.
@@ -69,7 +69,7 @@ export function shortestSequence(level) {
       const next = command === 'move' ? [x + dx[d], y + dy[d], d]
         : [x, y, (d + (command === 'turnRight' ? 1 : 3)) % 4];
       const tile = level.grid[next[1]]?.[next[0]];
-      if (!tile || tile === '#' || seen.has(next.join(','))) continue;
+      if (!tile || tile === '#' || tile === 'H' || seen.has(next.join(','))) continue;
       seen.add(next.join(','));
       queue.push({ pose: next, program: [...program, command] });
     }

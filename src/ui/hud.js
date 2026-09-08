@@ -11,6 +11,7 @@
    ============================================================ */
 
 const RESULT_COPY = {
+  fell: '> FELL — robot dropped into a hole.',
   crashed: '> CRASHED — robot met a wall.',
   finished: '> FELL SHORT — robot stopped before the exit.',
   goal: '> LEVEL COMPLETE.',
