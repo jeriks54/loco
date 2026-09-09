@@ -11,8 +11,14 @@ export const BLOCK_DEFS = {
   turnLeft: { label: 'turn left', glyph: '↰' },
   turnRight: { label: 'turn right', glyph: '↱' },
   loop: { label: 'loop', glyph: '↻' },
-  loopUntil: { label: 'loop until wall ahead', glyph: '↻' },
+  loopUntil: { label: 'loop until', glyph: '↻' },
   end: { label: 'end', glyph: '■' },
+};
+
+/** Operands used by the editable loop-until expression. */
+export const CONDITION_DEFS = {
+  wallSensor: { label: 'wall sensor', slot: 'sensor', glyph: '◉' },
+  blocked: { label: 'blocked', slot: 'value', glyph: '=' },
 };
 
 /** Inner markup shared by palette chips and the drag ghost. */
@@ -22,7 +28,12 @@ export function chipHTML(blockId) {
   return `<span class="chip-label">${def.label}</span><span class="chip-glyph">${def.glyph}</span>`;
 }
 
-export function renderPalette(container, blocks) {
+function conditionChipHTML(conditionId) {
+  const def = CONDITION_DEFS[conditionId];
+  return `<span class="chip-label">${def.label}</span><span class="chip-glyph">${def.glyph}</span>`;
+}
+
+export function renderPalette(container, blocks, sensor) {
   container.innerHTML = '';
   for (const id of blocks) {
     const chip = document.createElement('div');
@@ -32,5 +43,21 @@ export function renderPalette(container, blocks) {
     chip.setAttribute('aria-label', `${BLOCK_DEFS[id].label} block — drag into robot memory`);
     chip.innerHTML = chipHTML(id);
     container.appendChild(chip);
+  }
+
+  // Conditions are operands for the loop-until line, never independent
+  // memory entries. They are unlocked only with the matching equipment.
+  if (blocks.includes('loopUntil') && sensor === 'frontWall') {
+    for (const id of Object.keys(CONDITION_DEFS)) {
+      const def = CONDITION_DEFS[id];
+      const chip = document.createElement('div');
+      chip.className = 'block-chip condition-chip';
+      chip.dataset.condition = id;
+      chip.dataset.slot = def.slot;
+      chip.setAttribute('role', 'button');
+      chip.setAttribute('aria-label', `${def.label} operand — place in a ${def.slot} slot`);
+      chip.innerHTML = conditionChipHTML(id);
+      container.appendChild(chip);
+    }
   }
 }

@@ -39,13 +39,21 @@ try {
       for (const entry of sensorSolutions[i]) {
         const chip = page.locator(`#palette [data-block="${typeof entry === 'string' ? entry : entry.id}"]`);
         if (mobile) await chip.tap(); else await chip.click();
-        if (typeof entry !== 'string') {
+        if (entry.id === 'loop') {
           const line = page.locator('#program .filled').last();
           for (let c = 2; c < entry.count; c++) await line.getByLabel('increase loop count').click();
         }
+        if (entry.id === 'loopUntil') {
+          const line = page.locator('#program .filled').last();
+          await line.locator('[data-slot="sensor"]').click();
+          await page.locator('#palette [data-condition="wallSensor"]').click();
+          await line.locator('[data-slot="value"]').click();
+          await page.locator('#palette [data-condition="blocked"]').click();
+        }
       }
       assert.equal(await page.locator('#program .filled').count(), sensorSolutions[i].length);
-      assert.ok(await page.locator('.sensor-token').evaluateAll(els => els.every(e => e.textContent === 'loop until wall ahead' && !e.querySelector('button'))));
+      assert.ok(await page.locator('[data-slot="sensor"]').evaluateAll(els => els.every(e => e.textContent.includes('wall sensor'))));
+      assert.ok(await page.locator('[data-slot="value"]').evaluateAll(els => els.every(e => e.textContent.includes('blocked'))));
       assert.ok(await page.locator('#program .line-code').evaluateAll(els => els.every(e => e.scrollWidth <= e.clientWidth + 1)), 'line clipping');
       if (i === 3) {
         await page.screenshot({ path: resolve(screenshots, `sensors-${mobile ? 'phone' : 'desktop'}.png`) });

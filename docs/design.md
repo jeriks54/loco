@@ -75,9 +75,11 @@ wall/outside, while `isSafeToEnter` accepts only floor/start/goal. See the appro
 ## 4. Execution model
 
 - A program is an ordered array, `length <= memory`: simple commands are `move`, `turnLeft`, `turnRight`, `end` strings; counted loops are `{ id: 'loop', count }` objects.
-- M6 adds plain-string `loopUntil`, displayed as `loop until wall ahead`. A header
+- M6 adds `{ id: 'loopUntil', sensor, value }`, displayed as
+  `loop until [wall sensor] = [blocked]`. Both slots begin null and must be filled
+  with typed palette operands; equality is fixed. A header
   checks the adjacent wall before each body iteration; true skips the body.
-  Both loop types nest and share `end`. Missing front-wall equipment refuses
+  Both loop types nest and share `end`. Missing/wrong operands or equipment refuse
   execution before movement. Counted and sensed headers each cost one tick.
 - `loop n` … `end` repeats the body n times and supports nesting. Count defaults to 2 and is clamped to integer 1..99 (`LOOP_MIN` / `LOOP_MAX`). Chapter 2 has counted loops only; sensing belongs to future chapter 3. No `repeat` or `whileFrontClear` aliases remain in revision #16.
 - Balance is validated before movement; unmatched openers/ends emit terminal `syntax`. The 200-executed-line guard emits terminal `runaway`.
@@ -256,7 +258,7 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — **shipped in PR #20**, recorded in §8.1 and tracked in issue #15.
-- **#17 direction revised 2026-09-08:** Chapter 3 uses fixed `loop until wall ahead` and an automatically fitted front wall sensor. The older direction/predicate selectors and hole sensor are deferred. Holes appear as visible hazards but do not trigger the wall sensor. See `level-design.md` §9–10 and the M6 brief.
+- **#17 preview correction:** Chapter 3 keeps its automatically fitted front wall sensor but players construct `loop until [wall sensor] = [blocked]` by dragging operands into two initially empty slots. No mounting selector or hole sensor. See `briefs/m6-condition-slots.md`; this supersedes the fixed-label implementation.
 - **#19 first slice shipped PR #23:** tile infrastructure, start marker and fatal holes. Ladders and explicit `climb` remain chapter-5 work.
 - **Future equipment/rewards:** sensors can eventually be acquired and mounted at selected robot locations. Candidate types: wall, hole, distance, terrain. Purchase using earned rewards versus automatic chapter rewards is deliberately undecided; do not build that system into M6.
 - Broader graphics improvement — **#22**, requested by Jonas 2026-09-07. Agree desktop/mobile mockups before changing art direction; cover board/environment, robot, motion/outcome feedback and UI coherence. Coordinate #8/#19 and preserve legibility. This work is separately scheduled; the locked visual language below remains the baseline until a new direction is approved.

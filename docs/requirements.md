@@ -38,7 +38,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 |---|---|
 | 1 — shipped | `move` (1 step forward), `turn left`, `turn right` |
 | 2 — shipped in PR #21 | `loop n` / `end`, including nesting; count 1..99, default 2 |
-| 3 — M6 implementation #17 | Automatic front wall sensor and fixed `loop until wall ahead` / `end` |
+| 3 — M6 implementation #17 | Automatic front wall sensor and `loop until [sensor] = [value]` / `end`; fill with wall sensor and blocked |
 | 4 — planned #18 | `if` using the same condition vocabulary |
 | 5 — later | Explicit ladder `climb`, combined concepts, memory upgrades |
 
@@ -98,7 +98,7 @@ ladders, memory upgrades and scoring.
 
 1. **Shipped — #16, PR #21:** renamed historical M2 `repeat` to `loop`, removed `while front clear`, and replaced chapter-2 Part B with counted-loop exercises. All IDs and completion marks stay stable. See `level-design.md` §4 and `briefs/m3-counted-loops.md`.
 2. **First slice shipped — #19, PR #23:** tile types, fatal holes, start marker and fall feedback. Original 15 levels preserved. Ladders and explicit `climb` wait for chapter 5.
-3. **Current — #17, then #18:** Chapter 3 automatically equips a front wall sensor and introduces `loop until wall ahead`; holes occur in maps but have no sensor. Chapter 4 later adds `if`. See `briefs/m6-front-wall-sensor.md` and `level-design.md` §9–10; older condition selectors are superseded.
+3. **Current — #17, then #18:** Chapter 3 automatically equips a front wall sensor. Players drag `wall sensor` and `blocked` into two initially empty fields of `loop until [sensor] = [value]`; the expression costs one line. Incomplete conditions refuse Run before movement. Holes occur in maps but have no sensor. Chapter 4 later adds `if`. Current corrective contract: `briefs/m6-condition-slots.md`.
 4. **Mobile — shipped in PR #20:** M4's width-based bottom sheet and touch controls are current functionality. Decisions and measured history remain in `design.md` §8.1.
 5. **Ideas beyond:** chapter-5 Mastery and memory upgrades; fog of war, par/star ratings for efficient programs, level sharing.
 6. **Graphics improvement — #22:** improve the game's overall visual quality beyond the current tile slice. Agree a visual direction with Jonas using desktop/mobile mockups, then improve board/environment art, robot appearance, motion/outcome feedback and UI consistency. Coordinate #8 and #19; preserve puzzle readability and reduced-motion support. Requested 2026-09-07, scheduling separate from M5.

@@ -95,8 +95,12 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
       }
     },
 
-    showResult(type, { hasNext }) {
-      resultText.textContent = RESULT_COPY[type];
+    showResult(type, { hasNext, reason }) {
+      resultText.textContent = type === 'syntax' && reason === 'condition'
+        ? '> INCOMPLETE CONDITION — fill the sensor and value slots.'
+        : type === 'syntax' && reason === 'sensor'
+          ? '> SENSOR MISSING — this level needs a front wall sensor.'
+          : RESULT_COPY[type];
       nextBtn.classList.toggle('hidden', !(type === 'goal' && hasNext));
       overlayEl.classList.remove('hidden');
     },

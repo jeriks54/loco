@@ -177,7 +177,7 @@ function handleEvent(type, payload) {
     editor.setRunning(false);
     editor.clearHighlight();
     hud.setRunning(false);
-    hud.showResult(type, { hasNext: currentIndex < levels.length - 1 });
+    hud.showResult(type, { hasNext: currentIndex < levels.length - 1, reason: payload?.reason });
     if (type === 'goal') {
       // save progress and refresh the already-rendered level list
       progress = markCompleted(levels[currentIndex].id);

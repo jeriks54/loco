@@ -1,5 +1,11 @@
 # M6 — Chapter 3: front wall sensor (#17)
 
+**Correction after preview:** Jonas rejected the fixed condition text and requested
+two operand drop slots. `m6-condition-slots.md` is the current UI/data contract:
+`loop until [wall sensor] = [blocked]`, initially empty. This brief's original
+plain-string/label contract below is historical; level grids and sensor physics
+remain current.
+
 Jonas approved the short plan and requested implementation on 2026-09-08.
 Branch: `feat/m6-front-wall-sensor`, based on merged M5 `2d4bd42` (PR #23).
 

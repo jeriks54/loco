@@ -209,8 +209,11 @@ chapter-completion rewards remains undecided; no economy or equipment UI ships n
 Chapter 3 automatically fits one front wall sensor. It reads only the next tile
 in the robot's facing direction; turns rotate the sensor. Wall and out-of-bounds
 read true; holes, floor, start and goal read false. It does not stop a move by
-itself. The player uses `loop until wall ahead` / `end`, checked before each
-iteration. No direction/predicate selectors and no hole sensor in Chapter 3.
+itself. The player constructs `loop until [wall sensor] = [blocked]` / `end`,
+checked before each iteration. The two typed slots begin empty and accept dragged
+or tapped operands. Missing operands refuse execution; the header still costs
+one memory line. No mounting selector and no hole sensor in Chapter 3.
+See `briefs/m6-condition-slots.md` for the post-preview correction.
 
 This supersedes D9, D11 and D13's earlier UI decisions. D8 (explicit climb later),
 D10 (sensing plus holes), D12 (fatal holes) and D14 (four levels) remain.

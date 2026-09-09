@@ -64,3 +64,11 @@ fall checks. Human play-testing still judges sensor motion and puzzle feel.
 
 For the full game with Chapter 3, use `node tests/tile-server.mjs --game` and open
 `http://127.0.0.1:4175`. This mode serves the actual registry, not workshop fixtures.
+
+The PR #24 correction uses two operand slots. Run `node tests/conditions-browser.mjs`
+with the same Playwright setting for typed drag/drop, command rejection on slots,
+wrong/outside/cancelled drops, tap-selected and first-empty placement, slot clearing,
+memory-capacity placement, incomplete-condition feedback, running lock, nesting and
+280/320/390px screenshots. `sensors.mjs` also refuses missing/wrong operands before
+movement and checks condition snapshots; solutions construct explicit wall/blocked
+objects. `sensors-browser.mjs` fills both slots for all four Chapter 3 solutions.

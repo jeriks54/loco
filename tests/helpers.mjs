@@ -3,6 +3,7 @@ import { createLevelState } from '../src/game/state.js';
 import { createExecutor, MAX_TICKS } from '../src/game/executor.js';
 
 export const loop = (count) => ({ id: 'loop', count });
+export const untilWall = () => ({ id: 'loopUntil', sensor: 'wallSensor', value: 'blocked' });
 export const terminals = new Set(['goal', 'crashed', 'fell', 'finished', 'syntax', 'runaway']);
 
 // Replace pacing, not the interpreter. All callbacks still come from the real

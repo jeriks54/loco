@@ -6,7 +6,7 @@
 
    Program entries: plain strings for simple blocks,
    { id: 'loop', count } for counted loop (count 1..99, default 2),
-   or the plain string 'loopUntil' for a front-wall sensed loop.
+   or { id:'loopUntil', sensor:'wallSensor', value:'blocked' }.
 
    Loops: 'loop' or 'loopUntil' opens a loop, 'end'
    closes the nearest open one. Balance is validated BEFORE
@@ -77,6 +77,9 @@ function normalizeLines(program) {
       count = Math.min(LOOP_MAX, Math.max(LOOP_MIN, count));
       return { kind: 'loop', count };
     }
+    if (id === 'loopUntil') {
+      return { kind: id, sensor: entry?.sensor, value: entry?.value };
+    }
     if (SIMPLE_KINDS.has(id)) return { kind: id };
     throw new Error(`unknown block '${id}'`);
   });
@@ -113,6 +116,8 @@ function analyzeLoops(lines) {
 export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK_MS }) {
   const lines = normalizeLines(program); // snapshot — later edits don't leak in
   const balance = analyzeLoops(lines);
+  const invalidConditionAt = lines.findIndex(line => line.kind === 'loopUntil'
+    && (line.sensor !== 'wallSensor' || line.value !== 'blocked'));
   const missingSensorAt = state.sensor === 'frontWall'
     ? -1
     : lines.findIndex((line) => line.kind === 'loopUntil');
@@ -256,7 +261,11 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
       }
       if (missingSensorAt >= 0) {
         // Sensed programs require the level-fitted front wall equipment.
-        emit('syntax', { at: missingSensorAt });
+        emit('syntax', { at: missingSensorAt, reason: 'sensor' });
+        return;
+      }
+      if (invalidConditionAt >= 0) {
+        emit('syntax', { at: invalidConditionAt, reason: 'condition' });
         return;
       }
       running = true;

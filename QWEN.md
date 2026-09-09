@@ -35,8 +35,10 @@ future work. `node tests/tile-server.mjs` still serves the isolated hole worksho
 
 **Current #17 / M6:** Jonas requested implementation of the agreed Chapter 3 plan
 on 2026-09-08. `feat/m6-front-wall-sensor` adds four levels with automatically
-fitted front wall equipment and fixed `loop until wall ahead` / `end`. Holes are
-hazards, never detected by this sensor. No condition/direction selectors, shop,
+fitted front wall equipment. After the first preview Jonas requested two typed
+operand slots: `loop until [wall sensor] = [blocked]` / `end`, initially empty.
+See `docs/briefs/m6-condition-slots.md` for the corrective implementation contract.
+Holes are hazards, never detected by this sensor. No mounting selectors, shop,
 currency or equipment inventory. Brief: `docs/briefs/m6-front-wall-sensor.md`.
 Local implementation and manager review are complete; Node, Chapter 2/3 browser
 flows and real-paced hole regressions pass. Jonas authorized publishing the branch
@@ -63,7 +65,7 @@ Open roadmap issues, all labeled `enhancement` + `roadmap`:
 | # | What | Note |
 |---|---|---|
 | **#19** | Tile types + map art | First slice shipped PR #23; ladders stay with chapter 5 |
-| **#17** | Chapter 3 — front wall sensor + `loop until wall ahead` | Current M6; four levels, automatically equipped, no hole sensor |
+| **#17** | Chapter 3 — front wall sensor + constructed loop condition | Current M6 / PR #24; two operand slots, four levels, no hole sensor |
 | **#18** | Chapter 4 — `if` statements | Reuses chapter 3's condition model |
 | **#8** | Robot board sprite (replace the facing chevron) | Cosmetic; touches `scene.js`, so never parallel with renderer work |
 | **#22** | Improve the game's overall graphics | Jonas requested 2026-09-07; agree visual direction with mockups, covering board, robot, feedback and UI consistency. Coordinate #8/#19; schedule separately |
