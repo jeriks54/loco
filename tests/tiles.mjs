@@ -7,7 +7,7 @@ import { execute, shortestSequence, loop, withClock } from './helpers.mjs';
 import { holeBoard, holeTrap } from './tile-fixtures.mjs';
 
 // Full serialized registry recorded from main 6a67e86 before M5 edits.
-assert.equal(createHash('sha256').update(JSON.stringify(levels)).digest('hex'),
+assert.equal(createHash('sha256').update(JSON.stringify(levels.slice(0, 15))).digest('hex'),
   '2e901f16950b57b687a71348ef931afb7227a060b9d90cbffdfc13d522cd518e', 'M5 must preserve all 15 level definitions');
 const state = createLevelState(holeBoard);
 assert.equal(state.tiles.length, state.cols * state.rows);

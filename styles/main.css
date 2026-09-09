@@ -577,6 +577,24 @@ button {
   min-height: 0;
 }
 
+.sensor-note {
+  flex: none;
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.sensor-token {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.block-chip[data-block="loopUntil"] {
+  max-width: 100%;
+  white-space: normal;
+}
+
 .board-panel {
   display: flex;
   align-items: center;
@@ -754,6 +772,23 @@ button {
   min-width: 0;
 }
 
+.condition-code {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.condition-code > .line-token.kw {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.condition-code > .condition-expression {
+  flex: 1 1 12rem;
+  max-width: 100%;
+}
+
 .line-token {
   color: var(--text);
 }
@@ -761,6 +796,114 @@ button {
 /* loop keywords read like code structure */
 .line-token.kw {
   color: var(--accent);
+}
+
+/* Editable loop-until expression. The expression is allowed to wrap inside
+   its one numbered line so narrow sheets keep both operands reachable. */
+.condition-expression {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4ch;
+  min-width: 0;
+}
+
+.condition-slot-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2ch;
+  max-width: 100%;
+}
+
+.condition-slot,
+.condition-clear {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+
+.condition-slot {
+  min-width: 5.2ch;
+  max-width: 100%;
+  padding: 0.12rem 0.45rem;
+  border-radius: 5px;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.condition-slot:not(.selected):hover,
+.condition-slot:focus-visible {
+  border-color: var(--accent);
+}
+
+.condition-slot.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow), 0 0 10px var(--accent-soft);
+}
+
+.condition-slot.drop-target {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 10px var(--accent-soft);
+}
+
+.condition-slot.drop-reject {
+  border-color: var(--muted);
+  opacity: 0.65;
+}
+
+.condition-slot:disabled,
+.condition-clear:disabled {
+  cursor: default;
+}
+
+.condition-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.condition-clear:hover,
+.condition-clear:focus-visible {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.condition-comparison {
+  color: var(--muted);
+  user-select: none;
+}
+
+.condition-chip {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+}
+
+.condition-chip .chip-glyph {
+  color: var(--accent);
+}
+
+.editor-message {
+  min-height: 1.1rem;
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.editor-message:empty {
+  display: none;
 }
 
 .line.empty .line-no {

@@ -53,6 +53,7 @@ const pad2 = (n) => String(n).padStart(2, '0');
 const CHAPTER_HEADERS = {
   ch1: 'CHAPTER 1 — SEQUENCE',
   ch2: 'CHAPTER 2 — LOOPS',
+  ch3: 'CHAPTER 3 — SENSING',
 };
 const GENERIC_CHAPTER_HEADER = 'CHAPTER ? — UNEXPLORED';
 

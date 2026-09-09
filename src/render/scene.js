@@ -1,3 +1,5 @@
+import { isWallAhead } from '../game/state.js';
+
 /* ============================================================
    LoCo — canvas scene renderer (design.md §2, §6, §11)
    ASCII identity: floor '.', walls '#', goal as a small
@@ -264,6 +266,22 @@ export function createScene({ canvas }) {
     ctx.lineTo(-r * 0.85, r * 0.8);   // rear lower
     ctx.closePath();
     ctx.fill();
+
+    // The front wall sensor is part of the robot sprite so it follows the
+    // same local rotation, movement tween and fall fade/shrink as the body.
+    if (state.sensor === 'frontWall') {
+      const sensorSize = tile * 0.12;
+      const sensorX = r * 1.32;
+      const sensorBlocked = isWallAhead(state);
+      ctx.shadowBlur = 8;
+      ctx.strokeStyle = C.accent;
+      ctx.lineWidth = Math.max(1, tile * 0.045);
+      if (sensorBlocked) {
+        ctx.fillStyle = C.accent;
+        ctx.fillRect(sensorX - sensorSize / 2, -sensorSize / 2, sensorSize, sensorSize);
+      }
+      ctx.strokeRect(sensorX - sensorSize / 2, -sensorSize / 2, sensorSize, sensorSize);
+    }
     ctx.restore();
     return p;
   }

@@ -28,6 +28,12 @@ M5 adds `tiles.mjs` (also run by `verify.mjs`): full 15-level registry hash from
 independent BFS excluding holes, and fresh-executor restart. `tile-fixtures.mjs`
 contains test-only grids; production imports none of these files.
 
+M6 appends four levels: the M5 baseline hash now protects the first 15 entries.
+`sensors.mjs` (included in `verify.mjs`) checks all four intended programs,
+independent loop-free minima, wall directions/boundaries, invisible holes,
+mixed nesting, empty sensed loops, missing equipment and restart.
+`chapter3-solutions.mjs` retains intended programs separately from level data.
+
 Optional browser acceptance checks use an already-installed Playwright module and
 Chrome. Set `LOCO_PLAYWRIGHT_MODULE` to the absolute path to `playwright/index.mjs`,
 then run `node tests/browser.mjs`. It starts a temporary localhost server and an
@@ -48,3 +54,30 @@ single workshop fixture instead of the level registry. Move twice to fall; use
 Retry or Reset to return. Stop with Ctrl+C. It listens on localhost only, so it
 does not provide a remote phone/Vercel fixture link. Existing levels and production
 deployment remain unchanged; the workshop's progress is isolated by its origin.
+
+Run `node tests/sensors-browser.mjs` with the same Playwright setting to exercise
+all Chapter 3 solutions on desktop and touch, complete condition labels, 280–901px
+fit, automatic sensor explanation, completion marks, and canvas cue orientation,
+wall detection, hole exclusion and absence without equipment. These game flows
+use accelerated tick timers and fallback fonts; tile-browser retains real-paced
+fall checks. Human play-testing still judges sensor motion and puzzle feel.
+
+For the full game with Chapter 3, use `node tests/tile-server.mjs --game` and open
+`http://127.0.0.1:4175`. This mode serves the actual registry, not workshop fixtures.
+
+The PR #24 correction uses two operand slots. Run `node tests/conditions-browser.mjs`
+with the same Playwright setting for typed drag/drop, command rejection on slots,
+wrong/outside/cancelled drops, tap-selected and first-empty placement, slot clearing,
+memory-capacity placement, incomplete-condition feedback, running lock, nesting and
+280/320/390px screenshots. `sensors.mjs` also refuses missing/wrong operands before
+movement and checks condition snapshots; solutions construct explicit wall/blocked
+objects. `sensors-browser.mjs` fills both slots for all four Chapter 3 solutions.
+
+Chapter 3 now includes a fifth level, The Uneven Spiral (20 total). The previous
+19-level registry hash is retained. `spiral-proof.mjs`, included in `verify.mjs`,
+exhaustively checks every balanced counted-only program of up to six lines with
+at least one move: 1,687,728 programs, all counts 1–99. No-move programs cannot win
+and are skipped explicitly. It compares an independent combinatorial count with
+the enumerator's total, cross-checks its evaluator against the real executor on
+1,230 cases, and requires a known positive-control puzzle to solve. The capstone
+must have no counted-only solution. `sensors-browser.mjs` plays all five levels.

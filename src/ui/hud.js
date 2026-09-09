@@ -32,6 +32,7 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
   const speedEl = document.getElementById('speed');
   const levelNameEl = document.getElementById('level-name');
   const progressEl = document.getElementById('level-progress');
+  const sensorNote = document.getElementById('sensor-note');
 
   let running = false;
   let programLen = 0;
@@ -81,6 +82,7 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
     },
 
     setLevel(level, index, total) {
+      sensorNote.classList.toggle('hidden', level.sensor !== 'frontWall');
       levelNameEl.textContent = level.name;
       progressEl.textContent = `${pad2(index + 1)}/${pad2(total)} · MEM ${level.memory}`;
       memoryLimit = level.memory;
@@ -93,8 +95,12 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
       }
     },
 
-    showResult(type, { hasNext }) {
-      resultText.textContent = RESULT_COPY[type];
+    showResult(type, { hasNext, reason }) {
+      resultText.textContent = type === 'syntax' && reason === 'condition'
+        ? '> INCOMPLETE CONDITION — fill the sensor and value slots.'
+        : type === 'syntax' && reason === 'sensor'
+          ? '> SENSOR MISSING — this level needs a front wall sensor.'
+          : RESULT_COPY[type];
       nextBtn.classList.toggle('hidden', !(type === 'goal' && hasNext));
       overlayEl.classList.remove('hidden');
     },

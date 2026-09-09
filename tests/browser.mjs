@@ -49,7 +49,7 @@ try {
     });
     await page.goto(url);
     await page.locator('#btn-play').click();
-    assert.equal(await page.locator('.level-item').count(), 15);
+    assert.equal(await page.locator('.level-item').count(), 20);
     for (let i = 0; i < chapter2.length; i++) {
       await page.locator('.level-item').nth(7 + i).click();
       const before = await page.locator('#board').boundingBox();
@@ -111,7 +111,7 @@ try {
       console.log(`${mobile ? 'touch 390px' : 'desktop 1280px'}: ${chapter2[i].id} editor -> goal -> retry passed`);
     }
     // Smallest/widest board and nine-line capstone; desktop breakpoint transition.
-    await page.locator('.level-item').last().click();
+    await page.locator('.level-item').nth(14).click();
     if (mobile) {
       for (const width of [280, 320, 360, 390, 900, 901, 1280]) {
         await page.setViewportSize({ width, height: 844 });

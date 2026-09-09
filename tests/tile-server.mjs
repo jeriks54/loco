@@ -7,13 +7,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { holeBoard } from './tile-fixtures.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-export async function startTileServer(port = 0) {
+export async function startTileServer(port = 0, fixtureLevels = [holeBoard]) {
   const server = http.createServer(async (request, response) => {
     const path = new URL(request.url, 'http://localhost').pathname;
     if (path === '/favicon.ico') { response.writeHead(204).end(); return; }
-    if (path === '/src/levels/index.js') {
+    if (path === '/src/levels/index.js' && fixtureLevels !== null) {
       response.writeHead(200, { 'Content-Type': 'text/javascript' })
-        .end(`export const levels = ${JSON.stringify([holeBoard])};`);
+        .end(`export const levels = ${JSON.stringify(fixtureLevels)};`);
       return;
     }
     if (path !== '/' && path !== '/index.html' && !/^\/(src|styles)\/[\w/.-]+$/.test(path)) {
@@ -30,6 +30,7 @@ export async function startTileServer(port = 0) {
   return { server, url: `http://127.0.0.1:${server.address().port}` };
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  const { url } = await startTileServer(4174);
-  console.log(`Tile workshop: ${url} — Ctrl+C to stop. Move twice to fall; Retry or Reset to return.`);
+  const game = process.argv.includes('--game');
+  const { url } = await startTileServer(game ? 4175 : 4174, game ? null : [holeBoard]);
+  console.log(game ? `Full game: ${url} — Ctrl+C to stop.` : `Tile workshop: ${url} — Ctrl+C to stop. Move twice to fall; Retry or Reset to return.`);
 }

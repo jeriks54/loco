@@ -180,4 +180,4 @@ level or development switch. Report this limitation with the preview handoff.
   appearance and feel still need Jonas' play-test.
 - #22 was created on GitHub at Jonas' request. On 2026-09-08 Jonas confirmed that
   he had tried the workshop and explicitly authorized commit/push. Production
-  merge remains pending.
+  merge followed in PR #23 on 2026-09-08 as `2d4bd42`.
