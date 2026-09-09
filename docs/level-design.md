@@ -15,7 +15,7 @@ Requirements §7 left two things to level design: the exact level count and the 
 |---|---|---|---|
 | 1 — Sequence | Programs run top to bottom; turns are relative | `move`, `turn left`, `turn right` | Shipped (7 levels, ch1-01..07) |
 | 2 — Loops | Counted repetition as compression | `loop n`, `end` | Shipped (8 levels; #16, PR #21) |
-| 3 — Sensing | Automatic front wall sensor; visible holes remain undetected hazards | `loop until wall ahead` | M6 implementation — #17 (4 levels, §10); tile support shipped #19 |
+| 3 — Sensing | Automatic front wall sensor; visible holes remain undetected hazards | `loop until [sensor] = [value]` | M6 implementation — #17 (5 levels, §10); tile support shipped #19 |
 | 4 — Decisions | Branching on the same conditions | `if` (+ `else`?) | Planned — #18 |
 | 5 — Mastery | Everything combined, **ladders + `climb`**, memory upgrades as collectibles | `climb` | Later — #19 |
 
@@ -193,7 +193,7 @@ New chapter-3 puzzles and sensor blocks remain #17; ladders remain chapter 5.
 
 Chapter 3–5 watch-items (added 2026-09-05):
 
-- **Condition lines vs mobile width:** M6 uses a fixed label with no selectors; verify the full words remain visible in the expanded sheet down to 280px.
+- **Condition lines vs mobile width:** M6 uses two operand drop slots; verify both remain readable and operable in the expanded sheet down to 280px, including nesting.
 - **Three-valued sensing will read as a bug until it is taught.** `front is blocked` returning false at a hole looks like the game is wrong. §10 beat 3 exists purely to demonstrate it.
 - **`is clear` must mean *safe to enter* everywhere** — executor, sensor and copy. Define it once in #19 and never let a level author assume it means merely "not a wall".
 - **Verification tooling gap:** the reachability search must treat holes as impassable *for solvability* while the executor treats them as fatal *on entry*. Conflating the two ships a level that is only solvable by dying.
@@ -216,7 +216,9 @@ one memory line. No mounting selector and no hole sensor in Chapter 3.
 See `briefs/m6-condition-slots.md` for the post-preview correction.
 
 This supersedes D9, D11 and D13's earlier UI decisions. D8 (explicit climb later),
-D10 (sensing plus holes), D12 (fatal holes) and D14 (four levels) remain.
+D10 (sensing plus holes) and D12 (fatal holes) remain. D14's four-level limit was
+superseded on 2026-09-09 by Jonas' request for a fifth level requiring sensed loops
+even when counted loops are available.
 Chapter 4's `if` should consume sensor readings, but additional equipment and its
 controls will be designed separately rather than promised for that chapter now.
 
@@ -235,11 +237,18 @@ Exact grids, palettes, programs and integration contracts:
 | ch3-02 Two Halls | Stop at a wall, turn, sense in a new direction | 14×8 | 17 | 7 / 7 |
 | ch3-03 Mind the Gap | Count to a branch; wall sensing misses holes | 16×5 | 10 | 7 / 8 |
 | ch3-04 Safe Passage | Sense, count before a hole, turn, sense again | 13×8 | 16 | 11 / 11 |
+| ch3-05 The Uneven Spiral | Reuse sensed travel over seven unequal corridor lengths | 16×9 | 58 | 6 / 6 |
 
 Safe Passage replaces the old hole-sensing proposal. Its middle counted segment
 has four moves; three turns toward a wall and stops short, five falls. Using wall sensing for that
 segment also falls. The first two levels exclude counted loops; the last two
 allow counted alternatives deliberately. Par is not a global optimality claim.
+
+The Uneven Spiral adds the stronger requirement requested after play-testing:
+its six-line winning program nests sensed movement inside a counted outer loop.
+No counted-only program of at most six lines may win. The exhaustive proof contract
+is in `briefs/m6-uneven-spiral.md`; unlike primitive BFS, it covers nesting, all
+counts 1–99, both turn directions and the real tick/goal-interruption rules.
 
 Verification lives in `tests/sensors.mjs`: real-executor intended/negative cases
 and independent BFS over position/facing, excluding holes and respecting each

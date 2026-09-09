@@ -72,3 +72,12 @@ memory-capacity placement, incomplete-condition feedback, running lock, nesting 
 280/320/390px screenshots. `sensors.mjs` also refuses missing/wrong operands before
 movement and checks condition snapshots; solutions construct explicit wall/blocked
 objects. `sensors-browser.mjs` fills both slots for all four Chapter 3 solutions.
+
+Chapter 3 now includes a fifth level, The Uneven Spiral (20 total). The previous
+19-level registry hash is retained. `spiral-proof.mjs`, included in `verify.mjs`,
+exhaustively checks every balanced counted-only program of up to six lines with
+at least one move: 1,687,728 programs, all counts 1–99. No-move programs cannot win
+and are skipped explicitly. It compares an independent combinatorial count with
+the enumerator's total, cross-checks its evaluator against the real executor on
+1,230 cases, and requires a known positive-control puzzle to solve. The capstone
+must have no counted-only solution. `sensors-browser.mjs` plays all five levels.

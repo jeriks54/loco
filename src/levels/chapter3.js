@@ -26,4 +26,13 @@ export const chapter3 = [
     grid: ['#############', '#S.....######', '######.######', '######.######',
       '######.######', '#G.....######', '######H######', '#############'],
   },
+  {
+    id: 'ch3-05', name: 'The Uneven Spiral', startDir: 'E', sensor: 'frontWall',
+    memory: 6, par: 6, blocks: [...mixed],
+    // Unequal runs reuse one sensed body. Six-line counted-only impossibility
+    // is verified exhaustively; see docs/briefs/m6-uneven-spiral.md.
+    grid: ['################', '#S.............#', '##############.#',
+      '###..........#.#', '###.########.#.#', '###.#G.......#.#',
+      '###.##########.#', '###............#', '################'],
+  },
 ];

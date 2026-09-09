@@ -61,7 +61,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Difficulty rises via maze complexity **and** tight memory budgets.
 - Later chapters unlock new blocks and larger memories in step with mazes that require them.
 - Progress (completed levels) persists in the browser.
-- The merged registry has 15 stable IDs. M6 appends ch3-01..04 (19 total), keeping all prior level data and completion marks. Chapter 3 automatically supplies its sensor without requiring Chapter 2 completion.
+- The merged registry has 15 stable IDs. M6 appends ch3-01..05 (20 total), keeping all prior level data and completion marks. Chapter 3 automatically supplies its sensor without requiring Chapter 2 completion. The added six-line capstone requires sensing even with counted loops available; retain the exhaustive counted-program check.
 
 ### 3.7 Layout & controls
 
@@ -77,7 +77,7 @@ the counted-only chapter-2 revision #16 was play-tested and merged in PR #21 on
 2026-09-07. Historical M2 mechanics remain in its brief. The #19 tile-system brief
 was approved for implementation on 2026-09-07; local changes are reviewed and
 automated checks pass. Jonas confirmed play-testing and authorized commit/push on
-2026-09-08; merged in PR #23 that day. M6's four Chapter 3 levels are implemented
+2026-09-08; merged in PR #23 that day. M6's five Chapter 3 levels are implemented
 on a separate branch, pending final review and play-test.
 
 In:

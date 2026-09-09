@@ -51,7 +51,7 @@ const outerCount = execute(fixture, [loop(2), untilWall(), 'turnLeft', 'end', 't
 assert.equal(outerCount.outcome, 'finished'); assert.equal(outerCount.state.robot.dir, 'E');
 const outerSense = execute(fixture, [untilWall(), loop(1), 'turnLeft', 'end', 'end']);
 assert.equal(outerSense.outcome, 'finished'); assert.equal(outerSense.state.robot.dir, 'N');
-for (const level of chapter3.slice(2)) assert.equal(execute(level,
+for (const level of chapter3.slice(2, 4)) assert.equal(execute(level,
   level.id === 'ch3-03' ? [untilWall(), 'move', 'end'] : [untilWall(), 'move', 'end', 'turnRight', untilWall(), 'move', 'end']).outcome, 'fell');
 for (const [count, outcome] of [[3, 'finished'], [5, 'fell']]) {
   const wrong = structuredClone(sensorSolutions[3]); wrong[4].count = count;
@@ -86,4 +86,4 @@ withClock(clock => {
   executor.start(); clock.drain();
   assert.equal(live.robot.dir, 'N', 'condition snapshot must isolate edits');
 });
-console.log('PASS: four sensor levels, directional wall detection, invisible holes, mixed nesting, zero-entry, equipment refusal and runaway.');
+console.log('PASS: five sensor levels, directional wall detection, invisible holes, mixed nesting, zero-entry, equipment refusal and runaway.');

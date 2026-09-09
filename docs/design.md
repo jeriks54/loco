@@ -27,7 +27,7 @@ src/
   levels/
     chapter1.js      level definitions (one module per chapter)
     chapter2.js      eight counted-loop levels
-    chapter3.js      four front-wall sensing levels (M6)
+    chapter3.js      five front-wall sensing levels (M6)
     index.js         ordered registry of all levels
   game/
     state.js         level state: grid, robot pose, goal, memory size
@@ -130,7 +130,7 @@ Giant Steps. Exact grids and solutions live in `level-design.md` §4.
 | **M3 (#16, shipped PR #21)** | Counted-loop rename and chapter-2 Part B redesign; play-tested and merged 2026-09-07. Brief: `briefs/m3-counted-loops.md` |
 | **M4 (shipped, PR #20)** | Mobile layout — board on top, program as a bottom sheet (decisions and history in §8.1) |
 | **M5 (#19 first slice, shipped PR #23)** | Tile lookup, start marker and fatal holes; original 15 levels preserved. Merged 2026-09-08 as `2d4bd42`; ladders remain chapter-5 work |
-| **M6 (#17, local implementation)** | Four Chapter 3 levels, fixed front wall sensor and `loop until wall ahead`. Approved plan 2026-09-08; contract: `briefs/m6-front-wall-sensor.md` |
+| **M6 (#17, PR #24 preview)** | Five Chapter 3 levels, front wall equipment and two operand drop slots. Follow-up contracts: `briefs/m6-condition-slots.md` and `briefs/m6-uneven-spiral.md` |
 
 Merged baseline: `main` at `2d4bd42` (PR #23). The roadmap order is
 **#17 → #18**: chapter-3 sensing, then chapter-4 `if`; tile groundwork is shipped.

@@ -26,12 +26,12 @@ try {
     });
     await page.goto(url);
     await page.locator('#btn-play').click();
-    assert.equal(await page.locator('.level-item').count(), 19);
+    assert.equal(await page.locator('.level-item').count(), 20);
     assert.equal(await page.locator('.chapter-header').last().textContent(), 'CHAPTER 3 — SENSING');
     await page.locator('.level-item').first().click();
     assert.equal(await page.locator('#sensor-note').isVisible(), false);
     await page.locator('#btn-back').click();
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < chapter3.length; i++) {
       await page.locator('.level-item').nth(15 + i).click();
       assert.equal(await page.locator('#sensor-note').isVisible(), true);
       assert.match(await page.locator('#sensor-note').textContent(), /holes are not walls/);
@@ -55,7 +55,7 @@ try {
       assert.ok(await page.locator('[data-slot="sensor"]').evaluateAll(els => els.every(e => e.textContent.includes('wall sensor'))));
       assert.ok(await page.locator('[data-slot="value"]').evaluateAll(els => els.every(e => e.textContent.includes('blocked'))));
       assert.ok(await page.locator('#program .line-code').evaluateAll(els => els.every(e => e.scrollWidth <= e.clientWidth + 1)), 'line clipping');
-      if (i === 3) {
+      if (i === chapter3.length - 1) {
         await page.screenshot({ path: resolve(screenshots, `sensors-${mobile ? 'phone' : 'desktop'}.png`) });
         if (mobile) for (const width of [280, 320, 390, 900, 901]) {
           await page.setViewportSize({ width, height: 844 }); await page.waitForTimeout(80);
@@ -115,5 +115,5 @@ try {
     assert.deepEqual(errors, []);
     await context.close();
   }
-  console.log('PASS: sensor UI, full labels, 280–901px fit, renderer orientation/equipment/holes, and four persisted completions.');
+  console.log('PASS: sensor UI, full labels, 280–901px fit, renderer orientation/equipment/holes, and five persisted completions.');
 } finally { if (browser) await browser.close(); await new Promise(done => server.close(done)); }

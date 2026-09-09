@@ -18,7 +18,7 @@ Merged baseline: `main` = `2d4bd42` (PR #23). Shipped features:
 - **Persistence** — `localStorage['loco.progress.v1']` stores completed level ids only. Programs are never saved, so block renames have no migration cost.
 - **M4 mobile bottom sheet** (PR #20) — under `max-width: 900px` the board fills the screen and the program panel is a floating translucent overlay sheet with a grip + chevron, a peek bar carrying Run / Reset / memory count, and auto-collapse on run. Play-tested on a Samsung S26 in Chrome.
 
-15 merged levels; the M6 branch appends four Chapter 3 levels (19 total).
+15 merged levels; the M6 branch appends five Chapter 3 levels (20 total).
 Widest grids are 16 cells (ch2-01, ch2-08, branch ch3-03).
 
 **Completed revision #16:** `feat/m3-counted-loops`, approved for implementation on
@@ -34,10 +34,13 @@ fall feedback and reliable restart shipped in PR #23 on 2026-09-08. Ladders rema
 future work. `node tests/tile-server.mjs` still serves the isolated hole workshop.
 
 **Current #17 / M6:** Jonas requested implementation of the agreed Chapter 3 plan
-on 2026-09-08. `feat/m6-front-wall-sensor` adds four levels with automatically
+on 2026-09-08. `feat/m6-front-wall-sensor` adds five levels with automatically
 fitted front wall equipment. After the first preview Jonas requested two typed
 operand slots: `loop until [wall sensor] = [blocked]` / `end`, initially empty.
 See `docs/briefs/m6-condition-slots.md` for the corrective implementation contract.
+The fifth level, The Uneven Spiral, adds unequal corridor lengths in six memory
+lines. Exhaustive search of 1,687,728 counted-only programs finds no winner;
+the sensed solution wins in 180 ticks. See `docs/briefs/m6-uneven-spiral.md`.
 Holes are hazards, never detected by this sensor. No mounting selectors, shop,
 currency or equipment inventory. Brief: `docs/briefs/m6-front-wall-sensor.md`.
 Local implementation and manager review are complete; Node, Chapter 2/3 browser
@@ -65,7 +68,7 @@ Open roadmap issues, all labeled `enhancement` + `roadmap`:
 | # | What | Note |
 |---|---|---|
 | **#19** | Tile types + map art | First slice shipped PR #23; ladders stay with chapter 5 |
-| **#17** | Chapter 3 — front wall sensor + constructed loop condition | Current M6 / PR #24; two operand slots, four levels, no hole sensor |
+| **#17** | Chapter 3 — front wall sensor + constructed loop condition | Current M6 / PR #24; two operand slots, five levels, no hole sensor |
 | **#18** | Chapter 4 — `if` statements | Reuses chapter 3's condition model |
 | **#8** | Robot board sprite (replace the facing chevron) | Cosmetic; touches `scene.js`, so never parallel with renderer work |
 | **#22** | Improve the game's overall graphics | Jonas requested 2026-09-07; agree visual direction with mockups, covering board, robot, feedback and UI consistency. Coordinate #8/#19; schedule separately |
@@ -76,7 +79,7 @@ mounting need a separate later design decision; broader graphics remain #22.
 ## Where things are documented
 
 - `docs/design.md` — architecture (§2), level format (§3), editor (§5), milestones (§8), **M4 mobile decisions (§8.1)**, workflow + roles + **delegation protocol (§9)**, open design questions (§10), visual language (§11).
-- `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), **decisions D1–D14 (§7)**, risks (§8), **chapters 3–5 mechanics (§9)** and the **four proposed chapter-3 levels (§10)**.
+- `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), decisions (§7), sensor equipment direction (§9) and five Chapter 3 levels (§10).
 - `docs/requirements.md` — the product requirements and the post-MVP roadmap (§5).
 - `docs/briefs/` — `m6-front-wall-sensor.md` is current; M3/M5 record shipped #16/#19 first slice. Earlier briefs retain historical scope and decisions.
 - `tests/README.md` — retained Node verification and browser play-test checklist.
