@@ -23,28 +23,40 @@ try {
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
     await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ status: 200, contentType: 'text/css', body: '' }));
     // Observe real canvas drawing without changing pacing or rendering. The
-    // chevron is the filled path with shadowBlur 16; transforms stay in pixels.
-    await page.addInitScript(() => {
+    // robot is the brass body fill (#B08D57, unique on the board); transforms
+    // stay in pixels. The tile is solved from the canvas width using the
+    // documented frame-pad rule (design.md §12), because the backing store
+    // carries the grid plus the in-canvas frame.
+    await page.addInitScript((cols) => {
       window.robotFrames = [];
       window.lastRobot = null;
+      const BODY = ['#b08d57', 'rgb(176, 141, 87)'];
       const proto = CanvasRenderingContext2D.prototype;
-      const originalFill = proto.fill, originalRect = proto.fillRect;
+      const originalRect = proto.fillRect;
       proto.fillRect = function(x, y, w, h) {
-        if (this.canvas.id === 'board' && x === 0 && y === 0 && w > 100) window.lastRobot = null;
-        return originalRect.call(this, x, y, w, h);
-      };
-      proto.fill = function(...args) {
-        if (this.canvas.id === 'board' && this.shadowBlur === 16) {
-          const t = this.getTransform();
-          const tile = parseFloat(this.canvas.style.width) / 16;
+        if (this.canvas.id !== 'board') return originalRect.call(this, x, y, w, h);
+        if (x === 0 && y === 0 && w > 100) window.lastRobot = null;
+        if (BODY.includes(String(this.fillStyle).toLowerCase())) {
+          const width = parseFloat(this.canvas.style.width);
+          let tile = 14; let pad = 0;
+          for (let t = 14; t <= 64; t += 1) {
+            const p = t >= 24 ? Math.round(t * 0.5) : 0;
+            if (cols * t + p * 2 === width) { tile = t; pad = p; break; }
+          }
+          const tr = this.getTransform();
           const dpr = window.devicePixelRatio || 1;
-          const sample = { time: performance.now(), x: t.e / dpr / tile - 0.5, y: t.f / dpr / tile - 0.5, alpha: this.globalAlpha };
+          const sample = {
+            time: performance.now(),
+            x: (tr.e / dpr - pad) / tile - 0.5,
+            y: (tr.f / dpr - pad) / tile - 0.5,
+            alpha: this.globalAlpha,
+          };
           window.lastRobot = sample.alpha > 0 ? sample : null;
           window.robotFrames.push(sample);
         }
-        return originalFill.apply(this, args);
+        return originalRect.call(this, x, y, w, h);
       };
-    });
+    }, holeBoard.grid[0].length);
     await page.goto(url);
     await page.locator('#btn-play').click();
     assert.equal(await page.locator('.level-item').count(), 1);

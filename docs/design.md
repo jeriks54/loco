@@ -292,14 +292,14 @@ visual reference; the values below are the contract and were read off it.
 
 | Element | Value |
 |---|---|
-| Frame around the board | `#241B14`, inner shadow `rgba(0,0,0,.45)` |
+| Frame around the board | `#241B14`, inner shadow `rgba(0,0,0,.45)`; drawn only at `tile >= 24` — below that the board is edge-to-edge, because a 280px viewport leaves only 2px of headroom at `MIN_TILE` |
 | Floor (walnut plank) | base `#342B22`; seam `#272019` |
 | Wall (clay brick) | base `#5B4534`; lit top face `#7E6047`; dark bottom `#37281C`; mortar `#40301F`; per-tile outline `#1F1710` |
 | Wall shadow on floor | `rgba(0,0,0,.38)` |
 | Hole | void `#0B0806`; outer rim `#241B14`; inner rim `#000` |
 | Start marker | outline `#8A7867`, `S` glyph |
-| Exit | mint outline badge + `EXIT`; below the glyph threshold a solid mint square with a dark centre dot |
-| Robot | brass body `#B08D57`, outline `#6E5636`, treads `#241B14`, mint visor with glow on the facing side |
+| Exit | the chrome accent (`--accent`, `#4CE68C` at approval) outline badge + `EXIT`; below the glyph threshold a solid accent square with a dark centre dot |
+| Robot | brass body `#B08D57`, outline `#6E5636`, treads `#241B14`, accent visor with glow on the facing side |
 
 **Rules:**
 
@@ -308,10 +308,13 @@ visual reference; the values below are the contract and were read off it.
   what keeps the maze readable once material detail is dropped, and it is not optional.
 - **Level-of-detail thresholds.** Plank seams and brick mortar only at `tile >= 24`; vertical
   plank joints only at `tile >= 32`; `S` and `EXIT` glyphs only at `tile >= 18`. Below 18 the
-  exit is a solid mint mark. `MIN_TILE` stays 14 (`scene.js`); the 14px board must answer
+  exit is a solid accent mark. `MIN_TILE` stays 14 (`scene.js`); the 14px board must answer
   wall / floor / hole / start / exit without squinting.
-- **Mint stays the only saturated hue on the board**: robot visor and glow, exit, program
-  pointer. Materials stay desaturated (walnut and clay, never pine or brick-red).
+- **The board's only saturated hue is the chrome accent itself.** Visor, exit and
+  program pointer all read `--accent` from `styles/main.css`, so the product has
+  exactly one green; the board never introduces a second one. (The approval mockup
+  rendered a lime stand-in; the shipped token governs.) Materials stay desaturated
+  (walnut and clay, never pine or brick-red).
 - **A hole is absence.** Never a surface, never lit, never shadow-casting. Its double rim is
   the only cue, so ch3-03/ch3-04 keep teaching that a wall sensor misses a hole.
 - **Console chrome is untouched**: title screen, panels, sheet, ticker keep §11 exactly.

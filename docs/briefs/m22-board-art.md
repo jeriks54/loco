@@ -31,10 +31,12 @@ separate) is richer motion, outcome feedback and the UI-coherence pass.
   `TILE_DESKTOP = 48` (`:16`); `fit()` clamps at `:80`; `ResizeObserver` at `:388`;
   first draw waits for `document.fonts.ready` (`:372-383`). All retained.
 - **Frame pad enters the fit arithmetic.** The frame is drawn in-canvas with
-  `pad = tile >= 24 ? round(tile * 0.5) : 2` around the grid, and `fit()` must subtract
-  `2 * pad` from the available width and height. The pad collapses to a 2px hairline
-  below tile 24 **on purpose**: at a 280px viewport a 16-wide level has ~226px of usable
-  width, and a full inset there would clip ch2-01/ch2-08. `MIN_TILE` may not be raised.
+  `pad = tile >= 24 ? round(tile * 0.5) : 0` around the grid, and `fit()` must subtract
+  `2 * pad` from the available width and height. Measured 2026-09-14: a 280px viewport
+  leaves 226px of usable width, so a 16-wide level at `MIN_TILE` has 2px of headroom and
+  any inset below tile 24 clips ch2-01/ch2-08 behind `overflow-x: hidden`. The frame
+  therefore exists only from tile 24 up; phones get the board edge-to-edge as before.
+  `MIN_TILE` may not be raised.
 - **Animation state to preserve:** `MOVE_MS` / `TURN_MS` tweens, `fx.crash` shake + flash,
   `fx.goal` pulse, `pendingFall` / `fall` (180ms shrink/fade after `moved` into a hole),
   `robotHidden`, and every `reducedMotion` snap path.
@@ -56,15 +58,16 @@ separate) is richer motion, outcome feedback and the UI-coherence pass.
 | Wall shadow on floor | `rgba(0,0,0,.38)`, thickness `max(1, t*0.14)`, on every edge whose neighbour is a wall |
 | Hole | void `#0B0806`; outer rim `#241B14` (`max(2, t*0.12)`); inner rim `#000` at 22%–78% |
 | Start | outline `#8A7867` inset 20%; `S` glyph only at `t >= 18` |
-| Exit | mint outline badge + `EXIT` at `t >= 18`; below 18 a solid mint square with a dark centre dot |
-| Robot | body `#B08D57` inset 18%; outline `#6E5636`; treads `#241B14`; visor mint `28% × 24%` of the body on the facing side, `shadowBlur = t * 0.35` |
+| Exit | chrome accent (`--accent`) outline badge + `EXIT` at `t >= 18`; below 18 a solid accent square with a dark centre dot |
+| Robot | body `#B08D57` inset 18%; outline `#6E5636`; treads `#241B14`; visor `--accent` `28% × 24%` of the body on the facing side, `shadowBlur = t * 0.35` |
 
 - **LOD thresholds:** plank seams and brick mortar at `t >= 24`; vertical plank joints at
   `t >= 32`; `S` / `EXIT` glyphs at `t >= 18`. Below the thresholds: shape only.
 - **Draw order:** tiles → start/exit markers → wall-shadow pass → robot. The shadow must
   not cover the robot (it is edge-only) and must never touch a hole.
 - **A hole is absence:** never lit, never a surface, never shadow-casting.
-- **Mint is the only saturated hue on the board.** No new accent colours.
+- **The board's only saturated hue is the chrome accent token.** Visor, exit and pointer
+  read `--accent`; no second green, no new accent colours.
 - **No new motion and no chrome changes.**
 
 ## Ownership
@@ -108,6 +111,37 @@ brief, `design.md` §12 and the mockup file; write early.
 6. Is anything in the chrome — title, panels, sheet, ticker — visibly changed? It
    must not be.
 
-## Review results
+## Review results — 2026-09-14
 
-(filled in by the manager after implementation)
+- One gpt-5.6-luna high agent delivered `src/render/scene.js` only; the manager
+  reviewed the full diff against this brief and `design.md` §12 before any test run.
+- **Manager corrections over the delivery:**
+  1. *Accent.* The delivery pinned a literal lime `#B6FF3B` — the approval mockup's
+     stand-in. `styles/main.css` is the source of truth and ships `--accent: #4CE68C`,
+     so visor and exit now read `C.accent`; §12, this brief and the mockup were
+     corrected to "the chrome accent token", keeping exactly one green in the product.
+  2. *Frame pad.* The delivered `pad = 2` below tile 24 measured 228px of canvas in a
+     226px panel at 280px on ch2-01/ch2-08 — a silent clip behind `overflow-x: hidden`,
+     the exact M4 failure mode. Pad is 0 below tile 24 (frame from tile 24 up);
+     re-measured 224 ≤ 226 with headroom at 280/320/390.
+  3. *Sheet dial.* Re-measured against the real tokens, the shipped 0.5/0.5 puts
+     `--muted` at **4.27:1** over the new lit brick top `#7E6047` — under AA. Raised to
+     0.6/0.6 (16% leak): 4.65:1 lit top, 4.96:1 wall base, 5.28:1 floor, `--text`
+     ≥ 11.1:1; pure accent 3.66:1 (was 2.90:1), still the accepted blurred-region cost.
+     Recorded in the `main.css` comment and gated by the new `tests/contrast.mjs`.
+- **Test maintenance:** `tests/tiles-browser.mjs` identified the robot by the chevron's
+  `shadowBlur 16`; the probe now hooks the brass body fill and solves the tile from the
+  documented pad rule. Fall ordering, reduced-motion, resize and restart assertions are
+  unchanged and passing.
+- **Verification:** `node tests/verify.mjs` (20 level paths, 8 counted + 5 sensed
+  solutions, 1,687,728-program spiral proof); `browser.mjs` 16 desktop + touch flows;
+  `tiles-browser.mjs` three contexts at real pacing; `sensors-browser.mjs` ten flows;
+  `conditions-browser.mjs` desktop + touch; `contrast.mjs`; fit re-measure at
+  280/320/390 (canvas ≤ usable width, no clip); manager screenshots at 1280/390/280
+  inspected — the 14px board answers wall / floor / hole / start / exit, the hole still
+  reads as absence, and the chevron is gone.
+- **Carried to Jonas' play-test as judgement calls, not defects:** (a) see-through is
+  fainter at 16% leak than the 25% he approved on M4 — the dial is his to turn; (b) on
+  phones a width-bound maze letterboxes to the panel centre, so with the sheet expanded
+  it sits behind the sheet — pre-existing M4 geometry, now fainter through it. Top-aligning
+  the canvas under the breakpoint is the fix if his phone verdict wants it.

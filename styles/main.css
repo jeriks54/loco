@@ -1426,20 +1426,27 @@ button {
    is what actually produces the see-through, so color-mix is what gets
    tested; the blur rides along inside, with both prefixes.
 
-   25% of the board reaches the eye: the body at 0.5 over the maze, the cards
-   at 0.5 over the body. Measured against the real tokens rather than guessed:
-   --muted (the uppercase section headings) on the resulting card is 5.01:1
-   over the board's dark surfaces (--bg, --surface-2 walls) and --text stays
-   13.2:1, because .program keeps its opaque var(--bg) fill and .block-chip
-   keeps var(--surface-2). Opacity is spent where it buys legibility and given
-   up where it does not.
+   16% of the board reaches the eye: the body at 0.6 over the maze, the cards
+   at 0.6 over the body. Measured against the real tokens rather than guessed,
+   and re-measured 2026-09-14 against the direction-A board (design.md §12),
+   whose lit wall top #7E6047 is the new worst case: --muted (the uppercase
+   section headings) on the resulting card is 4.65:1 over that lit top, 4.96:1
+   over the wall base #5B4534 and 5.28:1 over the walnut floor; --text stays
+   >= 11.1:1 throughout, because .program keeps its opaque var(--bg) fill and
+   .block-chip keeps var(--surface-2). Opacity is spent where it buys
+   legibility and given up where it does not.
+
+   The dial moved with the board: at the previous 0.5 / 0.5 the lit wall top
+   measured 4.27:1 for --muted — under AA — because a warm lit brick face is
+   brighter than anything the old graphite board put behind the sheet. 0.6 /
+   0.6 is the most transparent pair that holds 4.5:1 over it.
 
    Known cost: over a pure --accent backdrop — the EXIT badge, the robot's
-   glow — --muted falls to 2.90:1. blur(8px) spreads that and it is a small,
-   transient region rather than a background, but it is the price of seeing
-   the map. To trade see-through back for heading contrast, raise BOTH
-   percentages together; 0.75 / 0.70 is the most transparent pair that still
-   holds 4.5:1 even over pure accent (7.5% leak).
+   glow — --muted falls to 3.66:1 (2.90:1 before the board change). blur(8px)
+   spreads that and it is a small, transient region rather than a background,
+   but it is the price of seeing the map. To trade see-through back for
+   heading contrast, raise BOTH percentages together; 0.75 / 0.70 is the most
+   transparent pair that still holds 4.5:1 even over pure accent (7.5% leak).
 
    Supersedes the option-a "cards stay opaque" decision in design.md §8.1
    after play-test: with opaque cards the only clear pixels were the body's
@@ -1450,14 +1457,14 @@ button {
     #sheet.is-expanded .sheet-body {
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      background: color-mix(in srgb, var(--surface) 50%, transparent);
+      background: color-mix(in srgb, var(--surface) 60%, transparent);
     }
 
     /* The cards are most of the body's area — leaving them opaque is what
        made the sheet look solid. .program and .block-chip inside them keep
        their opaque fills, so the code lines and chip labels are unaffected. */
     #sheet.is-expanded .sheet-body .panel-section {
-      background: color-mix(in srgb, var(--bg) 50%, transparent);
+      background: color-mix(in srgb, var(--bg) 60%, transparent);
     }
   }
 }

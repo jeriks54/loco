@@ -60,19 +60,20 @@
 
   <h2>4 · Mobile sheet contrast over the new boards</h2>
   <div class="row">
-    <div class="col"><h3>A under the 25%-leak sheet</h3><div id="sheetA"></div></div>
-    <div class="col"><b>B under the 25%-leak sheet</b><div id="sheetB"></div></div>
+    <div class="col"><h3>A under the 16%-leak sheet</h3><div id="sheetA"></div></div>
+    <div class="col"><b>B under the 16%-leak sheet</b><div id="sheetB"></div></div>
   </div>
-  <p class="note">Approximation of <span class="mono">styles/main.css</span> "Sheet translucency": board, then
-  body <span class="mono">color-mix(--surface 50%, transparent)</span>, then card
-  <span class="mono">color-mix(--bg 50%, transparent)</span>, with real program copy on top. The shipped table
-  measures <b>5.01:1</b> for <span class="mono">--muted</span> over today's dark board; a warmer/lighter board
-  spends that margin. If A wins on taste, this strip decides whether sheet opacity must rise.</p>
+  <p class="note">Approximation of <span class="mono">styles/main.css</span> "Sheet translucency" at the shipped
+  0.6 / 0.6 (16% leak): board, then body <span class="mono">color-mix(--surface 60%, transparent)</span>, then
+  card <span class="mono">color-mix(--bg 60%, transparent)</span>, with real program copy on top. Re-measured
+  2026-09-14 against the real tokens: at the old 0.5 / 0.5 the lit wall top gave
+  <span class="mono">--muted</span> <b>4.27:1</b> — under AA — so the dial moved; at 0.6 / 0.6 it holds
+  <b>4.65:1</b> over the lit top and 3.66:1 over pure accent.</p>
 </div>
 
 <script>
 (() => {
-  const MINT = '#B6FF3B', TEXT = '#E8EEF2', MUTED = '#7E8B98';
+  const MINT = '#4CE68C', TEXT = '#EDF2EF', MUTED = '#93A09A';   // real shipped tokens
   const GRIDS = {
     ch304: ['#############','#S.....######','######.######','######.######','######.######','#G.....######','######H######','#############'],
     ch208: ['################','#S....##########','#####.##########','#####.....######','#########.######','#########.....##','#############.##','#############G##','################'],
@@ -217,7 +218,7 @@
 
   function board(host, grid, t, style, frame) {
     const cols = grid[0].length, rows = grid.length;
-    const pad = frame ? Math.round(t * 0.5) : 4;
+    const pad = frame && t >= 24 ? Math.round(t * 0.5) : 0;
     const [c, x] = mk(cols * t + pad * 2, rows * t + pad * 2);
     if (frame) {                          // A: the board is a physical object in a frame
       x.fillStyle = '#241B14'; x.fillRect(0, 0, c.clientWidth, c.clientHeight);
@@ -252,8 +253,8 @@
     const c = board(document.getElementById(id), GRIDS.ch304, 30, style, style === A);
     const x = c.getContext('2d');
     const w = c.clientWidth, h = c.clientHeight, band = h * 0.52;
-    x.fillStyle = 'rgba(18,24,31,.5)'; x.fillRect(0, h - band, w, band);      // sheet body
-    x.fillStyle = 'rgba(11,15,20,.5)'; x.fillRect(8, h - band + 8, w - 16, band - 16); // card
+    x.fillStyle = 'rgba(43,50,49,.6)'; x.fillRect(0, h - band, w, band);      // sheet body
+    x.fillStyle = 'rgba(35,40,39,.6)'; x.fillRect(8, h - band + 8, w - 16, band - 16); // card
     x.font = '11px "JetBrains Mono", monospace'; x.textAlign = 'left'; x.textBaseline = 'alphabetic';
     x.fillStyle = MUTED; x.fillText('ROBOT MEMORY  4 / 11', 18, h - band + 30);
     x.fillStyle = TEXT;  x.fillText('04 loop until [wall sensor] = [blocked]', 18, h - band + 50);

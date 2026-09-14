@@ -81,3 +81,10 @@ and are skipped explicitly. It compares an independent combinatorial count with
 the enumerator's total, cross-checks its evaluator against the real executor on
 1,230 cases, and requires a known positive-control puzzle to solve. The capstone
 must have no counted-only solution. `sensors-browser.mjs` plays all five levels.
+
+`contrast.mjs` (standalone, not part of `verify.mjs`) re-checks the mobile sheet's
+translucency dial against the direction-A board's worst-case pixels (design.md §12).
+It reads the shipped `color-mix` percentages and the colour tokens straight from
+`styles/main.css`, so it tracks whichever dial pair is live, and fails if `--muted`
+drops below 4.5:1 over the lit brick top, the wall base or the walnut floor. Run it
+whenever the board palette or the dial changes: `node tests/contrast.mjs`.
