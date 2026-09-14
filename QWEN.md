@@ -9,17 +9,18 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-09-08
+## State as of 2026-09-14
 
-Merged baseline: `main` = `2d4bd42` (PR #23). Shipped features:
+Merged baseline: `main` = `ee25b75` (PR #24). Shipped features:
 
 - **Chapter 1 — Sequence**, 7 levels (`ch1-01..07`), move / turn left / turn right.
 - **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), programs rendered as numbered mono lines. Counted `loop n` / `end` replaced historical M2 `repeat` / `while front clear` in PR #21.
+- **Chapter 3 — Sensing**, 5 levels (`ch3-01..05`), automatic front wall sensor and player-constructed `loop until [wall sensor] = [blocked]` / `end` via two typed operand slots. Shipped in PR #24.
 - **Persistence** — `localStorage['loco.progress.v1']` stores completed level ids only. Programs are never saved, so block renames have no migration cost.
 - **M4 mobile bottom sheet** (PR #20) — under `max-width: 900px` the board fills the screen and the program panel is a floating translucent overlay sheet with a grip + chevron, a peek bar carrying Run / Reset / memory count, and auto-collapse on run. Play-tested on a Samsung S26 in Chrome.
 
-15 merged levels; the M6 branch appends five Chapter 3 levels (20 total).
-Widest grids are 16 cells (ch2-01, ch2-08, branch ch3-03).
+20 merged levels across three chapters.
+Widest grids are 16 cells (ch2-01, ch2-08, ch3-03, ch3-05).
 
 **Completed revision #16:** `feat/m3-counted-loops`, approved for implementation on
 2026-09-06, play-tested and merged on 2026-09-07 in PR #21 (`6a67e86`). The runtime uses only
@@ -33,7 +34,7 @@ marks are preserved.
 fall feedback and reliable restart shipped in PR #23 on 2026-09-08. Ladders remain
 future work. `node tests/tile-server.mjs` still serves the isolated hole workshop.
 
-**Current #17 / M6:** Jonas requested implementation of the agreed Chapter 3 plan
+**Completed #17 / M6:** Jonas requested implementation of the agreed Chapter 3 plan
 on 2026-09-08. `feat/m6-front-wall-sensor` adds five levels with automatically
 fitted front wall equipment. After the first preview Jonas requested two typed
 operand slots: `loop until [wall sensor] = [blocked]` / `end`, initially empty.
@@ -43,9 +44,8 @@ lines. Exhaustive search of 1,687,728 counted-only programs finds no winner;
 the sensed solution wins in 180 ticks. See `docs/briefs/m6-uneven-spiral.md`.
 Holes are hazards, never detected by this sensor. No mounting selectors, shop,
 currency or equipment inventory. Brief: `docs/briefs/m6-front-wall-sensor.md`.
-Local implementation and manager review are complete; Node, Chapter 2/3 browser
-flows and real-paced hole regressions pass. Jonas authorized publishing the branch
-and PR for Vercel play-testing on 2026-09-08; production merge remains pending.
+Merged to `main` in PR #24 as `ee25b75` on 2026-09-09; issue #17 closed and the
+production deployment followed the same minute.
 `node tests/tile-server.mjs --game` serves the full game
 at localhost:4175.
 
@@ -67,21 +67,24 @@ Open roadmap issues, all labeled `enhancement` + `roadmap`:
 
 | # | What | Note |
 |---|---|---|
+| **#18** | Chapter 4 — `if` statements | Next in the agreed order; reuses chapter 3's condition model |
 | **#19** | Tile types + map art | First slice shipped PR #23; ladders stay with chapter 5 |
-| **#17** | Chapter 3 — front wall sensor + constructed loop condition | Current M6 / PR #24; two operand slots, five levels, no hole sensor |
-| **#18** | Chapter 4 — `if` statements | Reuses chapter 3's condition model |
 | **#8** | Robot board sprite (replace the facing chevron) | Cosmetic; touches `scene.js`, so never parallel with renderer work |
 | **#22** | Improve the game's overall graphics | Jonas requested 2026-09-07; agree visual direction with mockups, covering board, robot, feedback and UI consistency. Coordinate #8/#19; schedule separately |
 
-**Order: #17 → #18**, with tile groundwork shipped. Equipment acquisition and
-mounting need a separate later design decision; broader graphics remain #22.
+Shipped and closed: **#17** (Chapter 3 — front wall sensor + constructed loop
+condition, two operand slots, five levels, no hole sensor) in PR #24.
+
+**Order: #18 next**, with chapter 3 and the tile groundwork shipped. Equipment
+acquisition and mounting need a separate later design decision; broader graphics
+remain #22.
 
 ## Where things are documented
 
 - `docs/design.md` — architecture (§2), level format (§3), editor (§5), milestones (§8), **M4 mobile decisions (§8.1)**, workflow + roles + **delegation protocol (§9)**, open design questions (§10), visual language (§11).
 - `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), decisions (§7), sensor equipment direction (§9) and five Chapter 3 levels (§10).
 - `docs/requirements.md` — the product requirements and the post-MVP roadmap (§5).
-- `docs/briefs/` — `m6-front-wall-sensor.md` is current; M3/M5 record shipped #16/#19 first slice. Earlier briefs retain historical scope and decisions.
+- `docs/briefs/` — all briefs are now historical records of shipped work: M3/M5/M6 record #16, the #19 first slice and #17. Earlier briefs retain historical scope and decisions.
 - `tests/README.md` — retained Node verification and browser play-test checklist.
 
 ## Hard rules
@@ -96,7 +99,6 @@ mounting need a separate later design decision; broader graphics remain #22.
 
 ## Known loose ends
 
-- **Version string is stale.** `index.html`'s tab bar and `main.js`'s ticker both say `v0.0.1` while the docs have called the game v0.1 since M2. Unresolved — ask jonas what it should read.
 - **Three dead buttons on the title screen.** Tutorial, Settings and High Scores all still answer with the `> loading X.module .......... not found` joke (`main.js` wires every `[data-module]` except Start Game to it). Documented as intentional in `design.md` §11, but it shipped, and Tutorial is the biggest onboarding gap for a game whose whole promise is teaching.
 - **Five M4 play-test items were never reported on** before the merge: chip-drag versus sheet-drag arbitration, right-edge clipping on ch2-01/ch2-08, the board not rescaling across detents, the desktop check across 900px, and heading legibility over the maze. The chip-drag one is the interaction that could only be verified by reading code — look there first if anything feels off.
 - **Sheet translucency is a dial, not a settled value.** Currently 25% leak. `styles/main.css`'s "Sheet translucency" comment has the measured contrast table and how to change it.

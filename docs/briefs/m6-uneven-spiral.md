@@ -83,3 +83,6 @@ Publish the new level on the existing PR #24 preview, without merging production
   the spiral fits 280/320/390/900/901px. Manager reviewed the phone screenshot.
   Automated browser flows use fallback fonts and accelerated ticks; puzzle feel
   remains Jonas' play-test. No executor rules were changed for this level.
+
+Merged with PR #24 to `main` as `ee25b75` on 2026-09-09; the registry is 20 levels
+and `node tests/verify.mjs` still reports no counted-only spiral win.

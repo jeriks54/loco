@@ -1,9 +1,10 @@
 # LoCo — Level Design
 
 Curriculum, concept progression, and level plan. Counted Chapter 2 shipped in PR #21;
-tile infrastructure shipped in PR #23. Sections 9–10 record Jonas' revised sensor
-direction of 2026-09-08 and the M6 Chapter 3 implementation. Earlier decisions
-remain historical where superseded explicitly by §9.
+tile infrastructure shipped in PR #23; Chapter 3 sensing shipped in PR #24.
+Sections 9–10 record Jonas' revised sensor direction of 2026-09-08 and the M6
+Chapter 3 implementation. Earlier decisions remain historical where superseded
+explicitly by §9.
 
 ## 1. Purpose
 
@@ -15,7 +16,7 @@ Requirements §7 left two things to level design: the exact level count and the 
 |---|---|---|---|
 | 1 — Sequence | Programs run top to bottom; turns are relative | `move`, `turn left`, `turn right` | Shipped (7 levels, ch1-01..07) |
 | 2 — Loops | Counted repetition as compression | `loop n`, `end` | Shipped (8 levels; #16, PR #21) |
-| 3 — Sensing | Automatic front wall sensor; visible holes remain undetected hazards | `loop until [sensor] = [value]` | M6 implementation — #17 (5 levels, §10); tile support shipped #19 |
+| 3 — Sensing | Automatic front wall sensor; visible holes remain undetected hazards | `loop until [sensor] = [value]` | Shipped (5 levels; #17, PR #24, §10); tile support shipped #19 |
 | 4 — Decisions | Branching on the same conditions | `if` (+ `else`?) | Planned — #18 |
 | 5 — Mastery | Everything combined, **ladders + `climb`**, memory upgrades as collectibles | `climb` | Later — #19 |
 
@@ -158,13 +159,14 @@ still feels varied enough around the U-shaped third exercise.
 - Slack policy: the current chapter-2 revision gives +1 at ch2-05; other budgets equal intended par. Future chapters may add slack when introducing a new concept.
 - Later chapters: difficulty via maze ambiguity (forks, sensors needed) + mixed concepts, not just longer programs.
 
-## 6. Shipped #16 scope and approved #19 work
+## 6. Shipped scope
 
 PR #21 renamed runtime/editor vocabulary, redesigned ch2-05..08 and retained
 independent Node verification plus desktop/mobile checks. See `briefs/m3-counted-loops.md`.
-Next, #19 prepares tile lookup, fatal-hole handling and start/hole rendering while
-preserving these 15 levels. Its approved contract is `briefs/m5-tile-types.md`.
-New chapter-3 puzzles and sensor blocks remain #17; ladders remain chapter 5.
+PR #23 then shipped the #19 first slice: tile lookup, fatal-hole handling and
+start/hole rendering, preserving these 15 levels. Its contract is
+`briefs/m5-tile-types.md`. PR #24 shipped chapter 3's five puzzles, the automatic
+front wall sensor and the two operand slots under #17; ladders remain chapter 5.
 
 ## 7. Decision record (jonas)
 
@@ -226,10 +228,12 @@ Tiles and fatal entry shipped in PR #23. `isBlocked` remains wall/outside;
 `isSafeToEnter` remains floor/start/goal. This safety helper is not exposed as a
 second sensor: a wall sensor cannot detect a hole or guarantee safe movement.
 
-## 10. Chapter 3 — Sensing (M6)
+## 10. Chapter 3 — Sensing (M6, shipped PR #24)
 
 Exact grids, palettes, programs and integration contracts:
-[`briefs/m6-front-wall-sensor.md`](briefs/m6-front-wall-sensor.md).
+[`briefs/m6-front-wall-sensor.md`](briefs/m6-front-wall-sensor.md), with the
+two-slot correction in
+[`briefs/m6-condition-slots.md`](briefs/m6-condition-slots.md).
 
 | Level | Lesson | Grid | Loop-free minimum | Par / memory |
 |---|---|---|---|---|
@@ -250,7 +254,10 @@ No counted-only program of at most six lines may win. The exhaustive proof contr
 is in `briefs/m6-uneven-spiral.md`; unlike primitive BFS, it covers nesting, all
 counts 1–99, both turn directions and the real tick/goal-interruption rules.
 
-Verification lives in `tests/sensors.mjs`: real-executor intended/negative cases
-and independent BFS over position/facing, excluding holes and respecting each
-palette. The pre-implementation 2026-09-05 simulation is historical, not evidence
-for the new level pack. New results are recorded in the M6 brief after execution.
+Verification lives in `tests/sensors.mjs` and `tests/spiral-proof.mjs`:
+real-executor intended/negative cases and independent BFS over position/facing,
+excluding holes and respecting each palette. The pre-implementation 2026-09-05
+simulation is historical, not evidence for the shipped pack. Executed results are
+recorded in the M6 briefs; `node tests/verify.mjs` re-runs all of them and passes
+20 level paths, 8 counted and 5 sensed solutions, plus the 1,687,728-program
+spiral proof.
