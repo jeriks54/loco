@@ -70,14 +70,14 @@ Open roadmap issues, all labeled `enhancement` + `roadmap`:
 | **#18** | Chapter 4 — `if` statements | Next in the agreed order; reuses chapter 3's condition model |
 | **#19** | Tile types + map art | First slice shipped PR #23; ladders stay with chapter 5 |
 | **#8** | Robot board sprite (replace the facing chevron) | Cosmetic; touches `scene.js`, so never parallel with renderer work |
-| **#22** | Improve the game's overall graphics | Jonas requested 2026-09-07; agree visual direction with mockups, covering board, robot, feedback and UI consistency. Coordinate #8/#19; schedule separately |
+| **#22** | Improve the game's overall graphics | Direction A (tabletop board) agreed 2026-09-14 against `docs/reference/m22-board-directions.html`; rules in `design.md` §12, contract in `briefs/m22-board-art.md`. Slice 1 = board materials + robot base sprite (#8); slice 2 = motion/feedback/UI coherence |
 
 Shipped and closed: **#17** (Chapter 3 — front wall sensor + constructed loop
 condition, two operand slots, five levels, no hole sensor) in PR #24.
 
-**Order: #18 next**, with chapter 3 and the tile groundwork shipped. Equipment
-acquisition and mounting need a separate later design decision; broader graphics
-remain #22.
+**Order: #22 slice 1 next** — Jonas pulled it forward on 2026-09-14 — then #18.
+Chapter 3 and the tile groundwork are shipped. Equipment acquisition and mounting
+need a separate later design decision.
 
 ## Where things are documented
 

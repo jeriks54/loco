@@ -1,0 +1,263 @@
+<!--
+  #22 board direction mockup — DECISION MATERIAL, not product code.
+  Treatments A (tabletop, flat-shape) and B (pixel dungeon) drawn procedurally
+  on the real shipped grids, at the real tile sizes including the 14px floor.
+  Chrome stays graphite + mint in both; only the board and robot change.
+  Level-of-detail rule under test: material detail (plank seams, brick mortar,
+  floor dots) is dropped below 24px so the 14px floor stays legible.
+-->
+<style>
+  .mk { font-family: ui-sans-serif, system-ui, sans-serif; background: #0B0F14; color: #E8EEF2; padding: 28px 20px 64px; }
+  .mk .mono, .mk h2, .mk h3, .mk .cap { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .mk h1 { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 15px; letter-spacing: .08em; color: #B6FF3B; margin: 0 0 4px; }
+  .mk .sub { color: #7E8B98; font-size: 13px; margin: 0 0 28px; max-width: 62ch; }
+  .mk h2 { font-size: 12px; letter-spacing: .12em; color: #7E8B98; text-transform: uppercase; margin: 36px 0 12px; }
+  .mk h3 { font-size: 12px; color: #E8EEF2; margin: 0 0 8px; }
+  .mk .row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  .mk .col { flex: 1 1 340px; min-width: 300px; }
+  .mk .cap { font-size: 11px; color: #7E8B98; margin: 6px 0 0; }
+  .mk canvas { display: block; background: #0B0F14; border: 1px solid #26303B; border-radius: 6px; max-width: 100%; }
+  .mk .ladder { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-end; }
+  .mk .note { border-left: 2px solid #B6FF3B; padding-left: 12px; color: #7E8B98; font-size: 12.5px; max-width: 68ch; margin: 10px 0 0; }
+  .mk .note b { color: #E8EEF2; font-weight: 600; }
+</style>
+
+<div class="mk">
+  <h1>#22 BOARD DIRECTIONS — MOCKUP</h1>
+  <p class="sub">Decision material only. Both treatments keep the graphite console chrome and mint as the
+  single saturated accent; only the board and the robot change. Grids are the real shipped levels.
+  The tile ladder includes the production 14px floor (<span class="mono">scene.js MIN_TILE</span>).</p>
+
+  <h2>1 · Tile-size ladder — ch3-04 Safe Passage (13×8, hole)</h2>
+  <div class="row">
+    <div class="col">
+      <h3>A — TABLETOP, FLAT-SHAPE</h3>
+      <div class="ladder" id="ladderA"></div>
+      <p class="cap">walnut planks + oxide-clay brick; seams/mortar dropped below 24px</p>
+    </div>
+    <div class="col">
+      <h3>B — PIXEL DUNGEON</h3>
+      <div class="ladder" id="ladderB"></div>
+      <p class="cap">2-tone bevelled tiles; brick motif dropped below 24px</p>
+    </div>
+  </div>
+  <p class="note"><b>Read this row first.</b> At 14px both must still answer: where is the wall, where is
+  the hole, where did I start, where is the exit? Anything that needs squinting fails.</p>
+
+  <h2>2 · Full boards at desktop tile — ch2-08 Giant Steps (16×9, widest)</h2>
+  <div class="row">
+    <div class="col"><h3>A — TABLETOP</h3><div id="fullA"></div></div>
+    <div class="col"><h3>B — PIXEL DUNGEON</h3><div id="fullB"></div></div>
+  </div>
+
+  <h2>3 · Semantics close-up (4× zoom)</h2>
+  <div class="row">
+    <div class="col"><h3>A — robot · hole · start · exit · wall corner</h3><div id="zoomA"></div></div>
+    <div class="col"><h3>B — robot · hole · start · exit · wall corner</h3><div id="zoomB"></div></div>
+  </div>
+  <p class="note">The hole must stay <b>absence</b> in both — a void with a rim, never a surface — or the
+  ch3-03/ch3-04 "a wall sensor misses a hole" lesson stops reading.</p>
+
+  <h2>4 · Mobile sheet contrast over the new boards</h2>
+  <div class="row">
+    <div class="col"><h3>A under the 25%-leak sheet</h3><div id="sheetA"></div></div>
+    <div class="col"><b>B under the 25%-leak sheet</b><div id="sheetB"></div></div>
+  </div>
+  <p class="note">Approximation of <span class="mono">styles/main.css</span> "Sheet translucency": board, then
+  body <span class="mono">color-mix(--surface 50%, transparent)</span>, then card
+  <span class="mono">color-mix(--bg 50%, transparent)</span>, with real program copy on top. The shipped table
+  measures <b>5.01:1</b> for <span class="mono">--muted</span> over today's dark board; a warmer/lighter board
+  spends that margin. If A wins on taste, this strip decides whether sheet opacity must rise.</p>
+</div>
+
+<script>
+(() => {
+  const MINT = '#B6FF3B', TEXT = '#E8EEF2', MUTED = '#7E8B98';
+  const GRIDS = {
+    ch304: ['#############','#S.....######','######.######','######.######','######.######','#G.....######','######H######','#############'],
+    ch208: ['################','#S....##########','#####.##########','#####.....######','#########.######','#########.....##','#############.##','#############G##','################'],
+  };
+  const ZOOM = ['###.','##..','#SH.','##G.']; // wall corner, floor, start+hole, goal
+
+  const mk = (w, h) => {
+    const c = document.createElement('canvas');
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    c.width = w * dpr; c.height = h * dpr;
+    c.style.width = w + 'px'; c.style.height = h + 'px';
+    const x = c.getContext('2d'); x.scale(dpr, dpr);
+    return [c, x];
+  };
+
+  /* ---------- A: tabletop, flat-shape ---------- */
+  const A = {
+    floor(x, px, py, t, r, c) {
+      x.fillStyle = '#342B22'; x.fillRect(px, py, t, t);
+      if (t >= 24) {                       // plank seams only when they can read
+        x.fillStyle = '#272019';
+        x.fillRect(px, py + t - 1, t, 1);
+        if (t >= 32) x.fillRect(px + ((r % 2) ? t * 0.5 : t * 0.25), py, 1, t);
+      }
+    },
+    wall(x, px, py, t) {
+      x.fillStyle = '#5B4534'; x.fillRect(px, py, t, t);
+      x.fillStyle = '#7E6047'; x.fillRect(px, py, t, Math.max(2, t * 0.16));   // lit top face
+      x.fillStyle = '#37281C'; x.fillRect(px, py + t - Math.max(2, t * 0.14), t, Math.max(2, t * 0.14));
+      if (t >= 24) {                     // two brick courses + staggered mortar
+        x.fillStyle = '#40301F';
+        x.fillRect(px, py + t / 2, t, 1);
+        x.fillRect(px + t * 0.5, py, 1, t / 2);
+        x.fillRect(px + t * 0.25, py + t / 2, 1, t / 2);
+        x.fillRect(px + t * 0.75, py + t / 2, 1, t / 2);
+      }
+      x.strokeStyle = '#1F1710'; x.lineWidth = 1;      // separates wall mass from floor
+      x.strokeRect(px + .5, py + .5, t - 1, t - 1);
+    },
+    hole(x, px, py, t) {
+      x.fillStyle = '#0B0806'; x.fillRect(px, py, t, t);
+      x.strokeStyle = '#241B14'; x.lineWidth = Math.max(2, t * 0.12);
+      x.strokeRect(px + x.lineWidth / 2, py + x.lineWidth / 2, t - x.lineWidth, t - x.lineWidth);
+      x.strokeStyle = '#000'; x.lineWidth = 1;
+      x.strokeRect(px + t * 0.22, py + t * 0.22, t * 0.56, t * 0.56);
+    },
+    robot(x, px, py, t) {                 // brass toy, mint eye-glow
+      const m = t * 0.18, w = t - m * 2, h = t - m * 2;
+      x.fillStyle = '#241B14'; x.fillRect(px + m, py + m + h * 0.78, w, h * 0.22);      // treads
+      x.fillStyle = '#B08D57'; x.fillRect(px + m, py + m, w, h * 0.8);
+      x.strokeStyle = '#6E5636'; x.lineWidth = 1; x.strokeRect(px + m + .5, py + m + .5, w - 1, h * 0.8 - 1);
+      x.save(); x.shadowColor = MINT; x.shadowBlur = t * 0.35;
+      x.fillStyle = MINT; x.fillRect(px + m + w * 0.58, py + m + h * 0.24, w * 0.28, h * 0.24); // visor, facing E
+      x.restore();
+    },
+  };
+
+  /* ---------- B: pixel dungeon ---------- */
+  const B = {
+    floor(x, px, py, t, r, c) {
+      x.fillStyle = '#151C24'; x.fillRect(px, py, t, t);
+      x.fillStyle = '#202A34'; x.fillRect(px, py, t, 1); x.fillRect(px, py, 1, t);
+      if (t >= 18) { x.fillStyle = '#2B3641'; x.fillRect(px + t / 2 - 1, py + t / 2 - 1, 2, 2); }
+    },
+    wall(x, px, py, t) {
+      x.fillStyle = '#27313C'; x.fillRect(px, py, t, t);
+      x.fillStyle = '#46586A'; x.fillRect(px, py, t, 1); x.fillRect(px, py, 1, t);
+      x.fillStyle = '#10151B'; x.fillRect(px, py + t - 1, t, 1); x.fillRect(px + t - 1, py, 1, t);
+      if (t >= 24) {
+        x.fillStyle = '#161D25';
+        x.fillRect(px, py + t / 2, t, 1);
+        x.fillRect(px + t * 0.5, py, 1, t / 2);
+        x.fillRect(px + t * 0.25, py + t / 2, 1, t / 2);
+        x.fillRect(px + t * 0.75, py + t / 2, 1, t / 2);
+      }
+    },
+    hole(x, px, py, t) {
+      x.fillStyle = '#05070A'; x.fillRect(px, py, t, t);
+      x.strokeStyle = '#10161D'; x.lineWidth = Math.max(2, t * 0.12);
+      x.strokeRect(px + x.lineWidth / 2, py + x.lineWidth / 2, t - x.lineWidth, t - x.lineWidth);
+      x.strokeStyle = '#000'; x.lineWidth = 1;
+      x.strokeRect(px + t * 0.22, py + t * 0.22, t * 0.56, t * 0.56);
+    },
+    robot(x, px, py, t) {                 // chunky steel, mint visor, rects only
+      const m = t * 0.18, w = t - m * 2, h = t - m * 2;
+      x.fillStyle = '#4A5866'; x.fillRect(px + m, py + m + h * 0.8, w, h * 0.2);
+      x.fillStyle = '#9FB0C0'; x.fillRect(px + m, py + m, w, h * 0.8);
+      x.fillStyle = '#5C6B7A'; x.fillRect(px + m, py + m + h * 0.52, w, h * 0.28);
+      x.fillStyle = MINT; x.fillRect(px + m + w * 0.56, py + m + h * 0.2, w * 0.3, h * 0.22);
+    },
+  };
+
+  // Top-down boards read by height: walls cast a shadow onto adjacent floor.
+  // This is what carries maze legibility once material detail is dropped at 14px.
+  function wallShadows(x, grid, t, px0, py0) {
+    const R = grid.length, C = grid[0].length, s = Math.max(1, t * 0.14);
+    x.fillStyle = 'rgba(0,0,0,.38)';
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+      if (grid[r][c] === '#') continue;
+      const px = px0 + c * t, py = py0 + r * t;
+      if (r > 0 && grid[r - 1][c] === '#') x.fillRect(px, py, t, s);
+      if (c > 0 && grid[r][c - 1] === '#') x.fillRect(px, py, s, t);
+      if (r < R - 1 && grid[r + 1][c] === '#') x.fillRect(px, py + t - s, t, s);
+      if (c < C - 1 && grid[r][c + 1] === '#') x.fillRect(px + t - s, py, s, t);
+    }
+  }
+
+  function draw(x, grid, t, style, px0 = 0, py0 = 0) {
+    grid.forEach((row, r) => {
+      [...row].forEach((ch, c) => {
+        const px = px0 + c * t, py = py0 + r * t;
+        if (ch === '#') style.wall(x, px, py, t);
+        else if (ch === 'H') style.hole(x, px, py, t);
+        else {
+          style.floor(x, px, py, t, r, c);
+          if (ch === 'S') {
+            x.strokeStyle = style === A ? '#8A7867' : MUTED; x.lineWidth = Math.max(1, t * 0.08);
+            x.strokeRect(px + t * 0.2, py + t * 0.2, t * 0.6, t * 0.6);
+            if (t >= 18) {
+              x.fillStyle = x.strokeStyle; x.font = `${Math.round(t * 0.42)}px "JetBrains Mono", monospace`;
+              x.textAlign = 'center'; x.textBaseline = 'middle';
+              x.fillText('S', px + t / 2, py + t / 2 + 1);
+            }
+            style.robot(x, px, py, t);
+          }
+          if (ch === 'G') {
+            if (t >= 18) {
+              x.strokeStyle = MINT; x.lineWidth = Math.max(1, t * 0.08);
+              x.strokeRect(px + t * 0.16, py + t * 0.26, t * 0.68, t * 0.48);
+              x.fillStyle = MINT; x.font = `${Math.round(t * 0.26)}px "JetBrains Mono", monospace`;
+              x.textAlign = 'center'; x.textBaseline = 'middle';
+              x.fillText('EXIT', px + t / 2, py + t / 2 + 1);
+            } else {                     // LOD: badge text cannot read, keep a mint mark
+              x.fillStyle = MINT; x.fillRect(px + t * 0.28, py + t * 0.28, t * 0.44, t * 0.44);
+              x.fillStyle = '#0B0F14'; x.fillRect(px + t * 0.44, py + t * 0.44, t * 0.12, t * 0.12);
+            }
+          }
+        }
+      });
+    });
+  }
+
+  function board(host, grid, t, style, frame) {
+    const cols = grid[0].length, rows = grid.length;
+    const pad = frame ? Math.round(t * 0.5) : 4;
+    const [c, x] = mk(cols * t + pad * 2, rows * t + pad * 2);
+    if (frame) {                          // A: the board is a physical object in a frame
+      x.fillStyle = '#241B14'; x.fillRect(0, 0, c.clientWidth, c.clientHeight);
+      x.fillStyle = 'rgba(0,0,0,.45)'; x.fillRect(pad - 2, pad - 2, cols * t + 4, rows * t + 4);
+    }
+    draw(x, grid, t, style, pad, pad);
+    if (style === A) wallShadows(x, grid, t, pad, pad);
+    host.appendChild(c);
+    return c;
+  }
+
+  // 1 · ladder
+  [48, 28, 22, 14].forEach(t => {
+    const wrapA = document.createElement('div'), wrapB = document.createElement('div');
+    board(wrapA, GRIDS.ch304, t, A, true); board(wrapB, GRIDS.ch304, t, B, false);
+    wrapA.appendChild(Object.assign(document.createElement('p'), { className: 'cap', textContent: t + 'px' }));
+    wrapB.appendChild(Object.assign(document.createElement('p'), { className: 'cap', textContent: t + 'px' }));
+    document.getElementById('ladderA').appendChild(wrapA);
+    document.getElementById('ladderB').appendChild(wrapB);
+  });
+
+  // 2 · full boards
+  board(document.getElementById('fullA'), GRIDS.ch208, 34, A, true);
+  board(document.getElementById('fullB'), GRIDS.ch208, 34, B, false);
+
+  // 3 · zoom
+  board(document.getElementById('zoomA'), ZOOM, 64, A, true);
+  board(document.getElementById('zoomB'), ZOOM, 64, B, false);
+
+  // 4 · sheet contrast strip
+  [['sheetA', A], ['sheetB', B]].forEach(([id, style]) => {
+    const c = board(document.getElementById(id), GRIDS.ch304, 30, style, style === A);
+    const x = c.getContext('2d');
+    const w = c.clientWidth, h = c.clientHeight, band = h * 0.52;
+    x.fillStyle = 'rgba(18,24,31,.5)'; x.fillRect(0, h - band, w, band);      // sheet body
+    x.fillStyle = 'rgba(11,15,20,.5)'; x.fillRect(8, h - band + 8, w - 16, band - 16); // card
+    x.font = '11px "JetBrains Mono", monospace'; x.textAlign = 'left'; x.textBaseline = 'alphabetic';
+    x.fillStyle = MUTED; x.fillText('ROBOT MEMORY  4 / 11', 18, h - band + 30);
+    x.fillStyle = TEXT;  x.fillText('04 loop until [wall sensor] = [blocked]', 18, h - band + 50);
+    x.fillText('05     move', 18, h - band + 68);
+  });
+})();
+</script>

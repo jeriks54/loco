@@ -265,11 +265,11 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 - **#17 shipped (PR #24):** Chapter 3 keeps its automatically fitted front wall sensor and players construct `loop until [wall sensor] = [blocked]` by dragging operands into two initially empty slots. No mounting selector or hole sensor. See `briefs/m6-condition-slots.md`; this superseded the fixed-label implementation before merge.
 - **#19 first slice shipped PR #23:** tile infrastructure, start marker and fatal holes. Ladders and explicit `climb` remain chapter-5 work.
 - **Future equipment/rewards:** sensors can eventually be acquired and mounted at selected robot locations. Candidate types: wall, hole, distance, terrain. Purchase using earned rewards versus automatic chapter rewards is deliberately undecided; do not build that system into M6.
-- Broader graphics improvement — **#22**, requested by Jonas 2026-09-07. Agree desktop/mobile mockups before changing art direction; cover board/environment, robot, motion/outcome feedback and UI coherence. Coordinate #8/#19 and preserve legibility. This work is separately scheduled; the locked visual language below remains the baseline until a new direction is approved.
+- Broader graphics improvement — **#22**, requested by Jonas 2026-09-07. Direction agreed 2026-09-14 against `docs/reference/m22-board-directions.html`: **direction A, tabletop flat-shape** for the board, console chrome unchanged. Rules in §12; implementation contract in `briefs/m22-board-art.md`. Motion/outcome feedback and UI coherence remain a second slice.
 
 ## 11. Visual language
 
-Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic inside a modern mobile app** — terminal/roguelike glyph art with contemporary app polish.
+Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic inside a modern mobile app** — terminal/roguelike glyph art with contemporary app polish. Amended 2026-09-14 for #22: these rules stay locked for the **console chrome** (title screen, panels, sheet, ticker); the **board inside the console** follows §12, direction A, approved against `docs/reference/m22-board-directions.html`.
 
 - **Typography:** two voices — clean system sans for human-facing copy (subtitle, tagline, buttons, tab labels); JetBrains Mono for terminal/ASCII elements (maze art, boot log/ticker, version).
 - **Palette:** warm green-tinted charcoal surfaces, near-white text, muted grey-green secondary text, one mint neon accent. Reference: `docs/reference/welcome-mockup.png`. Exact values live as CSS custom properties in `styles/main.css` (source of truth).
@@ -279,3 +279,54 @@ Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic i
 - **Motion:** subtle — fade-ins, cursor blink, glow pulses; must honor `prefers-reduced-motion`.
 - **Layout:** desktop board/editor panels plus the shipped M4 mobile bottom sheet (requirements §3.7). The welcome screen uses a centered column on phones.
 - **Copy voice:** terminal boot voice — short, dry, playful; no lorem ipsum.
+
+## 12. Board art — direction A, tabletop flat-shape (#22, approved 2026-09-14)
+
+The board is a **physical object inside the console**: oiled-walnut planks under oxide-clay
+brick, drawn with flat shapes only — no gradients, no noise, no image assets. The concept is
+the split: the graphite terminal is the programmer's console, the board is the machine the
+robot runs on. Approved against `docs/reference/m22-board-directions.html`, which remains the
+visual reference; the values below are the contract and were read off it.
+
+**Palette (board only; chrome keeps §11 tokens):**
+
+| Element | Value |
+|---|---|
+| Frame around the board | `#241B14`, inner shadow `rgba(0,0,0,.45)` |
+| Floor (walnut plank) | base `#342B22`; seam `#272019` |
+| Wall (clay brick) | base `#5B4534`; lit top face `#7E6047`; dark bottom `#37281C`; mortar `#40301F`; per-tile outline `#1F1710` |
+| Wall shadow on floor | `rgba(0,0,0,.38)` |
+| Hole | void `#0B0806`; outer rim `#241B14`; inner rim `#000` |
+| Start marker | outline `#8A7867`, `S` glyph |
+| Exit | mint outline badge + `EXIT`; below the glyph threshold a solid mint square with a dark centre dot |
+| Robot | brass body `#B08D57`, outline `#6E5636`, treads `#241B14`, mint visor with glow on the facing side |
+
+**Rules:**
+
+- **Legibility is carried by height, not texture.** Every wall casts a shadow onto each
+  orthogonally adjacent floor tile (`rgba(0,0,0,.38)`, thickness `max(1, tile*0.14)`). This is
+  what keeps the maze readable once material detail is dropped, and it is not optional.
+- **Level-of-detail thresholds.** Plank seams and brick mortar only at `tile >= 24`; vertical
+  plank joints only at `tile >= 32`; `S` and `EXIT` glyphs only at `tile >= 18`. Below 18 the
+  exit is a solid mint mark. `MIN_TILE` stays 14 (`scene.js`); the 14px board must answer
+  wall / floor / hole / start / exit without squinting.
+- **Mint stays the only saturated hue on the board**: robot visor and glow, exit, program
+  pointer. Materials stay desaturated (walnut and clay, never pine or brick-red).
+- **A hole is absence.** Never a surface, never lit, never shadow-casting. Its double rim is
+  the only cue, so ch3-03/ch3-04 keep teaching that a wall sensor misses a hole.
+- **Console chrome is untouched**: title screen, panels, sheet, ticker keep §11 exactly.
+- **Sheet contrast must be re-measured before merge**, not eyeballed: `--muted` and `--text`
+  over the translucency stack against the new worst case (a lit wall top `#7E6047` behind the
+  sheet). Below 4.5:1, raise sheet opacity per the dial in `styles/main.css`; never lighten
+  the text. The shipped table (5.01:1 / 2.90:1) was measured against the old dark board.
+- **No new motion.** Existing tween / shake / fall-shrink / goal-pulse behaviour and
+  `prefers-reduced-motion` handling are unchanged; richer motion and outcome feedback are
+  #22 slice 2.
+- **Future tile types follow the same rules.** When #19's ladders land, they get a material,
+  a shadow behaviour and an LOD plan under this section, not a one-off style.
+- **#8 folds in here.** The brass robot base sprite (body, treads, facing visor) ships with
+  this slice so `scene.js` is not rewritten twice; its richer move/crash/goal animation is
+  slice 2. Issue #8 closes on the base sprite only if Jonas agrees the chevron is gone for
+  good.
+
+Implementation contract, ownership and acceptance: `briefs/m22-board-art.md`.
