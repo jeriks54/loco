@@ -70,7 +70,10 @@ Grid legend: `#` wall, `.` floor, `S` start, `G` goal; M5 adds `H` fatal hole.
 M5 state adds row-major `tiles` and a separate `start` pose, retaining `walls` for
 compatibility. `tileAt` returns a type or null outside the grid; `isBlocked` means
 wall/outside, while `isSafeToEnter` accepts only floor/start/goal. See the approved
-`briefs/m5-tile-types.md` for the exact table. Existing levels contain no holes.
+`briefs/m5-tile-types.md` for the exact table. Chapters 1–2 contain no holes;
+M6's ch3-03 and ch3-04 use them as hazards the wall sensor cannot detect.
+Chapter 3 levels additionally carry `sensor: 'frontWall'`; parsed state exposes it
+as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
 
 ## 4. Execution model
 
@@ -130,11 +133,12 @@ Giant Steps. Exact grids and solutions live in `level-design.md` §4.
 | **M3 (#16, shipped PR #21)** | Counted-loop rename and chapter-2 Part B redesign; play-tested and merged 2026-09-07. Brief: `briefs/m3-counted-loops.md` |
 | **M4 (shipped, PR #20)** | Mobile layout — board on top, program as a bottom sheet (decisions and history in §8.1) |
 | **M5 (#19 first slice, shipped PR #23)** | Tile lookup, start marker and fatal holes; original 15 levels preserved. Merged 2026-09-08 as `2d4bd42`; ladders remain chapter-5 work |
-| **M6 (#17, PR #24 preview)** | Five Chapter 3 levels, front wall equipment and two operand drop slots. Follow-up contracts: `briefs/m6-condition-slots.md` and `briefs/m6-uneven-spiral.md` |
+| **M6 (#17, shipped PR #24)** | Five Chapter 3 levels, front wall equipment and two operand drop slots. Merged 2026-09-09 as `ee25b75`; contracts: `briefs/m6-front-wall-sensor.md`, `briefs/m6-condition-slots.md` and `briefs/m6-uneven-spiral.md` |
 
-Merged baseline: `main` at `2d4bd42` (PR #23). The roadmap order is
-**#17 → #18**: chapter-3 sensing, then chapter-4 `if`; tile groundwork is shipped.
-Memory upgrades and explicit ladder `climb` remain future chapter-5 work.
+Merged baseline: `main` at `ee25b75` (PR #24). Chapter-3 sensing is shipped, so
+the roadmap order is now **#18**: chapter-4 `if` reuses chapter 3's condition
+model; tile groundwork is shipped. Memory upgrades and explicit ladder `climb`
+remain future chapter-5 work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
 
@@ -258,7 +262,7 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — **shipped in PR #20**, recorded in §8.1 and tracked in issue #15.
-- **#17 preview correction:** Chapter 3 keeps its automatically fitted front wall sensor but players construct `loop until [wall sensor] = [blocked]` by dragging operands into two initially empty slots. No mounting selector or hole sensor. See `briefs/m6-condition-slots.md`; this supersedes the fixed-label implementation.
+- **#17 shipped (PR #24):** Chapter 3 keeps its automatically fitted front wall sensor and players construct `loop until [wall sensor] = [blocked]` by dragging operands into two initially empty slots. No mounting selector or hole sensor. See `briefs/m6-condition-slots.md`; this superseded the fixed-label implementation before merge.
 - **#19 first slice shipped PR #23:** tile infrastructure, start marker and fatal holes. Ladders and explicit `climb` remain chapter-5 work.
 - **Future equipment/rewards:** sensors can eventually be acquired and mounted at selected robot locations. Candidate types: wall, hole, distance, terrain. Purchase using earned rewards versus automatic chapter rewards is deliberately undecided; do not build that system into M6.
 - Broader graphics improvement — **#22**, requested by Jonas 2026-09-07. Agree desktop/mobile mockups before changing art direction; cover board/environment, robot, motion/outcome feedback and UI coherence. Coordinate #8/#19 and preserve legibility. This work is separately scheduled; the locked visual language below remains the baseline until a new direction is approved.

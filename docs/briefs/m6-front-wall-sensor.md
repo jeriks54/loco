@@ -182,4 +182,6 @@ independent tests, documentation and full review. No concurrent edits to those f
 3. Check full command wording, sensor cue, Run/Reset/Retry and program scrolling.
 
 Jonas authorized committing and publishing the M6 branch/PR for Vercel play-testing
-on 2026-09-08. The preview contains all 19 levels; production merge remains pending.
+on 2026-09-08. The preview initially contained 19 levels; the fifth level and the
+two-slot correction brought it to 20. Merged to `main` in PR #24 as `ee25b75` on
+2026-09-09, closing #17; production deployed the same minute.

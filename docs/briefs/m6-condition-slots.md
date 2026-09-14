@@ -111,4 +111,5 @@ and previous chapter/tile regressions. Inspect narrow screenshots with filled sl
 - Browser flows use fallback fonts and accelerated ticks; human phone feel and
   the educational value of constructing the expression remain play-test items.
 
-The correction updates the existing PR #24 preview; no production merge is included.
+The correction updated the existing PR #24 preview and merged with it to `main` as
+`ee25b75` on 2026-09-09, closing #17; production deployed the same minute.
