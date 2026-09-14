@@ -99,7 +99,6 @@ remain #22.
 
 ## Known loose ends
 
-- **Version string is stale.** `index.html`'s tab bar and `main.js`'s ticker both say `v0.0.1` while the docs have called the game v0.1 since M2. Unresolved — ask jonas what it should read.
 - **Three dead buttons on the title screen.** Tutorial, Settings and High Scores all still answer with the `> loading X.module .......... not found` joke (`main.js` wires every `[data-module]` except Start Game to it). Documented as intentional in `design.md` §11, but it shipped, and Tutorial is the biggest onboarding gap for a game whose whole promise is teaching.
 - **Five M4 play-test items were never reported on** before the merge: chip-drag versus sheet-drag arbitration, right-edge clipping on ch2-01/ch2-08, the board not rescaling across detents, the desktop check across 900px, and heading legibility over the maze. The chip-drag one is the interaction that could only be verified by reading code — look there first if anything feels off.
 - **Sheet translucency is a dial, not a settled value.** Currently 25% leak. `styles/main.css`'s "Sheet translucency" comment has the measured contrast table and how to change it.

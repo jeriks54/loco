@@ -27,6 +27,10 @@ import { loadProgress, markCompleted } from './persist.js';
 
 /* ---------- Welcome screen (kept from the warm-up) ---------- */
 
+// Single source of truth for the version: written into .version-mini at boot and
+// interpolated into the ticker. index.html deliberately carries no literal.
+const VERSION = 'v0.3';
+
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const M1_PENDING_LINE = '> update M1 pending — stand by_';
@@ -37,7 +41,7 @@ const REENABLE_DELAY_MS = 240; // pause after the last line before re-enabling
 
 const TICKER_START_DELAY_MS = 650;
 const TICKER_CHAR_MS = 22;
-const TICKER_LINE = '> loco.system v0.0.1 — ready_';
+const TICKER_LINE = `> loco.system ${VERSION} — ready_`;
 
 const BLINK_CLOSE_MS = 130;
 const BLINK_GAP_MS = 140;
@@ -48,6 +52,7 @@ const EYES_CLOSED = '─ ─';
 const bootLog = document.querySelector('.boot-log');
 const tickerText = document.getElementById('ticker-text');
 const robotEyes = document.querySelector('.robot-eyes');
+const versionMini = document.querySelector('.version-mini');
 // Start Game (#btn-play) is wired to the level select instead —
 // the boot-log joke stays for the not-yet-built modules only.
 const moduleButtons = document.querySelectorAll('[data-module]:not(#btn-play)');
@@ -112,6 +117,7 @@ moduleButtons.forEach((button) => {
   button.addEventListener('click', () => playBootSequence(button));
 });
 
+if (versionMini) versionMini.textContent = VERSION;
 typeTicker();
 scheduleBlink();
 
