@@ -70,14 +70,17 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Commands are placed by dragging them from the palette into memory.
 - Shipped M4 mobile layout: at widths up to 900px the program editor is a floating bottom sheet with grip/chevron, Run/Reset/memory peek bar, tap-to-add and auto-collapse on run.
 
-## 4. Current scope (through PR #24)
+## 4. Current scope (through M22 slice 1)
 
-Merged baseline is `main` at `ee25b75`. M2 shipped loops and M4 shipped mobile;
+Merged baseline is `main` at `0d209c1`. M2 shipped loops and M4 shipped mobile;
 the counted-only chapter-2 revision #16 was play-tested and merged in PR #21 on
 2026-09-07. Historical M2 mechanics remain in its brief. The #19 tile-system first
 slice was play-tested and merged in PR #23 on 2026-09-08. M6's five Chapter 3
 levels, the automatic front wall sensor and the two operand slots merged in PR #24
-on 2026-09-09; #17 is closed and production deployed.
+on 2026-09-09; #17 is closed and production deployed. M22 slice 1's direction-A
+board materials and brass robot base sprite were merged to `main` on 2026-09-17;
+its review, visual checks and contrast measurements are recorded in
+`briefs/m22-board-art.md`.
 
 In:
 
@@ -88,10 +91,12 @@ In:
 - **20 hand-crafted levels**: seven sequence, eight counted-loop and five sensing levels, with per-level palettes and memory budgets
 - Level select screen; progress saved to `localStorage`
 - Mobile bottom-sheet editor and touch controls
+- Direction-A tabletop board art: walnut floor, clay-brick walls, wall shadows, material LOD, persistent start/exit markers, fatal-hole absence and brass robot base sprite
 
 M5 shipped tile types and holes; M6 shipped conditional loops and one front wall sensor.
 Out: `if`, hole/distance/terrain sensors, selectable mounting, rewards/shop,
-ladders, memory upgrades and scoring.
+ladders, memory upgrades and scoring. M22 slice 2's richer motion, outcome
+feedback and UI-coherence work is also not yet shipped.
 
 ## 5. Roadmap (post-MVP)
 
@@ -101,7 +106,7 @@ ladders, memory upgrades and scoring.
 4. **Next — #18:** Chapter 4 adds `if`, reusing chapter 3's condition vocabulary. Roadmap item, not scheduled — do not start without jonas pulling it forward.
 5. **Mobile — shipped in PR #20:** M4's width-based bottom sheet and touch controls are current functionality. Decisions and measured history remain in `design.md` §8.1.
 6. **Ideas beyond:** chapter-5 Mastery and memory upgrades; fog of war, par/star ratings for efficient programs, level sharing.
-7. **Graphics improvement — #22:** improve the game's overall visual quality beyond the current tile slice. Agree a visual direction with Jonas using desktop/mobile mockups, then improve board/environment art, robot appearance, motion/outcome feedback and UI consistency. Coordinate #8 and #19; preserve puzzle readability and reduced-motion support. Requested 2026-09-07, scheduling separate from M5.
+7. **Slice 1 shipped — #22 / #8:** Direction A's tabletop board art and the brass robot base sprite are merged to `main` as `0d209c1` on 2026-09-17. The contract, acceptance checks and visual review are recorded in `briefs/m22-board-art.md`; the console chrome, puzzle readability and reduced-motion support remain preserved. M22 slice 2 still covers richer motion/outcome feedback and UI coherence.
 8. **Sensor equipment and rewards — future intent, 2026-09-08:** allow players to select sensor mounting locations and acquire wall, hole, distance and terrain sensors. Decide later between buying with rewards earned from levels and automatic chapter rewards. No economy or inventory implementation in M6.
 
 ## 6. Non-functional requirements

@@ -134,11 +134,12 @@ Giant Steps. Exact grids and solutions live in `level-design.md` §4.
 | **M4 (shipped, PR #20)** | Mobile layout — board on top, program as a bottom sheet (decisions and history in §8.1) |
 | **M5 (#19 first slice, shipped PR #23)** | Tile lookup, start marker and fatal holes; original 15 levels preserved. Merged 2026-09-08 as `2d4bd42`; ladders remain chapter-5 work |
 | **M6 (#17, shipped PR #24)** | Five Chapter 3 levels, front wall equipment and two operand drop slots. Merged 2026-09-09 as `ee25b75`; contracts: `briefs/m6-front-wall-sensor.md`, `briefs/m6-condition-slots.md` and `briefs/m6-uneven-spiral.md` |
+| **M22 slice 1 (#22 / #8, shipped)** | Direction-A board materials and the brass robot base sprite. Merged to `main` on 2026-09-17 as `0d209c1`; acceptance and review are recorded in `briefs/m22-board-art.md`. Richer motion, outcome feedback and UI coherence remain slice 2 |
 
-Merged baseline: `main` at `ee25b75` (PR #24). Chapter-3 sensing is shipped, so
-the roadmap order is now **#18**: chapter-4 `if` reuses chapter 3's condition
-model; tile groundwork is shipped. Memory upgrades and explicit ladder `climb`
-remain future chapter-5 work.
+Merged baseline: `main` at `0d209c1` (M22 slice 1). Chapter-3 sensing and the
+direction-A board art are shipped, so the next curriculum roadmap item remains
+**#18**: chapter-4 `if` reuses chapter 3's condition model. M22 slice 2, memory
+upgrades and explicit ladder `climb` remain future work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
 
@@ -258,14 +259,14 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 
 ## 10. Open design questions
 
-- Robot board sprite: M1 shipped a facing chevron; upgrade to a proper glyph robot (welcome-mascot lineage, canvas-rendered, no image assets) tracked in issue #8 (label `roadmap`).
+- Robot board sprite: M22 slice 1 replaced M1's facing chevron with the canvas-rendered brass base sprite (body, treads and facing visor). Richer move/crash/goal animation remains part of M22 slice 2; no image assets are planned.
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — **shipped in PR #20**, recorded in §8.1 and tracked in issue #15.
 - **#17 shipped (PR #24):** Chapter 3 keeps its automatically fitted front wall sensor and players construct `loop until [wall sensor] = [blocked]` by dragging operands into two initially empty slots. No mounting selector or hole sensor. See `briefs/m6-condition-slots.md`; this superseded the fixed-label implementation before merge.
 - **#19 first slice shipped PR #23:** tile infrastructure, start marker and fatal holes. Ladders and explicit `climb` remain chapter-5 work.
 - **Future equipment/rewards:** sensors can eventually be acquired and mounted at selected robot locations. Candidate types: wall, hole, distance, terrain. Purchase using earned rewards versus automatic chapter rewards is deliberately undecided; do not build that system into M6.
-- Broader graphics improvement — **#22**, requested by Jonas 2026-09-07. Direction agreed 2026-09-14 against `docs/reference/m22-board-directions.html`: **direction A, tabletop flat-shape** for the board, console chrome unchanged. Rules in §12; implementation contract in `briefs/m22-board-art.md`. Motion/outcome feedback and UI coherence remain a second slice.
+- Broader graphics improvement — **#22 slice 1 shipped** to `main` as `0d209c1` on 2026-09-17. Direction A, tabletop flat-shape board art is implemented with the console chrome unchanged; the implementation contract and acceptance results are in `briefs/m22-board-art.md`. Motion/outcome feedback and UI coherence remain a second slice.
 
 ## 11. Visual language
 
@@ -280,7 +281,7 @@ Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic i
 - **Layout:** desktop board/editor panels plus the shipped M4 mobile bottom sheet (requirements §3.7). The welcome screen uses a centered column on phones.
 - **Copy voice:** terminal boot voice — short, dry, playful; no lorem ipsum.
 
-## 12. Board art — direction A, tabletop flat-shape (#22, approved 2026-09-14)
+## 12. Board art — direction A, tabletop flat-shape (#22, slice 1 shipped 2026-09-17)
 
 The board is a **physical object inside the console**: oiled-walnut planks under oxide-clay
 brick, drawn with flat shapes only — no gradients, no noise, no image assets. The concept is
@@ -318,10 +319,12 @@ visual reference; the values below are the contract and were read off it.
 - **A hole is absence.** Never a surface, never lit, never shadow-casting. Its double rim is
   the only cue, so ch3-03/ch3-04 keep teaching that a wall sensor misses a hole.
 - **Console chrome is untouched**: title screen, panels, sheet, ticker keep §11 exactly.
-- **Sheet contrast must be re-measured before merge**, not eyeballed: `--muted` and `--text`
-  over the translucency stack against the new worst case (a lit wall top `#7E6047` behind the
-  sheet). Below 4.5:1, raise sheet opacity per the dial in `styles/main.css`; never lighten
-  the text. The shipped table (5.01:1 / 2.90:1) was measured against the old dark board.
+- **Sheet contrast was re-measured for slice 1** against the new worst case (a lit wall top
+  `#7E6047` behind the sheet), not eyeballed. The current `styles/main.css` dial is 0.6 / 0.6
+  (16% leak): `--muted` measures 4.65:1 over the lit top, 4.96:1 over the wall base and
+  5.28:1 over the walnut floor; `--text` remains at least 11.1:1. If a future board or dial
+  change drops below 4.5:1, raise sheet opacity per the dial and never lighten the text.
+  `tests/contrast.mjs` gates these surfaces; the pure-accent blurred-region cost is 3.66:1.
 - **No new motion.** Existing tween / shake / fall-shrink / goal-pulse behaviour and
   `prefers-reduced-motion` handling are unchanged; richer motion and outcome feedback are
   #22 slice 2.
