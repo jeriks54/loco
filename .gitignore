@@ -1,3 +1,5 @@
 .vercel
 tests/vendor/
 tests/tmp/
+
+.vercel
