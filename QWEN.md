@@ -9,9 +9,10 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-09-14
+## State as of 2026-09-19
 
-Merged baseline: `main` = `ee25b75` (PR #24). Shipped features:
+Merged baseline: `main` = `ee25b75` (PR #24). Chapter 4 is implemented in the
+working tree pending final review and Jonas' play-test. Shipped features:
 
 - **Chapter 1 — Sequence**, 7 levels (`ch1-01..07`), move / turn left / turn right.
 - **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), programs rendered as numbered mono lines. Counted `loop n` / `end` replaced historical M2 `repeat` / `while front clear` in PR #21.
@@ -19,7 +20,8 @@ Merged baseline: `main` = `ee25b75` (PR #24). Shipped features:
 - **Persistence** — `localStorage['loco.progress.v1']` stores completed level ids only. Programs are never saved, so block renames have no migration cost.
 - **M4 mobile bottom sheet** (PR #20) — under `max-width: 900px` the board fills the screen and the program panel is a floating translucent overlay sheet with a grip + chevron, a peek bar carrying Run / Reset / memory count, and auto-collapse on run. Play-tested on a Samsung S26 in Chrome.
 
-20 merged levels across three chapters.
+20 merged levels across three chapters; Chapter 4 adds five working-tree levels
+(`ch4-01..05`) without changing the existing IDs.
 Widest grids are 16 cells (ch2-01, ch2-08, ch3-03, ch3-05).
 
 **Completed revision #16:** `feat/m3-counted-loops`, approved for implementation on
@@ -67,7 +69,7 @@ Open roadmap issues, all labeled `enhancement` + `roadmap`:
 
 | # | What | Note |
 |---|---|---|
-| **#18** | Chapter 4 — `if` statements | Next in the agreed order; reuses chapter 3's condition model |
+| **#18** | Chapter 4 — `if` statements | Implemented in the working tree; reuses chapter 3's condition model |
 | **#19** | Tile types + map art | First slice shipped PR #23; ladders stay with chapter 5 |
 | **#8** | Robot board sprite (replace the facing chevron) | Cosmetic; touches `scene.js`, so never parallel with renderer work |
 | **#22** | Improve the game's overall graphics | Direction A (tabletop board) agreed 2026-09-14 against `docs/reference/m22-board-directions.html`; rules in `design.md` §12, contract in `briefs/m22-board-art.md`. Slice 1 = board materials + robot base sprite (#8); slice 2 = motion/feedback/UI coherence |
@@ -75,16 +77,16 @@ Open roadmap issues, all labeled `enhancement` + `roadmap`:
 Shipped and closed: **#17** (Chapter 3 — front wall sensor + constructed loop
 condition, two operand slots, five levels, no hole sensor) in PR #24.
 
-**Order: #22 slice 1 next** — Jonas pulled it forward on 2026-09-14 — then #18.
-Chapter 3 and the tile groundwork are shipped. Equipment acquisition and mounting
-need a separate later design decision.
+Chapter 3, the tile groundwork, M22 slice 1 and the Chapter 4 implementation are
+represented in the current working tree. Equipment acquisition and mounting, M22
+slice 2, memory upgrades and explicit ladder `climb` remain future work.
 
 ## Where things are documented
 
 - `docs/design.md` — architecture (§2), level format (§3), editor (§5), milestones (§8), **M4 mobile decisions (§8.1)**, workflow + roles + **delegation protocol (§9)**, open design questions (§10), visual language (§11).
-- `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), decisions (§7), sensor equipment direction (§9) and five Chapter 3 levels (§10).
+- `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), decisions (§7), sensor equipment direction (§9), five Chapter 3 levels (§10) and the fixed Chapter 4 pack (§11).
 - `docs/requirements.md` — the product requirements and the post-MVP roadmap (§5).
-- `docs/briefs/` — all briefs are now historical records of shipped work: M3/M5/M6 record #16, the #19 first slice and #17. Earlier briefs retain historical scope and decisions.
+- `docs/briefs/` — milestone contracts, including `m7-if-branching.md` and historical M3/M5/M6 records.
 - `tests/README.md` — retained Node verification and browser play-test checklist.
 
 ## Hard rules

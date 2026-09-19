@@ -12,6 +12,8 @@ export const BLOCK_DEFS = {
   turnRight: { label: 'turn right', glyph: '↱' },
   loop: { label: 'loop', glyph: '↻' },
   loopUntil: { label: 'loop until', glyph: '↻' },
+  if: { label: 'if', glyph: '?' },
+  else: { label: 'else', glyph: ':' },
   end: { label: 'end', glyph: '■' },
 };
 
@@ -47,7 +49,7 @@ export function renderPalette(container, blocks, sensor) {
 
   // Conditions are operands for the loop-until line, never independent
   // memory entries. They are unlocked only with the matching equipment.
-  if (blocks.includes('loopUntil') && sensor === 'frontWall') {
+  if ((blocks.includes('loopUntil') || blocks.includes('if')) && sensor === 'frontWall') {
     for (const id of Object.keys(CONDITION_DEFS)) {
       const def = CONDITION_DEFS[id];
       const chip = document.createElement('div');

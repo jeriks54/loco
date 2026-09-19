@@ -39,7 +39,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 | 1 — shipped | `move` (1 step forward), `turn left`, `turn right` |
 | 2 — shipped in PR #21 | `loop n` / `end`, including nesting; count 1..99, default 2 |
 | 3 — shipped in PR #24 | Automatic front wall sensor and `loop until [sensor] = [value]` / `end`; fill with wall sensor and blocked |
-| 4 — planned #18 | `if` using the same condition vocabulary |
+| 4 — shipped in Chapter 4 | `if` / `else` using the same condition vocabulary |
 | 5 — later | Explicit ladder `climb`, combined concepts, memory upgrades |
 
 ### 3.4 Execution
@@ -53,7 +53,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Robot moves into a wall or off the maze → **crash**: the run ends immediately, level is retried with the program preserved.
 - Robot enters a hole → **fell**: terminal failure; Retry preserves the program.
 - Program finishes without reaching the goal → retry (program preserved).
-- Unbalanced loops/ends, an incomplete `loop until` condition, and a sensed loop on a level without the required sensor all refuse execution without movement; 200 executed lines trigger the runaway guard.
+- Unbalanced loops/ends, unmatched or duplicate `else`, an incomplete `loop until`/`if` condition, and a sensed condition on a level without the required sensor all refuse execution without movement; 200 executed lines trigger the runaway guard.
 
 ### 3.6 Progression
 
@@ -61,7 +61,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Difficulty rises via maze complexity **and** tight memory budgets.
 - Later chapters unlock new blocks and larger memories in step with mazes that require them.
 - Progress (completed levels) persists in the browser.
-- The merged registry has 20 stable IDs: the original 15 plus ch3-01..05 from PR #24, keeping all prior level data and completion marks. Chapter 3 automatically supplies its sensor without requiring Chapter 2 completion. The added six-line capstone requires sensing even with counted loops available; retain the exhaustive counted-program check.
+- The merged registry has 25 stable IDs: the original 20 plus ch4-01..05 from Chapter 4, keeping all prior level data and completion marks. Chapter 3 and Chapter 4 automatically supply the front-wall sensor without requiring earlier chapter completion. Chapter 4's five levels require branching within their memory budgets; retain independent real-executor cross-checks.
 
 ### 3.7 Layout & controls
 
@@ -86,15 +86,15 @@ In:
 
 - Grid renderer, maze with entrance/goal, animated robot
 - Drag & drop program editor with memory-slot limit
-- Executor for `move` / `turn left` / `turn right`, counted `loop` / `end` and sensed `loop until` / `end`, with run/reset/speed controls
+- Executor for `move` / `turn left` / `turn right`, counted `loop` / `end`, sensed `loop until` / `end`, and `if` / `else` / `end`, with run/reset/speed controls
 - Crash + fall-short fail states with retry
-- **20 hand-crafted levels**: seven sequence, eight counted-loop and five sensing levels, with per-level palettes and memory budgets
+- **25 hand-crafted levels**: seven sequence, eight counted-loop, five sensing and five decision levels, with per-level palettes and memory budgets
 - Level select screen; progress saved to `localStorage`
 - Mobile bottom-sheet editor and touch controls
 - Direction-A tabletop board art: walnut floor, clay-brick walls, wall shadows, material LOD, persistent start/exit markers, fatal-hole absence and brass robot base sprite
 
-M5 shipped tile types and holes; M6 shipped conditional loops and one front wall sensor.
-Out: `if`, hole/distance/terrain sensors, selectable mounting, rewards/shop,
+M5 shipped tile types and holes; M6 shipped conditional loops and one front wall sensor; Chapter 4 adds front-wall `if`/`else` branching.
+Out: hole/distance/terrain sensors, selectable mounting, rewards/shop,
 ladders, memory upgrades and scoring. M22 slice 2's richer motion, outcome
 feedback and UI-coherence work is also not yet shipped.
 
@@ -103,7 +103,7 @@ feedback and UI-coherence work is also not yet shipped.
 1. **Shipped — #16, PR #21:** renamed historical M2 `repeat` to `loop`, removed `while front clear`, and replaced chapter-2 Part B with counted-loop exercises. All IDs and completion marks stay stable. See `level-design.md` §4 and `briefs/m3-counted-loops.md`.
 2. **First slice shipped — #19, PR #23:** tile types, fatal holes, start marker and fall feedback. Original 15 levels preserved. Ladders and explicit `climb` wait for chapter 5.
 3. **Shipped — #17, PR #24:** Chapter 3 automatically equips a front wall sensor. Players drag `wall sensor` and `blocked` into two initially empty fields of `loop until [sensor] = [value]`; the expression costs one line. Incomplete conditions refuse Run before movement. Holes occur in maps but have no sensor. Shipped contract: `briefs/m6-condition-slots.md`. Issue #17 is closed.
-4. **Next — #18:** Chapter 4 adds `if`, reusing chapter 3's condition vocabulary. Roadmap item, not scheduled — do not start without jonas pulling it forward.
+4. **Shipped — #18:** Chapter 4 adds explicit `if`/`else` branching, reusing chapter 3's front-wall condition vocabulary. The five-level pack and structural control-flow contracts are recorded in `briefs/m7-if-branching.md`.
 5. **Mobile — shipped in PR #20:** M4's width-based bottom sheet and touch controls are current functionality. Decisions and measured history remain in `design.md` §8.1.
 6. **Ideas beyond:** chapter-5 Mastery and memory upgrades; fog of war, par/star ratings for efficient programs, level sharing.
 7. **Slice 1 shipped — #22 / #8:** Direction A's tabletop board art and the brass robot base sprite are merged to `main` as `0d209c1` on 2026-09-17. The contract, acceptance checks and visual review are recorded in `briefs/m22-board-art.md`; the console chrome, puzzle readability and reduced-motion support remain preserved. M22 slice 2 still covers richer motion/outcome feedback and UI coherence.
@@ -120,4 +120,4 @@ feedback and UI-coherence work is also not yet shipped.
 ## 7. Open questions
 
 - Star rating / par block-count per level? (Lean: post-MVP.)
-- Future chapter counts and difficulty curves — defined in `level-design.md`; the current 20 IDs remain stable.
+- Future chapter counts and difficulty curves — defined in `level-design.md`; the current 25 IDs remain stable.

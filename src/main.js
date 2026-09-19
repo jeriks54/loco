@@ -29,7 +29,7 @@ import { loadProgress, markCompleted } from './persist.js';
 
 // Single source of truth for the version: written into .version-mini at boot and
 // interpolated into the ticker. index.html deliberately carries no literal.
-const VERSION = 'v0.3';
+const VERSION = 'v0.4';
 
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

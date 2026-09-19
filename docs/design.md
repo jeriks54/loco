@@ -28,6 +28,7 @@ src/
     chapter1.js      level definitions (one module per chapter)
     chapter2.js      eight counted-loop levels
     chapter3.js      five front-wall sensing levels (M6)
+    chapter4.js      five conditional-branching levels (M7)
     index.js         ordered registry of all levels
   game/
     state.js         level state: grid, robot pose, goal, memory size
@@ -43,7 +44,7 @@ src/
   persist.js         load/save progress in localStorage
 ```
 
-**Data flow:** `editor` produces a program (simple-command strings and counted-loop objects) → `executor` walks it against `state`, emitting events (`step`, `moved`, `turned`, `crashed`, `fell`, `finished`, `goal`, `syntax`, `runaway`) → `scene` animates movement events → `editor` highlights the current block on `step` events (the program pointer) → `hud` reacts to terminal events.
+**Data flow:** `editor` produces a program (simple-command strings, counted-loop objects, and typed condition objects) → `executor` walks it against `state`, emitting events (`step`, `moved`, `turned`, `crashed`, `fell`, `finished`, `goal`, `syntax`, `runaway`) → `scene` animates movement events → `editor` highlights the current block on `step` events (the program pointer) → `hud` reacts to terminal events.
 
 ## 3. Level format
 
@@ -77,15 +78,31 @@ as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
 
 ## 4. Execution model
 
-- A program is an ordered array, `length <= memory`: simple commands are `move`, `turnLeft`, `turnRight`, `end` strings; counted loops are `{ id: 'loop', count }` objects.
+- A program is an ordered array, `length <= memory`: simple commands are `move`,
+  `turnLeft`, `turnRight`, `else`, and `end` strings; counted loops are
+  `{ id: 'loop', count }` objects; conditional entries are
+  `{ id: 'loopUntil'|'if', sensor, value }` objects.
 - M6 adds `{ id: 'loopUntil', sensor, value }`, displayed as
-  `loop until [wall sensor] = [blocked]`. Both slots begin null and must be filled
-  with typed palette operands; equality is fixed. A header
-  checks the adjacent wall before each body iteration; true skips the body.
-  Both loop types nest and share `end`. Missing/wrong operands or equipment refuse
-  execution before movement. Counted and sensed headers each cost one tick.
+  `loop until [wall sensor] = [blocked]`. M7 adds `{ id: 'if', sensor, value }`,
+  displayed as `if [wall sensor] = [blocked]`, plus the explicit `else` marker.
+  Both condition slots begin null and must be filled with typed palette operands;
+  equality is fixed. A `loopUntil` header checks the adjacent wall before each
+  body iteration; true skips the body. An `if` header checks once: true enters
+  its body, false jumps to `else` or past its `end`.
+- `else` is allowed only once in the nearest open `if`. A true branch reaching
+  `else` skips the alternate body and continues after its matching `end`; a false
+  branch falls through it. `end` closes the nearest open `if`, `loop`, or
+  `loopUntil`. Loops and conditionals may nest in either direction, including an
+  `if` inside a loop and a loop inside an `if`. Empty branches are valid runtime
+  syntax, but no shipped level relies on one.
+- Every visited line, including `if`, `else`, and `end`, emits one `step` event
+  and consumes one tick. Skipped branch lines emit neither. Missing or invalid
+  condition operands, invalid nesting, unmatched `else`, duplicate `else`, and
+  unmatched `end` refuse execution before movement. The 200-executed-line guard
+  emits terminal `runaway`.
 - `loop n` … `end` repeats the body n times and supports nesting. Count defaults to 2 and is clamped to integer 1..99 (`LOOP_MIN` / `LOOP_MAX`). Chapter 2 has counted loops only; sensing belongs to future chapter 3. No `repeat` or `whileFrontClear` aliases remain in revision #16.
-- Balance is validated before movement; unmatched openers/ends emit terminal `syntax`. The 200-executed-line guard emits terminal `runaway`.
+- Structure is validated before movement; the analyzer returns matching `end`
+  and `else` positions. The 200-executed-line guard emits terminal `runaway`.
 - The executor is a tick machine: one block per tick; a timer drives ticks so animation can pace them (speed control changes the tick interval).
 - Each tick first emits `step` with the index of the executing block — the editor uses it to highlight the current block (program pointer).
 - Crash rule: `move` into a wall or out of bounds → emit `crashed`, halt.
@@ -97,7 +114,7 @@ as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
 ## 5. Drag & drop editor
 
 - Palette shows the blocks unlocked for the current level; dragging a block creates a **copy** (blocks are reusable, memory is the limit).
-- Program area renders the program as **numbered mono lines**, one per memory slot ("program-as-lines", shipped with M2 / issue #9); loop bodies indent per nesting depth and `loop` lines carry ± steppers for the count (no typing). Drops insert a line at position; over-capacity drops reject.
+- Program area renders the program as **numbered mono lines**, one per memory slot ("program-as-lines", shipped with M2 / issue #9); loop and conditional bodies indent per nesting depth, `else` is aligned with its matching `if`, and `loop` lines carry ± steppers for the count (no typing). Drops insert a line at position; over-capacity drops reject.
 - Implemented with Pointer Events for mouse and touch rather than the HTML5 DnD API — more controllable styling and animation.
 - Click a placed line to remove it. "Clear" button empties the program.
 - Layout shell: board (canvas) and editor are self-contained panels — desktop shows the board left, editor right; the shipped mobile mode uses a floating bottom sheet at widths up to 900px (see §8.1). On touch, drag is complemented by tap-to-add (a pointerup under the 5px drag threshold appends the block).
@@ -121,7 +138,8 @@ as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
 Revision #16 preserves all 15 level IDs and existing completion marks. Programs are
 not persisted, so the block rename requires no migration. The replacement Part B
 levels retain IDs ch2-05..08: Double Step, Beyond the Pattern, The Return Trip and
-Giant Steps. Exact grids and solutions live in `level-design.md` §4.
+Giant Steps. Chapter 4 appends ch4-01..05 without renumbering or rewriting any
+earlier entry. Exact grids and solutions live in `level-design.md` §§4 and 11.
 
 ## 8. Milestones
 
@@ -134,12 +152,12 @@ Giant Steps. Exact grids and solutions live in `level-design.md` §4.
 | **M4 (shipped, PR #20)** | Mobile layout — board on top, program as a bottom sheet (decisions and history in §8.1) |
 | **M5 (#19 first slice, shipped PR #23)** | Tile lookup, start marker and fatal holes; original 15 levels preserved. Merged 2026-09-08 as `2d4bd42`; ladders remain chapter-5 work |
 | **M6 (#17, shipped PR #24)** | Five Chapter 3 levels, front wall equipment and two operand drop slots. Merged 2026-09-09 as `ee25b75`; contracts: `briefs/m6-front-wall-sensor.md`, `briefs/m6-condition-slots.md` and `briefs/m6-uneven-spiral.md` |
+| **M7 (#18, Chapter 4)** | Five conditional-branching levels, explicit `if` / `else` / `end`, front-wall condition reuse, structural validation and desktop/touch coverage. Shipped in this work; contract: `briefs/m7-if-branching.md` |
 | **M22 slice 1 (#22 / #8, shipped)** | Direction-A board materials and the brass robot base sprite. Merged to `main` on 2026-09-17 as `0d209c1`; acceptance and review are recorded in `briefs/m22-board-art.md`. Richer motion, outcome feedback and UI coherence remain slice 2 |
 
-Merged baseline: `main` at `0d209c1` (M22 slice 1). Chapter-3 sensing and the
-direction-A board art are shipped, so the next curriculum roadmap item remains
-**#18**: chapter-4 `if` reuses chapter 3's condition model. M22 slice 2, memory
-upgrades and explicit ladder `climb` remain future work.
+Merged baseline: `main` at `0d209c1` (M22 slice 1). Chapter-3 sensing, Chapter 4
+branching and the direction-A board art are now represented in the working tree;
+M22 slice 2, memory upgrades and explicit ladder `climb` remain future work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
 
@@ -276,7 +294,7 @@ Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic i
 - **Palette:** warm green-tinted charcoal surfaces, near-white text, muted grey-green secondary text, one mint neon accent. Reference: `docs/reference/welcome-mockup.png`. Exact values live as CSS custom properties in `styles/main.css` (source of truth).
 - **Decoration:** figlet-style ASCII logo (block glyphs, mint glow — user preferred it over a line-art SVG variant, 2026-08-25); ASCII maze teaser with the robot and a glowing path to an `[EXIT]` badge; box-drawing wall fragments; blinking robot eyes. No code-rain background, no scanlines/CRT kitsch — it should feel 2026, not 1983.
 - **Welcome structure (per reference):** figlet logo → maze teaser → tagline → outline-glow "Start Game" + secondary "Tutorial" → bottom tab bar (Settings / High Scores) with mini version. No subtitle line. Not-yet-built modules answer with a terminal "not found" joke.
-- **Version:** one `VERSION` constant in `src/main.js` is the single source of truth — it is interpolated into the ticker and written into the empty `.version-mini` span at boot, so `index.html` carries no literal and the two cannot drift. Bump that constant only. Scheme agreed 2026-09-14: one minor per shipped curriculum chapter — v0.1 chapter 2, v0.2 mobile + tiles, v0.3 chapter 3.
+- **Version:** one `VERSION` constant in `src/main.js` is the single source of truth — it is interpolated into the ticker and written into the empty `.version-mini` span at boot, so `index.html` carries no literal and the two cannot drift. Bump that constant only. Scheme agreed 2026-09-14: one minor per shipped curriculum chapter — v0.1 chapter 2, v0.2 mobile + tiles, v0.3 chapter 3, v0.4 Chapter 4 after final acceptance.
 - **Motion:** subtle — fade-ins, cursor blink, glow pulses; must honor `prefers-reduced-motion`.
 - **Layout:** desktop board/editor panels plus the shipped M4 mobile bottom sheet (requirements §3.7). The welcome screen uses a centered column on phones.
 - **Copy voice:** terminal boot voice — short, dry, playful; no lorem ipsum.
