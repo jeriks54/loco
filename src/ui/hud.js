@@ -15,7 +15,7 @@ const RESULT_COPY = {
   crashed: '> CRASHED — robot met a wall.',
   finished: '> FELL SHORT — robot stopped before the exit.',
   goal: '> LEVEL COMPLETE.',
-  syntax: '> SYNTAX ERROR — every loop needs its matching end.',
+  syntax: '> SYNTAX ERROR — every block needs its matching end.',
   runaway: '> DIZZY — robot got dizzy, run stopped.',
 };
 

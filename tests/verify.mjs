@@ -12,6 +12,7 @@ import { solutions, loopFreeMinimums } from './chapter2-solutions.mjs';
 import './tiles.mjs';
 import './sensors.mjs';
 import './spiral-proof.mjs';
+import './decisions.mjs';
 
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 const chapter1 = levels.filter(l => l.id.startsWith('ch1-'));
@@ -31,10 +32,15 @@ for (const file of sourceFiles) {
   assert.equal(checked.status, 0, checked.stderr);
   assert.doesNotMatch(readFileSync(path, 'utf8'), /\brepeat\b|whileFrontClear|REPEAT_MIN|REPEAT_MAX/, path);
 }
-assert.deepEqual(Object.keys(BLOCK_DEFS).sort(), ['end', 'loop', 'loopUntil', 'move', 'turnLeft', 'turnRight']);
-assert.equal(levels.length, 20);
-assert.equal(new Set(levels.map(l => l.id)).size, 20);
-assert.deepEqual(levels.map(l => l.id), [...Array.from({ length: 7 }, (_, i) => `ch1-0${i + 1}`), ...Array.from({ length: 8 }, (_, i) => `ch2-0${i + 1}`), ...Array.from({ length: 5 }, (_, i) => `ch3-0${i + 1}`)]);
+assert.deepEqual(Object.keys(BLOCK_DEFS).sort(), ['else', 'end', 'if', 'loop', 'loopUntil', 'move', 'turnLeft', 'turnRight']);
+assert.equal(levels.length, 25);
+assert.equal(new Set(levels.map(l => l.id)).size, 25);
+assert.deepEqual(levels.map(l => l.id), [
+  ...Array.from({ length: 7 }, (_, i) => `ch1-0${i + 1}`),
+  ...Array.from({ length: 8 }, (_, i) => `ch2-0${i + 1}`),
+  ...Array.from({ length: 5 }, (_, i) => `ch3-0${i + 1}`),
+  ...Array.from({ length: 5 }, (_, i) => `ch4-0${i + 1}`),
+]);
 assert.equal(hash(levels.slice(0, 19)), 'b9badb3ed831e316064198452975f154a564d08c516356b8199a8f5dc47cd0ca', 'capstone must preserve previous 19 levels');
 
 for (const level of levels) {
@@ -121,4 +127,4 @@ withClock(clock => {
 const capped = execute(corridor, [loop(1000), 'end']);
 assert.equal(capped.outcome, 'finished'); assert.equal(capped.ticks, 199);
 console.table(report);
-console.log(`PASS: ${sourceFiles.length} module syntax checks; 20 level paths; 8 counted + 5 sensor solution checks; executor regression checks.`);
+console.log(`PASS: ${sourceFiles.length} module syntax checks; 25 level paths; 8 counted + 5 sensor + 5 decision solution checks; executor regression checks.`);

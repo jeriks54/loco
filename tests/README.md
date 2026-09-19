@@ -28,11 +28,20 @@ M5 adds `tiles.mjs` (also run by `verify.mjs`): full 15-level registry hash from
 independent BFS excluding holes, and fresh-executor restart. `tile-fixtures.mjs`
 contains test-only grids; production imports none of these files.
 
-M6 appends four levels: the M5 baseline hash now protects the first 15 entries.
-`sensors.mjs` (included in `verify.mjs`) checks all four intended programs,
+M6 appends five levels: the M5 baseline hash now protects the first 15 entries.
+`sensors.mjs` (included in `verify.mjs`) checks all five intended programs,
 independent loop-free minima, wall directions/boundaries, invisible holes,
 mixed nesting, empty sensed loops, missing equipment and restart.
 `chapter3-solutions.mjs` retains intended programs separately from level data.
+
+M7 appends five levels (`ch4-01..05`) and leaves the first 20 registry entries
+unchanged. `chapter4-solutions.mjs` keeps intended programs independently from
+the level module. `decisions.mjs` runs all five through the real executor and
+checks condition snapshots, true/false paths, skipped branch step traces, operand
+rejection, invalid nesting, and nested loop/conditional behavior. The Chapter 4
+proof check must enumerate the branch-free command language permitted by each
+palette within its memory cap and cross-check its independent evaluator against
+the real executor; a solution alone does not prove that branching is required.
 
 Optional browser acceptance checks use an already-installed Playwright module and
 Chrome. Set `LOCO_PLAYWRIGHT_MODULE` to the absolute path to `playwright/index.mjs`,
@@ -81,6 +90,13 @@ and are skipped explicitly. It compares an independent combinatorial count with
 the enumerator's total, cross-checks its evaluator against the real executor on
 1,230 cases, and requires a known positive-control puzzle to solve. The capstone
 must have no counted-only solution. `sensors-browser.mjs` plays all five levels.
+
+`chapter4-browser.mjs` exercises Chapter 4 on desktop and touch: condition operands,
+tap and drag insertion for `if` / `else` / `end`, indentation, line numbers,
+incomplete and invalid nesting feedback, nested programs, memory locking, pointer
+highlighting, completion/retry and board fit at 280/320/390/900/901px. It also
+retains the Chapter 2 and Chapter 3 flow checks. Human play-testing remains the
+release gate for feel and visual review.
 
 `contrast.mjs` (standalone, not part of `verify.mjs`) re-checks the mobile sheet's
 translucency dial against the direction-A board's worst-case pixels (design.md §12).

@@ -1,10 +1,11 @@
 # LoCo — Level Design
 
 Curriculum, concept progression, and level plan. Counted Chapter 2 shipped in PR #21;
-tile infrastructure shipped in PR #23; Chapter 3 sensing shipped in PR #24.
-Sections 9–10 record Jonas' revised sensor direction of 2026-09-08 and the M6
-Chapter 3 implementation. Earlier decisions remain historical where superseded
-explicitly by §9.
+tile infrastructure shipped in PR #23; Chapter 3 sensing shipped in PR #24; Chapter
+4 branching is the M7 milestone recorded in §11 and `briefs/m7-if-branching.md`.
+Sections 9–11 record the current sensor direction, Chapter 3 implementation and
+the exact Chapter 4 contract. Earlier decisions remain historical where superseded
+explicitly by §9 or §11.
 
 ## 1. Purpose
 
@@ -17,7 +18,7 @@ Requirements §7 left two things to level design: the exact level count and the 
 | 1 — Sequence | Programs run top to bottom; turns are relative | `move`, `turn left`, `turn right` | Shipped (7 levels, ch1-01..07) |
 | 2 — Loops | Counted repetition as compression | `loop n`, `end` | Shipped (8 levels; #16, PR #21) |
 | 3 — Sensing | Automatic front wall sensor; visible holes remain undetected hazards | `loop until [sensor] = [value]` | Shipped (5 levels; #17, PR #24, §10); tile support shipped #19 |
-| 4 — Decisions | Branching on the same conditions | `if` (+ `else`?) | Planned — #18 |
+| 4 — Decisions | Branching on the same conditions | `if`, `else`, `end` | Shipped — #18 / M7 (§11) |
 | 5 — Mastery | Everything combined, **ladders + `climb`**, memory upgrades as collectibles | `climb` | Later — #19 |
 
 Re-ordered 2026-09-05 (jonas): sensing was chapter 3 *and* chapter 4 was Mastery in the original map, with `if` bundled into "Decisions" alongside sensors. Split — chapter 3 now introduces the condition/sensor vocabulary inside a loop, chapter 4 reuses that same vocabulary for branching, and Mastery moves to chapter 5. Rationale: a wrong condition in `loop until` fails loudly (robot drives into a wall), so it is the cheaper place to learn the vocabulary that `if` then depends on.
@@ -221,8 +222,9 @@ This supersedes D9, D11 and D13's earlier UI decisions. D8 (explicit climb later
 D10 (sensing plus holes) and D12 (fatal holes) remain. D14's four-level limit was
 superseded on 2026-09-09 by Jonas' request for a fifth level requiring sensed loops
 even when counted loops are available.
-Chapter 4's `if` should consume sensor readings, but additional equipment and its
-controls will be designed separately rather than promised for that chapter now.
+Chapter 4 consumes the same front-wall reading and typed operand vocabulary as
+Chapter 3. It adds no sensor type, mounting selector or equipment UI. The only
+condition exposed in this chapter is `wall sensor = blocked`.
 
 Tiles and fatal entry shipped in PR #23. `isBlocked` remains wall/outside;
 `isSafeToEnter` remains floor/start/goal. This safety helper is not exposed as a
@@ -261,3 +263,131 @@ simulation is historical, not evidence for the shipped pack. Executed results ar
 recorded in the M6 briefs; `node tests/verify.mjs` re-runs all of them and passes
 20 level paths, 8 counted and 5 sensed solutions, plus the 1,687,728-program
 spiral proof.
+
+## 11. Chapter 4 — Conditional branching (M7, shipped)
+
+Chapter 4 teaches a decision as a program line rather than as a new sensor. The
+front wall remains the only reading: `if [wall sensor] = [blocked]`. `else` is an
+explicit structural line, and `end` closes the nearest open conditional or loop.
+The sequence is deliberately progressive:
+
+1. `ch4-01` introduces a true condition at a readable hairpin.
+2. `ch4-02` makes the false case visible and introduces the first explicit
+   `else` in a compact courtyard.
+3. `ch4-03` repeats the decision with both turn arms across irregular
+   switchbacks.
+4. `ch4-04` repeats a relay of crossings, nesting a counted movement loop in
+   the false arm while the true arm turns immediately.
+5. `ch4-05` is the capstone: a counted loop branches between an immediate turn
+   and a sensed corridor traversal through a hazard-lined garden.
+
+Exact implementation data is fixed here; level code and independent solutions must
+match this table rather than inventing a second map or budget.
+
+| id / name | Palette | Grid | Start | Memory / par | Intended shape |
+|---|---|---|---|---|---|
+| ch4-01 The Hairpin | `move`, `turn right`, `loop`, `if`, `end` | 10×5 hairpin | E | 6 / 6 | true branch turns at each hairpin |
+| ch4-02 The Courtyard | `move`, both turns, `loop`, `if`, `else`, `end` | 9×8 courtyard | E | 7 / 7 | false arm advances; true arm turns |
+| ch4-03 Switchback | `move`, both turns, `loop`, `if`, `else`, `end` | 10×8 switchbacks | E | 8 / 8 | counted loop alternates both decisions |
+| ch4-04 The Relay | `move`, both turns, `loop`, `if`, `else`, `end` | 15×9 relay zigzag | E | 10 / 10 | false arm nests a counted four-step |
+| ch4-05 Signal Garden | `move`, both turns, `loop`, `loop until`, `if`, `else`, `end` | 13×9 hazard garden | E | 10 / 10 | sensed traversal in the false arm |
+
+Every map is deliberately different so completing a level visibly advances the
+route as well as the lesson. `ch4-01` uses:
+
+```text
+##########
+#S......##
+#######.##
+#G......##
+##########
+```
+
+`ch4-02` uses:
+
+```text
+#########
+#S.....##
+######.##
+###..#.##
+###.G#.##
+###.##.##
+###....##
+#########
+```
+
+`ch4-03` uses:
+
+```text
+##########
+##.#######
+#G..######
+##...#####
+###...#.##
+####....##
+#####..S.#
+##########
+```
+
+`ch4-04` uses:
+
+```text
+###############
+###H###########
+#S....###.....#
+###H#.###.###.#
+#####.###.###.#
+#####.###.###.#
+#####.....###G#
+#####.#########
+###############
+```
+
+The first four routes are one-cell-wide learning shapes. `#` is the wall palette,
+`.` is floor, `S` is the start marker and `G` is the goal marker. The capstone is
+larger and adds holes that the front-wall sensor deliberately cannot detect:
+
+```text
+#############
+#S....#######
+###H#.#######
+####H.##H####
+#####......##
+#########H.##
+######.....##
+######.....G#
+#############
+```
+
+The exact independent solutions are in `tests/chapter4-solutions.mjs`:
+
+```text
+ch4-01: loop 99; if wall=blocked; turn right; end; move; end
+ch4-02: loop 99; if wall=blocked; turn right; else; move; end; end
+ch4-03: loop 12; if wall=blocked; turn right; else; turn left; end; move; end
+ch4-04: loop 12; if wall=blocked; turn right; else; loop 4; move; end;
+        turn left; end; end
+ch4-05: loop 30; if wall=blocked; turn right; else; loop until wall=blocked;
+        move; end; turn left; end; end
+```
+
+The first four levels use counted repetition to keep the decision visible while
+the geometry grows from a hairpin through a courtyard and switchbacks to a
+relay of repeated crossings. The Relay is 15×9 and uses six crossings: the
+false arm nests four moves, while the true arm turns immediately. Astra's
+independent enumeration found no winning program below ten lines through nine
+lines, and the independent branch-free evaluator also finds no solution within
+the ten-line budget. The previous six-line follower is a regression fixture and
+does not solve this map. The capstone branches
+between an immediate turn and a sensed traversal; holes add pressure without
+introducing a second sensor. The independent proof currently covers the first
+four maps. Signal Garden remains a design candidate until its mixed-loop
+branch-necessity proof is strengthened; its intended path is still checked
+through the real executor.
+
+Chapter 4 acceptance includes: all five intended paths through the real executor;
+memory and palette checks; true, false and skipped-branch step traces; invalid
+nesting and incomplete operands; nested loop/conditional programs; desktop and
+touch editor interaction; pointer highlighting through a branch; capacity and
+lock behavior; and layout checks at 280, 320, 390, 900 and 901px. Chapter 1–3
+flows remain regression checks, and `v0.4` is reserved for the completed milestone.

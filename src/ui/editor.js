@@ -27,6 +27,11 @@ function entryId(entry) {
   return typeof entry === 'string' ? entry : entry.id;
 }
 
+function isConditionEntry(entry) {
+  const id = entryId(entry);
+  return id === 'loopUntil' || id === 'if';
+}
+
 export function createEditor({ paletteEl, programEl, countEl, onChange }) {
   let memory = 0;
   let program = [];
@@ -63,9 +68,9 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
     let depth = 0;
     for (const entry of program) {
       const id = entryId(entry);
-      if (id === 'end') depth = Math.max(0, depth - 1);
+      if (id === 'end' || id === 'else') depth = Math.max(0, depth - 1);
       depths.push(depth);
-      if (id === 'loop' || id === 'loopUntil') depth += 1;
+      if (id === 'loop' || id === 'loopUntil' || id === 'if' || id === 'else') depth += 1;
     }
     return { depths, trailing: depth };
   }
@@ -75,7 +80,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
     if (typeof entry === 'string') {
       return `<span class="line-token${entry === 'end' ? ' kw' : ''}">${BLOCK_DEFS[entry].label}</span>`;
     }
-    if (entry.id === 'loopUntil') {
+    if (isConditionEntry(entry)) {
       const slotHTML = (slot) => {
         const conditionId = entry[slot];
         const def = conditionId ? CONDITION_DEFS[conditionId] : null;
@@ -90,7 +95,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
         return `<span class="condition-slot-wrap"><button type="button" class="condition-slot${selectedClass}" data-slot="${slot}" aria-label="${aria}">${slotLabel}</button>${clear}</span>`;
       };
       return (
-        `<span class="line-token kw">${BLOCK_DEFS.loopUntil.label}</span>` +
+        `<span class="line-token kw">${BLOCK_DEFS[entry.id].label}</span>` +
         ` <span class="condition-expression">` +
         slotHTML('sensor') +
         ` <span class="condition-comparison" aria-label="equals">=</span> ` +
@@ -123,7 +128,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
         line.style.setProperty('--indent', String(depths[i]));
         line.innerHTML =
           `<span class="line-no">${pad2(i + 1)}</span>` +
-          `<span class="line-code${entryId(program[i]) === 'loopUntil' ? ' condition-code' : ''}">${codeHTML(program[i], i)}</span>`;
+          `<span class="line-code${isConditionEntry(program[i]) ? ' condition-code' : ''}">${codeHTML(program[i], i)}</span>`;
       } else {
         line.className = 'line empty';
         line.style.setProperty('--indent', String(trailing));
@@ -150,6 +155,8 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       ? { id: 'loop', count: 2 }
       : blockId === 'loopUntil'
         ? { id: 'loopUntil', sensor: null, value: null }
+        : blockId === 'if'
+          ? { id: 'if', sensor: null, value: null }
         : blockId;
     program.splice(at, 0, entry);
     renderLines();
@@ -182,7 +189,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
   function firstCompatibleSlot(slot) {
     for (let index = 0; index < program.length; index += 1) {
       const entry = program[index];
-      if (entry && entry.id === 'loopUntil' && !entry[slot]) return { index, slot };
+      if (entry && isConditionEntry(entry) && !entry[slot]) return { index, slot };
     }
     return null;
   }
@@ -206,7 +213,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
     }
     if (!target) target = firstCompatibleSlot(def.slot);
     const entry = target && program[target.index];
-    if (!target || !entry || entry.id !== 'loopUntil') {
+    if (!target || !entry || !isConditionEntry(entry)) {
       clearSelection();
       setMessage(`Choose a ${def.slot} slot for ${def.label}.`);
       return false;
@@ -222,7 +229,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
   function clearOperand(index, slot) {
     if (running) return;
     const entry = program[index];
-    if (!entry || entry.id !== 'loopUntil' || !Object.prototype.hasOwnProperty.call(entry, slot)) return;
+    if (!entry || !isConditionEntry(entry) || !Object.prototype.hasOwnProperty.call(entry, slot)) return;
     entry[slot] = null;
     clearSelection();
     renderLines();
@@ -233,7 +240,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
   function setSelectedSlot(index, slot) {
     if (running) return;
     const entry = program[index];
-    if (!entry || entry.id !== 'loopUntil' || !CONDITION_DEFS[slot === 'sensor' ? 'wallSensor' : 'blocked']) return;
+    if (!entry || !isConditionEntry(entry) || !CONDITION_DEFS[slot === 'sensor' ? 'wallSensor' : 'blocked']) return;
     selectedSlot = { index, slot };
     renderLines();
     setMessage(`Selected ${slot} slot on line ${index + 1}.`);
@@ -445,8 +452,8 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       // Copies every object field so later editor edits cannot leak into a run.
       return program.map((entry) => {
         if (typeof entry === 'string') return entry;
-        if (entry.id === 'loopUntil') {
-          return { id: 'loopUntil', sensor: entry.sensor ?? null, value: entry.value ?? null };
+        if (isConditionEntry(entry)) {
+          return { id: entry.id, sensor: entry.sensor ?? null, value: entry.value ?? null };
         }
         return { id: entry.id, count: entry.count };
       });

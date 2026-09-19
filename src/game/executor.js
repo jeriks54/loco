@@ -6,10 +6,12 @@
 
    Program entries: plain strings for simple blocks,
    { id: 'loop', count } for counted loop (count 1..99, default 2),
-   or { id:'loopUntil', sensor:'wallSensor', value:'blocked' }.
+   or { id:'loopUntil'|'if', sensor:'wallSensor', value:'blocked' }.
+   The string token 'else' is the optional branch marker for 'if'.
 
-   Loops: 'loop' or 'loopUntil' opens a loop, 'end'
-   closes the nearest open one. Balance is validated BEFORE
+   Loops: 'loop' or 'loopUntil' opens a loop; 'if' opens a
+   conditional; 'else' marks its optional second branch; 'end'
+   closes the nearest open block. Balance is validated BEFORE
    running — an unbalanced program is refused with a terminal
    'syntax' event; the robot never moves and the program is
    preserved. The runaway guard halts any run after MAX_TICKS
@@ -60,7 +62,9 @@ const DIR_VECTORS = {
 const TURN_LEFT = { N: 'W', W: 'S', S: 'E', E: 'N' };
 const TURN_RIGHT = { N: 'E', E: 'S', S: 'W', W: 'N' };
 
-const SIMPLE_KINDS = new Set(['move', 'turnLeft', 'turnRight', 'loopUntil', 'end']);
+const SIMPLE_KINDS = new Set(['move', 'turnLeft', 'turnRight', 'else', 'end']);
+const OPEN_KINDS = new Set(['loop', 'loopUntil', 'if']);
+const CONDITION_KINDS = new Set(['loopUntil', 'if']);
 
 /** Entry token id ('loop' for { id:'loop', count }). */
 function entryId(entry) {
@@ -80,32 +84,44 @@ function normalizeLines(program) {
     if (id === 'loopUntil') {
       return { kind: id, sensor: entry?.sensor, value: entry?.value };
     }
+    if (id === 'if') {
+      return { kind: id, sensor: entry?.sensor, value: entry?.value };
+    }
     if (SIMPLE_KINDS.has(id)) return { kind: id };
     throw new Error(`unknown block '${id}'`);
   });
 }
 
 /**
- * Balance validation + loop table. Each 'end' closes the
- * nearest open loop. Returns { ok:true, endOf } where endOf
- * maps a loop head line to its matching 'end' line, or
- * { ok:false, at } with 'at' the offending line (the unmatched
- * 'end', or the outermost loop left unclosed).
+ * Structural validation + matching-block table. Each 'end' closes the
+ * nearest open loop or conditional. Returns matching end/else positions, or
+ * { ok:false, at, reason } with 'at' the offending line (the unmatched
+ * 'else'/'end', or the outermost block left unclosed).
  */
-function analyzeLoops(lines) {
+function analyzeBlocks(lines) {
   const stack = [];
   const endOf = new Map();
+  const elseOf = new Map();
+  const ifOfElse = new Map();
   for (let i = 0; i < lines.length; i += 1) {
     const kind = lines[i].kind;
-    if (kind === 'loop' || kind === 'loopUntil') {
-      stack.push(i);
+    if (OPEN_KINDS.has(kind)) {
+      stack.push({ index: i, kind, elseIndex: null });
+    } else if (kind === 'else') {
+      const top = stack.at(-1);
+      if (!top || top.kind !== 'if') return { ok: false, at: i, reason: 'structure' };
+      if (top.elseIndex !== null) return { ok: false, at: i, reason: 'structure' };
+      top.elseIndex = i;
+      elseOf.set(top.index, i);
+      ifOfElse.set(i, top.index);
     } else if (kind === 'end') {
-      if (stack.length === 0) return { ok: false, at: i };
-      endOf.set(stack.pop(), i);
+      if (stack.length === 0) return { ok: false, at: i, reason: 'structure' };
+      const block = stack.pop();
+      endOf.set(block.index, i);
     }
   }
-  if (stack.length > 0) return { ok: false, at: stack[0] };
-  return { ok: true, endOf };
+  if (stack.length > 0) return { ok: false, at: stack[0].index, reason: 'structure' };
+  return { ok: true, endOf, elseOf, ifOfElse };
 }
 
 /**
@@ -115,12 +131,12 @@ function analyzeLoops(lines) {
  */
 export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK_MS }) {
   const lines = normalizeLines(program); // snapshot — later edits don't leak in
-  const balance = analyzeLoops(lines);
-  const invalidConditionAt = lines.findIndex(line => line.kind === 'loopUntil'
+  const balance = analyzeBlocks(lines);
+  const invalidConditionAt = lines.findIndex(line => CONDITION_KINDS.has(line.kind)
     && (line.sensor !== 'wallSensor' || line.value !== 'blocked'));
   const missingSensorAt = state.sensor === 'frontWall'
     ? -1
-    : lines.findIndex((line) => line.kind === 'loopUntil');
+    : lines.findIndex((line) => CONDITION_KINDS.has(line.kind));
   const startPose = { ...(state.start || state.robot) };
 
   let ip = 0;
@@ -203,6 +219,18 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
       state.robot.dir = TURN_RIGHT[state.robot.dir];
       emit('turned', state.robot.dir);
       ip += 1;
+    } else if (line.kind === 'if') {
+      const conditionTrue = isWallAhead(state);
+      const elseIndex = balance.elseOf.get(ip);
+      if (conditionTrue) {
+        frames.push({ kind: 'if', head: ip, bodyStart: ip + 1, conditionTrue: true });
+        ip += 1;
+      } else if (elseIndex !== undefined) {
+        frames.push({ kind: 'if', head: ip, bodyStart: ip + 1, conditionTrue: false });
+        ip = elseIndex;
+      } else {
+        ip = balance.endOf.get(ip) + 1;
+      }
     } else if (line.kind === 'loop' || line.kind === 'loopUntil') {
       if (top && top.head === ip) {
         if (line.kind === 'loopUntil') {
@@ -236,10 +264,25 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
           ip += 1;
         }
       }
-    } else {
-      // 'end' — validation guarantees its loop frame is on top
+    } else if (line.kind === 'else') {
+      // The marker is a visited structural line. A true branch skips its
+      // alternate body; a false branch falls through into it.
       const frame = frames[frames.length - 1];
-      ip = frame ? frame.head : ip + 1;
+      if (frame?.kind === 'if' && frame.conditionTrue) {
+        frames.pop();
+        ip = balance.endOf.get(frame.head) + 1;
+      } else {
+        ip += 1;
+      }
+    } else {
+      // 'end' — validation guarantees its matching frame is on top
+      const frame = frames[frames.length - 1];
+      if (frame?.kind === 'if') {
+        frames.pop();
+        ip += 1;
+      } else {
+        ip = frame ? frame.head : ip + 1;
+      }
     }
 
     timer = setTimeout(tick, intervalMs());
@@ -256,7 +299,7 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
       restorePose(); // re-run always starts clean ("reset first")
       if (!balance.ok) {
         // run refused — robot untouched, program preserved (M2 brief)
-        emit('syntax', { at: balance.at });
+        emit('syntax', { at: balance.at, reason: balance.reason });
         return;
       }
       if (missingSensorAt >= 0) {
