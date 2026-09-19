@@ -152,12 +152,12 @@ earlier entry. Exact grids and solutions live in `level-design.md` §§4 and 11.
 | **M4 (shipped, PR #20)** | Mobile layout — board on top, program as a bottom sheet (decisions and history in §8.1) |
 | **M5 (#19 first slice, shipped PR #23)** | Tile lookup, start marker and fatal holes; original 15 levels preserved. Merged 2026-09-08 as `2d4bd42`; ladders remain chapter-5 work |
 | **M6 (#17, shipped PR #24)** | Five Chapter 3 levels, front wall equipment and two operand drop slots. Merged 2026-09-09 as `ee25b75`; contracts: `briefs/m6-front-wall-sensor.md`, `briefs/m6-condition-slots.md` and `briefs/m6-uneven-spiral.md` |
-| **M7 (#18, Chapter 4)** | Five conditional-branching levels, explicit `if` / `else` / `end`, front-wall condition reuse, structural validation and desktop/touch coverage. Shipped in this work; contract: `briefs/m7-if-branching.md` |
+| **M7 (#18, Chapter 4)** | Five conditional-branching levels, explicit `if` / `else` / `end`, front-wall condition reuse, structural validation and desktop/touch coverage. Shipped in PR #27 on 2026-09-19 as `8614ff1`; contract: `briefs/m7-if-branching.md` |
 | **M22 slice 1 (#22 / #8, shipped)** | Direction-A board materials and the brass robot base sprite. Merged to `main` on 2026-09-17 as `0d209c1`; acceptance and review are recorded in `briefs/m22-board-art.md`. Richer motion, outcome feedback and UI coherence remain slice 2 |
 
-Merged baseline: `main` at `0d209c1` (M22 slice 1). Chapter-3 sensing, Chapter 4
-branching and the direction-A board art are now represented in the working tree;
-M22 slice 2, memory upgrades and explicit ladder `climb` remain future work.
+Merged baseline: `main` at `8614ff1` (PR #27). Chapter-3 sensing, Chapter 4
+branching and the direction-A board art are shipped; M22 slice 2, memory upgrades
+and explicit ladder `climb` remain future work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
 
@@ -294,7 +294,7 @@ Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic i
 - **Palette:** warm green-tinted charcoal surfaces, near-white text, muted grey-green secondary text, one mint neon accent. Reference: `docs/reference/welcome-mockup.png`. Exact values live as CSS custom properties in `styles/main.css` (source of truth).
 - **Decoration:** figlet-style ASCII logo (block glyphs, mint glow — user preferred it over a line-art SVG variant, 2026-08-25); ASCII maze teaser with the robot and a glowing path to an `[EXIT]` badge; box-drawing wall fragments; blinking robot eyes. No code-rain background, no scanlines/CRT kitsch — it should feel 2026, not 1983.
 - **Welcome structure (per reference):** figlet logo → maze teaser → tagline → outline-glow "Start Game" + secondary "Tutorial" → bottom tab bar (Settings / High Scores) with mini version. No subtitle line. Not-yet-built modules answer with a terminal "not found" joke.
-- **Version:** one `VERSION` constant in `src/main.js` is the single source of truth — it is interpolated into the ticker and written into the empty `.version-mini` span at boot, so `index.html` carries no literal and the two cannot drift. Bump that constant only. Scheme agreed 2026-09-14: one minor per shipped curriculum chapter — v0.1 chapter 2, v0.2 mobile + tiles, v0.3 chapter 3, v0.4 Chapter 4 after final acceptance.
+- **Version:** one `VERSION` constant in `src/main.js` is the single source of truth — it is interpolated into the ticker and written into the empty `.version-mini` span at boot, so `index.html` carries no literal and the two cannot drift. Bump that constant only. Scheme agreed 2026-09-14: one minor per shipped curriculum chapter — v0.1 chapter 2, v0.2 mobile + tiles, v0.3 chapter 3, and v0.4 Chapter 4, shipped in PR #27.
 - **Motion:** subtle — fade-ins, cursor blink, glow pulses; must honor `prefers-reduced-motion`.
 - **Layout:** desktop board/editor panels plus the shipped M4 mobile bottom sheet (requirements §3.7). The welcome screen uses a centered column on phones.
 - **Copy voice:** terminal boot voice — short, dry, playful; no lorem ipsum.

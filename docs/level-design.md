@@ -380,14 +380,14 @@ lines, and the independent branch-free evaluator also finds no solution within
 the ten-line budget. The previous six-line follower is a regression fixture and
 does not solve this map. The capstone branches
 between an immediate turn and a sensed traversal; holes add pressure without
-introducing a second sensor. The independent proof currently covers the first
-four maps. Signal Garden remains a design candidate until its mixed-loop
-branch-necessity proof is strengthened; its intended path is still checked
-through the real executor.
+introducing a second sensor. The independent branch-free proof currently covers
+the first four maps. Signal Garden is shipped and its intended path is checked
+through the real executor; strengthening the mixed-loop branch-necessity proof
+remains a follow-up quality task rather than a release blocker.
 
 Chapter 4 acceptance includes: all five intended paths through the real executor;
 memory and palette checks; true, false and skipped-branch step traces; invalid
 nesting and incomplete operands; nested loop/conditional programs; desktop and
 touch editor interaction; pointer highlighting through a branch; capacity and
 lock behavior; and layout checks at 280, 320, 390, 900 and 901px. Chapter 1–3
-flows remain regression checks, and `v0.4` is reserved for the completed milestone.
+flows remain regression checks, and `v0.4` shipped with PR #27.

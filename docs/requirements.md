@@ -70,14 +70,15 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Commands are placed by dragging them from the palette into memory.
 - Shipped M4 mobile layout: at widths up to 900px the program editor is a floating bottom sheet with grip/chevron, Run/Reset/memory peek bar, tap-to-add and auto-collapse on run.
 
-## 4. Current scope (through M22 slice 1)
+## 4. Current scope (through M7 / M22 slice 1)
 
-Merged baseline is `main` at `0d209c1`. M2 shipped loops and M4 shipped mobile;
+Merged baseline is `main` at `8614ff1` (PR #27). M2 shipped loops and M4 shipped mobile;
 the counted-only chapter-2 revision #16 was play-tested and merged in PR #21 on
 2026-09-07. Historical M2 mechanics remain in its brief. The #19 tile-system first
 slice was play-tested and merged in PR #23 on 2026-09-08. M6's five Chapter 3
 levels, the automatic front wall sensor and the two operand slots merged in PR #24
-on 2026-09-09; #17 is closed and production deployed. M22 slice 1's direction-A
+on 2026-09-09; #17 is closed and production deployed. Chapter 4's conditional
+branching shipped as `v0.4` in PR #27 on 2026-09-19. M22 slice 1's direction-A
 board materials and brass robot base sprite were merged to `main` on 2026-09-17;
 its review, visual checks and contrast measurements are recorded in
 `briefs/m22-board-art.md`.
@@ -103,7 +104,7 @@ feedback and UI-coherence work is also not yet shipped.
 1. **Shipped — #16, PR #21:** renamed historical M2 `repeat` to `loop`, removed `while front clear`, and replaced chapter-2 Part B with counted-loop exercises. All IDs and completion marks stay stable. See `level-design.md` §4 and `briefs/m3-counted-loops.md`.
 2. **First slice shipped — #19, PR #23:** tile types, fatal holes, start marker and fall feedback. Original 15 levels preserved. Ladders and explicit `climb` wait for chapter 5.
 3. **Shipped — #17, PR #24:** Chapter 3 automatically equips a front wall sensor. Players drag `wall sensor` and `blocked` into two initially empty fields of `loop until [sensor] = [value]`; the expression costs one line. Incomplete conditions refuse Run before movement. Holes occur in maps but have no sensor. Shipped contract: `briefs/m6-condition-slots.md`. Issue #17 is closed.
-4. **Shipped — #18:** Chapter 4 adds explicit `if`/`else` branching, reusing chapter 3's front-wall condition vocabulary. The five-level pack and structural control-flow contracts are recorded in `briefs/m7-if-branching.md`.
+4. **Shipped — #18, PR #27:** Chapter 4 adds explicit `if`/`else` branching, reusing Chapter 3's front-wall condition vocabulary. The five-level pack and structural control-flow contracts are recorded in `briefs/m7-if-branching.md`; the release is `v0.4`.
 5. **Mobile — shipped in PR #20:** M4's width-based bottom sheet and touch controls are current functionality. Decisions and measured history remain in `design.md` §8.1.
 6. **Ideas beyond:** chapter-5 Mastery and memory upgrades; fog of war, par/star ratings for efficient programs, level sharing.
 7. **Slice 1 shipped — #22 / #8:** Direction A's tabletop board art and the brass robot base sprite are merged to `main` as `0d209c1` on 2026-09-17. The contract, acceptance checks and visual review are recorded in `briefs/m22-board-art.md`; the console chrome, puzzle readability and reduced-motion support remain preserved. M22 slice 2 still covers richer motion/outcome feedback and UI coherence.

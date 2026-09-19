@@ -34,7 +34,7 @@ independent loop-free minima, wall directions/boundaries, invisible holes,
 mixed nesting, empty sensed loops, missing equipment and restart.
 `chapter3-solutions.mjs` retains intended programs separately from level data.
 
-M7 appends five levels (`ch4-01..05`) and leaves the first 20 registry entries
+M7 shipped in PR #27 as `v0.4`. It appends five levels (`ch4-01..05`) and leaves the first 20 registry entries
 unchanged. `chapter4-solutions.mjs` keeps intended programs independently from
 the level module. `decisions.mjs` runs all five through the real executor and
 checks condition snapshots, true/false paths, skipped branch step traces, operand

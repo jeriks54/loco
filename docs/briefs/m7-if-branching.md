@@ -1,7 +1,6 @@
 # M7 / Chapter 4 — Conditional branching
 
-Status: implemented in the working tree; version `v0.4` is the release marker after
-the final Node, browser and Jonas play-test gates.
+Status: shipped in PR #27 on 2026-09-19 as commit `8614ff1`; product version `v0.4`.
 
 ## Goal
 
@@ -183,6 +182,7 @@ dragging and tapping `if`/`else`/`end`, indentation and numbering, incomplete
 conditions, invalid nesting feedback, nested programs, capacity/lock behavior,
 pointer highlighting, run/reset/retry/completion, and the five requested widths.
 
-Release is complete only after the Node suite, browser suite, visual mobile review
-and Jonas' play-test approval. The product version changes from `v0.3` to `v0.4`
-only at that completion gate.
+Release acceptance was completed for PR #27: the retained Node suite passed, the
+Chapter 4 browser coverage is recorded in `tests/chapter4-browser.mjs`, the Vercel
+preview received visual review, and Jonas approved the play-test. The product
+version is now `v0.4`.
