@@ -23,20 +23,24 @@ try {
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
     await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ status: 200, contentType: 'text/css', body: '' }));
     // Observe real canvas drawing without changing pacing or rendering. The
-    // robot is the brass body fill (#B08D57, unique on the board); transforms
+    // robot is the brass body fill (#C88E42, unique on the board); transforms
     // stay in pixels. The tile is solved from the canvas width using the
     // documented frame-pad rule (design.md §12), because the backing store
     // carries the grid plus the in-canvas frame.
     await page.addInitScript((cols) => {
       window.robotFrames = [];
       window.lastRobot = null;
-      const BODY = ['#b08d57', 'rgb(176, 141, 87)'];
+      const BODY = ['#c88e42', 'rgb(200, 142, 66)'];
       const proto = CanvasRenderingContext2D.prototype;
       const originalRect = proto.fillRect;
+      const originalFill = proto.fill;
       proto.fillRect = function(x, y, w, h) {
         if (this.canvas.id !== 'board') return originalRect.call(this, x, y, w, h);
         if (x === 0 && y === 0 && w > 100) window.lastRobot = null;
-        if (BODY.includes(String(this.fillStyle).toLowerCase())) {
+        return originalRect.call(this, x, y, w, h);
+      };
+      proto.fill = function(...args) {
+        if (this.canvas.id === 'board' && BODY.includes(String(this.fillStyle).toLowerCase())) {
           const width = parseFloat(this.canvas.style.width);
           let tile = 14; let pad = 0;
           for (let t = 14; t <= 64; t += 1) {
@@ -54,7 +58,7 @@ try {
           window.lastRobot = sample.alpha > 0 ? sample : null;
           window.robotFrames.push(sample);
         }
-        return originalRect.call(this, x, y, w, h);
+        return originalFill.apply(this, args);
       };
     }, holeBoard.grid[0].length);
     await page.goto(url);

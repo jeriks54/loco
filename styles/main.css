@@ -1,25 +1,29 @@
 /* ============================================================
    LoCo — main.css
-   Visual language (design.md §11, locked): ASCII aesthetic
-   inside a modern mobile app. Reference: docs/reference/
-   welcome-mockup.png — line-art glow logo, maze teaser with
-   robot + glowing path to EXIT, sans copy, mono terminal art,
-   warm charcoal + mint neon. Tokens here are source of truth.
+   Visual language: LoCo Workshop — warm ivory, walnut, brass,
+   and forest-green. Tokens are shared by title, levels, and game.
    ============================================================ */
 
 /* ---------- Design tokens ---------- */
 
 :root {
-  --bg: #232827;             /* warm charcoal, green-tinted */
-  --surface: #2B3231;
-  --surface-2: #333B39;
-  --border: #3A423F;
-  --text: #EDF2EF;
-  --muted: #93A09A;
-  --accent: #4CE68C;         /* mint neon */
-  --accent-soft: rgba(76, 230, 140, 0.14);
-  --accent-glow: rgba(76, 230, 140, 0.35);
-  --accent-dim: rgba(76, 230, 140, 0.07);
+  --bg: #eee8dc;
+  --surface: #fbf8ef;
+  --surface-2: #e8e0d1;
+  --border: #d5cebd;
+  --text: #343b31;
+  --muted: #5d6657;
+  --accent: #226449;
+  --accent-ink: #194d35;
+  --accent-fill: #dce9da;
+  --accent-soft: rgba(34, 100, 73, 0.14);
+  --accent-glow: rgba(34, 100, 73, 0.25);
+  --accent-dim: rgba(34, 100, 73, 0.08);
+  --strong: #1d583f;
+  --walnut: #6e4c35;
+  --walnut-light: #b59a74;
+  --code: #f5f1e7;
+  --shadow: 0 14px 30px rgba(58, 41, 26, 0.10);
 
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', 'SF Mono',
     Menlo, Consolas, 'Liberation Mono', monospace;
@@ -48,7 +52,8 @@ body {
   line-height: 1.5;
   background: var(--bg);
   color: var(--text);
-  overflow-x: hidden; /* safety net: no horizontal scroll, ever */
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -81,9 +86,9 @@ button {
 #screen-title {
   background-color: var(--bg);
   background-image:
-    radial-gradient(circle, rgba(237, 242, 239, 0.035) 1px, transparent 1.4px),
-    radial-gradient(46rem 30rem at 50% 14%, var(--accent-dim), transparent 65%),
-    radial-gradient(42rem 30rem at 84% 108%, rgba(99, 133, 184, 0.08), transparent 62%);
+    radial-gradient(circle, rgba(52, 59, 49, 0.055) 1px, transparent 1.4px),
+    radial-gradient(46rem 30rem at 50% 14%, rgba(34, 100, 73, 0.10), transparent 65%),
+    radial-gradient(42rem 30rem at 84% 108%, rgba(181, 154, 116, 0.16), transparent 62%);
   background-size: 22px 22px, auto, auto;
   background-repeat: repeat, no-repeat, no-repeat;
 }
@@ -120,7 +125,7 @@ button {
   min-width: 48px;
   padding: 0.55em 1.6em;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--surface);
   color: var(--text);
   font-family: var(--font-sans);
@@ -154,17 +159,17 @@ button {
 .btn-primary {
   position: relative;
   overflow: hidden; /* contains the shine sweep */
-  background-color: rgba(76, 230, 140, 0.07);
+  background-color: var(--accent);
   border-color: var(--accent);
-  color: var(--text);
+  color: var(--surface);
   font-weight: 600;
-  box-shadow: 0 0 22px var(--accent-soft), inset 0 0 18px var(--accent-soft);
+  box-shadow: 0 3px 8px rgba(29, 88, 63, 0.18);
 }
 
 .btn-primary:hover {
-  background-color: rgba(76, 230, 140, 0.13);
+  background-color: var(--strong);
   border-color: var(--accent);
-  box-shadow: 0 0 32px var(--accent-glow), inset 0 0 22px var(--accent-soft);
+  box-shadow: 0 5px 12px rgba(29, 88, 63, 0.22);
 }
 
 .btn-large {
@@ -175,7 +180,7 @@ button {
 }
 
 .btn-secondary {
-  background: transparent;
+  background: var(--surface);
   border-color: var(--border);
   color: var(--muted);
   min-height: 44px;
@@ -184,7 +189,7 @@ button {
 }
 
 .btn-secondary:hover {
-  background: transparent;
+  background: var(--surface-2);
   border-color: var(--muted);
   color: var(--text);
 }
@@ -207,7 +212,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   width: 100%;
   max-width: 40rem;
   text-align: center;
@@ -219,7 +224,7 @@ button {
   font-size: clamp(0.6rem, 3.8vw, 1.25rem);
   line-height: 1.1;
   color: var(--accent);
-  text-shadow: 0 0 16px var(--accent-glow);
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.45);
 }
 
 /* Maze teaser: mono ASCII art, walls muted, path + exit glowing */
@@ -232,17 +237,17 @@ button {
 }
 
 .maze .r {
-  color: var(--text);
+  color: var(--walnut);
 }
 
 .maze .robot-eyes {
   color: var(--accent);
-  text-shadow: 0 0 8px var(--accent-glow);
+  text-shadow: 0 0 8px var(--accent-soft);
 }
 
 .maze .p {
   color: var(--accent);
-  text-shadow: 0 0 10px var(--accent-glow);
+  text-shadow: 0 0 10px var(--accent-soft);
 }
 
 .maze .exit-badge {
@@ -251,7 +256,7 @@ button {
   border-radius: 3px;
   padding: 0 0.5ch;
   color: var(--accent);
-  box-shadow: 0 0 10px var(--accent-soft);
+  box-shadow: 0 2px 5px var(--accent-soft);
 }
 
 .tagline {
@@ -391,7 +396,7 @@ button {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(115deg, transparent 35%, rgba(76, 230, 140, 0.25) 48%, transparent 62%);
+    background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.24) 48%, transparent 62%);
     transform: translateX(-130%);
     pointer-events: none;
   }
@@ -446,8 +451,20 @@ button {
   align-items: stretch;
   gap: 1.25rem;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1360px;
   margin: 0 auto;
+}
+
+#screen-game {
+  height: 100vh;
+  height: 100svh;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 30px 26px;
+}
+
+#screen-levels {
+  padding: 2.5rem 30px 4rem;
 }
 
 .screen-header {
@@ -455,6 +472,8 @@ button {
   align-items: center;
   gap: 1rem;
   width: 100%;
+  min-height: 82px;
+  border-bottom: 1px solid var(--border);
 }
 
 .screen-header h2 {
@@ -570,19 +589,93 @@ button {
 
 .game-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) 354px;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 1.5rem;
   width: 100%;
   flex: 1;
   min-height: 0;
 }
 
+.game-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.game-brand::before {
+  content: "[·]";
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: -0.16em;
+}
+
+.sensor-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 3.1rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.sensor-reading {
+  color: var(--accent-ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sensor-reading::before {
+  content: "";
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.45rem;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  vertical-align: -0.08rem;
+}
+
+.sensor-reading[data-blocked="true"]::before {
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.sensor-reading[data-phase="moving"]::before,
+.sensor-reading[data-phase="turning"]::before,
+.sensor-reading[data-blocked="unknown"]::before {
+  border-style: dashed;
+}
+
+.sensor-reading:empty,
+.sensor-reading[hidden] {
+  display: none;
+}
+
 .sensor-note {
-  flex: none;
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0;
   font-size: 0.8rem;
   line-height: 1.4;
-  color: var(--text);
+  color: var(--muted);
+  overflow-wrap: anywhere;
 }
 
 .sensor-token {
@@ -595,16 +688,26 @@ button {
   white-space: normal;
 }
 
+.world-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+  min-height: 0;
+}
+
 .board-panel {
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--walnut-light);
+  border: 0;
   border-radius: 16px;
-  padding: 1rem;
+  padding: 1.25rem;
   min-width: 0;
   min-height: 0;
+  box-shadow: var(--shadow);
 }
 
 .canvas-wrap {
@@ -615,9 +718,109 @@ button {
 
 #board {
   display: block;
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--walnut);
+  border: 2px solid #d5c29a;
   border-radius: 10px;
+  box-shadow: 0 2px 0 rgba(44, 28, 18, 0.35);
+}
+
+.board-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  min-height: 1.1rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.board-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.board-legend [class*="legend-"] {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}
+
+.legend-wall { background: var(--surface-2); color: var(--muted); }
+.legend-hole { background: #18221c; color: #18221c; box-shadow: inset 0 0 0 2px #778176; }
+.legend-exit { border: 2px solid var(--accent) !important; border-radius: 50% !important; background: transparent; color: var(--accent); }
+
+.equipment-card {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) minmax(170px, 208px);
+  align-items: center;
+  gap: 0.75rem;
+  flex: none;
+  min-height: 7.7rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(23, 27, 16, 0.04);
+}
+
+#equipment-portrait {
+  display: block;
+  width: 78px;
+  height: 78px;
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.equipment-copy,
+.equipment-state { min-width: 0; }
+
+.equipment-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.equipment-label::before {
+  content: "";
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+#equipment-name {
+  margin-bottom: 0.3rem;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+#equipment-description {
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+.equipment-state {
+  padding-left: 1rem;
+  border-left: 1px solid var(--border);
+}
+
+.equipment-reading-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--muted);
+  font-size: 0.58rem;
 }
 
 /* Result overlay (terminal boot voice, brief §6) */
@@ -630,7 +833,7 @@ button {
   justify-content: center;
   gap: 1rem;
   line-height: 1.5;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
   border-radius: 10px;
 }
 
@@ -638,7 +841,7 @@ button {
   font-family: var(--font-mono);
   font-size: 0.95rem;
   color: var(--text);
-  text-shadow: 0 0 12px var(--accent-soft);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
   padding: 0 1rem;
   text-align: center;
 }
@@ -656,16 +859,21 @@ button {
   gap: 1rem;
   min-width: 0;
   min-height: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
 .panel-section {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 1rem;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 1rem 1.1rem;
 }
 
 .panel-section h3 {
@@ -677,14 +885,15 @@ button {
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--text);
+  text-transform: none;
 }
 
 .memory-count {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
-  color: var(--accent);
+  color: var(--muted);
 }
 
 /* Command chips (palette + drag ghost; lines mode renders the
@@ -694,9 +903,9 @@ button {
   align-items: center;
   gap: 0.5ch;
   padding: 0.42rem 0.7rem;
-  background: var(--surface-2);
+  background: var(--code);
   border: 1px solid var(--border);
-  border-radius: 9px;
+  border-radius: 6px;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--text);
@@ -709,6 +918,14 @@ button {
 
 .block-chip .chip-glyph {
   color: var(--accent);
+}
+
+.block-chip[data-block="wallSensor"],
+.block-chip[data-block="blocked"],
+.condition-chip {
+  background: var(--accent-fill);
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+  color: var(--accent-ink);
 }
 
 .palette {
@@ -737,9 +954,10 @@ button {
   gap: 3px;
   min-height: 56px;
   padding: 0.5rem;
-  background: var(--bg);
+  background: var(--code);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
+  overflow: auto;
 }
 
 .line {
@@ -920,17 +1138,17 @@ button {
 }
 
 .line.filled:hover {
-  background: var(--surface);
+  background: var(--surface-2);
 }
 
 /* program pointer — the line currently executing */
 .line.current {
-  background: var(--accent-dim);
-  box-shadow: inset 0 0 0 1px var(--accent), 0 0 12px var(--accent-soft);
+  background: var(--accent-fill);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .line.current .line-no {
-  color: var(--accent);
+  color: var(--accent-ink);
   opacity: 1;
 }
 
@@ -1136,6 +1354,9 @@ button {
   flex-direction: column;
   gap: 1rem;
   min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.1rem;
 }
 
 /* One ▲ glyph, flipped by CSS — sheet.js never swaps the character */
@@ -1169,7 +1390,7 @@ button {
     height: 100vh;
     height: 100svh;
     overflow: hidden;
-    gap: 0.625rem;
+    gap: 0.5rem;
     padding: 0.625rem clamp(10px, 3vw, 16px) 0;
   }
 
@@ -1178,7 +1399,11 @@ button {
      track and never competes with the board for height. */
   .game-layout {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto auto;
+  }
+
+  .world-panel {
+    display: contents;
   }
 
   /* Reserving only the *collapsed* peek height is what makes the board
@@ -1187,7 +1412,36 @@ button {
      --sheet-grip-h + --sheet-peek-h below, or the board resizes on a
      detent change. */
   .board-panel {
-    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+    align-items: flex-start;
+    padding: 0 0 calc(76px + env(safe-area-inset-bottom, 0px));
+    border-radius: 12px;
+    box-shadow: none;
+    background: var(--walnut-light);
+  }
+
+  .canvas-wrap {
+    margin: 0 auto;
+  }
+
+  .board-legend {
+    min-height: 1.3rem;
+    font-size: 0.65rem;
+  }
+
+  .equipment-card {
+    grid-template-columns: 72px minmax(0, 1fr);
+    min-height: 7rem;
+    padding: 0.7rem;
+    margin-top: 0.15rem;
+  }
+
+  #equipment-portrait {
+    width: 68px;
+    height: 68px;
+  }
+
+  .equipment-state {
+    display: none;
   }
 
   /* 360px leaves nothing for the desktop header gap; the h2 already
@@ -1195,6 +1449,8 @@ button {
      thing that can give is the chrome around them. */
   .screen-header {
     gap: 0.5rem;
+    min-height: 63px;
+    border-bottom: 1px solid var(--border);
   }
 
   .screen-header .btn-ghost {
@@ -1211,7 +1467,7 @@ button {
        the detent contract fixes the pair at 56px, and both rows have to
        clear the WCAG 2.5.8 AA target minimum inside it. */
     --sheet-grip-h: 24px;
-    --sheet-peek-h: 32px;
+    --sheet-peek-h: 52px;
 
     position: absolute;
     left: 0;
@@ -1230,12 +1486,12 @@ button {
      on #sheet itself so its content box is exactly the detent height —
      a border would eat a pixel the grip and peek bar have budgeted for. */
   #sheet.is-collapsed {
-    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    height: calc(76px + env(safe-area-inset-bottom, 0px));
   }
 
   #sheet.is-expanded {
-    height: 70vh; /* fallback where svh is unknown */
-    height: min(70svh, 70vh);
+    height: 44vh;
+    height: min(44svh, 70vh);
   }
 
   /* mid-drag the height is inline and has to follow the finger */
@@ -1251,7 +1507,7 @@ button {
     height: var(--sheet-grip-h);
     touch-action: none; /* Pointer Events own the gesture */
     cursor: grab;
-    background: var(--surface-2); /* solid: a drag surface never floats over a moving maze */
+    background: var(--surface);
     /* inset rather than border-top: a border would eat a pixel of the 24px
        target the chevron has to fill */
     box-shadow: inset 0 1px 0 var(--border);
@@ -1297,7 +1553,7 @@ button {
     flex: none;
     height: var(--sheet-peek-h);
     padding: 0 0.75rem;
-    background: var(--surface); /* solid, same reason as the grip */
+    background: var(--surface);
     border-top: 1px solid var(--border);
   }
 
@@ -1315,7 +1571,7 @@ button {
      the 24px AA target floor. */
   .sheet-peek .btn {
     flex: none;
-    min-height: 28px;
+    min-height: 44px;
     padding: 0 0.9em;
     font-size: 0.8rem;
     border-radius: 10px;
@@ -1339,7 +1595,7 @@ button {
     overscroll-behavior: contain; /* scrolling the body must not rubber-band the page */
     -webkit-overflow-scrolling: touch;
     padding: 0.75rem;
-    background: var(--surface); /* solid fallback, replaced below where blur works */
+    background: var(--surface);
   }
 
   #sheet.is-expanded .sheet-body {
@@ -1416,55 +1672,307 @@ button {
   }
 }
 
-/* ---------- Sheet translucency ---------- */
+/* ---------- Workshop viewport fit ---------- */
 
-/* Gated on color-mix, NOT on backdrop-filter. Those are unrelated features,
-   and the previous gate on unprefixed backdrop-filter silently dropped this
-   whole block on any browser that only had -webkit-backdrop-filter (older iOS
-   Safari) or that had backdrop-filter but no color-mix (Safari < 16.2) —
-   leaving the sheet solid and reading as "no transparency at all". color-mix
-   is what actually produces the see-through, so color-mix is what gets
-   tested; the blur rides along inside, with both prefixes.
+/* Keep the editor as a single fitted card; only its code list scrolls. */
+@media (min-width: 901px) {
+  #screen-game {
+    height: 100svh;
+    min-height: 0;
+    overflow: hidden;
+  }
 
-   16% of the board reaches the eye: the body at 0.6 over the maze, the cards
-   at 0.6 over the body. Measured against the real tokens rather than guessed,
-   and re-measured 2026-09-14 against the direction-A board (design.md §12),
-   whose lit wall top #7E6047 is the new worst case: --muted (the uppercase
-   section headings) on the resulting card is 4.65:1 over that lit top, 4.96:1
-   over the wall base #5B4534 and 5.28:1 over the walnut floor; --text stays
-   >= 11.1:1 throughout, because .program keeps its opaque var(--bg) fill and
-   .block-chip keeps var(--surface-2). Opacity is spent where it buys
-   legibility and given up where it does not.
+  .game-layout,
+  .world-panel,
+  .side-panel {
+    min-height: 0;
+  }
 
-   The dial moved with the board: at the previous 0.5 / 0.5 the lit wall top
-   measured 4.27:1 for --muted — under AA — because a warm lit brick face is
-   brighter than anything the old graphite board put behind the sheet. 0.6 /
-   0.6 is the most transparent pair that holds 4.5:1 over it.
+  .sensor-summary {
+    flex: none;
+  }
 
-   Known cost: over a pure --accent backdrop — the EXIT badge, the robot's
-   glow — --muted falls to 3.66:1 (2.90:1 before the board change). blur(8px)
-   spreads that and it is a small, transient region rather than a background,
-   but it is the price of seeing the map. To trade see-through back for
-   heading contrast, raise BOTH percentages together; 0.75 / 0.70 is the most
-   transparent pair that still holds 4.5:1 even over pure accent (7.5% leak).
+  .sensor-note {
+    flex: 1 1 0;
+  }
 
-   Supersedes the option-a "cards stay opaque" decision in design.md §8.1
-   after play-test: with opaque cards the only clear pixels were the body's
-   0.75rem padding and the gaps between cards, which read as no transparency
-   at all on a real phone. */
-@supports (background: color-mix(in srgb, red 50%, transparent)) {
-  @media (max-width: 900px) {
-    #sheet.is-expanded .sheet-body {
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      background: color-mix(in srgb, var(--surface) 60%, transparent);
-    }
+  .sensor-summary > .sensor-reading {
+    flex: 0 1 auto;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 
-    /* The cards are most of the body's area — leaving them opaque is what
-       made the sheet look solid. .program and .block-chip inside them keep
-       their opaque fills, so the code lines and chip labels are unaffected. */
-    #sheet.is-expanded .sheet-body .panel-section {
-      background: color-mix(in srgb, var(--bg) 60%, transparent);
-    }
+  .equipment-card {
+    grid-template-columns: 78px minmax(0, 1fr) minmax(120px, 190px);
+  }
+
+  .sheet-body {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .sheet-body > .panel-section {
+    min-height: 0;
+    padding: 0.8rem 1rem;
+  }
+
+  .sheet-body > .panel-section + .panel-section {
+    border-top: 1px solid var(--border);
+  }
+
+  .sheet-body > .panel-section:nth-child(2) {
+    overflow: hidden;
+  }
+
+  #program {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .sheet-body > .panel-section.controls {
+    padding: 0.65rem 1rem 0.85rem;
+  }
+}
+
+@media (max-width: 900px) {
+  #screen-game {
+    height: 100svh;
+    min-height: 0;
+    overflow: hidden;
+    gap: 0.45rem;
+    padding-top: max(6px, env(safe-area-inset-top, 0px));
+  }
+
+  .screen-header {
+    display: grid;
+    grid-template-columns: minmax(0, auto) auto minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: 0.45rem;
+    row-gap: 0;
+    min-height: 0;
+    flex: none;
+    padding: 0.2rem 0 0.35rem;
+  }
+
+  .screen-header .game-brand {
+    grid-row: 1;
+    grid-column: 1;
+    font-size: 1.125rem;
+    gap: 0.35rem;
+  }
+
+  .game-brand::before {
+    width: 1.45rem;
+    height: 1.45rem;
+    border-radius: 6px;
+    font-size: 0.66rem;
+  }
+
+  .screen-header #btn-back {
+    grid-row: 1;
+    grid-column: 2;
+    min-height: 36px;
+    min-width: 0;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.75rem;
+  }
+
+  .screen-header h2 {
+    grid-row: 2;
+    grid-column: 1 / 4;
+    min-width: 0;
+    font-size: 1.125rem;
+    line-height: 1.35;
+  }
+
+  .screen-header .level-progress {
+    grid-row: 2;
+    grid-column: 4;
+    font-size: 0.62rem;
+    letter-spacing: 0.02em;
+  }
+
+  .sensor-summary {
+    flex: none;
+    min-height: 0;
+    align-items: flex-start;
+    gap: 0.35rem 0.65rem;
+    padding: 0.35rem 0;
+  }
+
+  .sensor-note {
+    flex: 1 1 9rem;
+    font-size: 0.68rem;
+    line-height: 1.3;
+  }
+
+  .sensor-summary > .sensor-reading {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 42%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-size: 0.7rem;
+  }
+
+  .game-layout {
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .world-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    overflow: hidden;
+  }
+
+  .board-panel {
+    flex: none;
+    height: clamp(180px, 29svh, 245px);
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+
+  .canvas-wrap {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .board-legend {
+    flex: none;
+    min-height: 1.25rem;
+    gap: 0.8rem;
+    font-size: 0.65rem;
+  }
+
+  .equipment-card {
+    flex: none;
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 0.65rem;
+    min-height: 0;
+    padding: 0.55rem 0.65rem;
+    margin: 0;
+  }
+
+  #equipment-portrait {
+    width: 78px;
+    height: 78px;
+  }
+
+  .equipment-state {
+    display: none;
+  }
+
+  #equipment-name {
+    font-size: 0.88rem;
+    line-height: 1.25;
+  }
+
+  #equipment-description {
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+
+  #sheet {
+    background: var(--surface);
+    box-shadow: 0 -10px 30px rgba(58, 41, 26, 0.18);
+  }
+
+  #sheet.is-expanded .sheet-body,
+  #sheet.is-expanded .sheet-body .panel-section {
+    background: var(--surface);
+  }
+
+  .sheet-peek .btn {
+    min-width: 72px;
+    min-height: 44px;
+    padding-inline: 0.7rem;
+  }
+
+  .block-chip,
+  .condition-slot {
+    min-height: 44px;
+  }
+
+  .sheet-body {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .sheet-body > .panel-section {
+    gap: 8px;
+    padding: 8px 0;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 600px) {
+  #screen-game {
+    gap: 0.2rem;
+    padding-top: max(3px, env(safe-area-inset-top, 0px));
+  }
+
+  .screen-header {
+    padding: 0;
+  }
+
+  .screen-header .game-brand {
+    font-size: 0.95rem;
+  }
+
+  .screen-header .game-brand::before {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .screen-header #btn-back {
+    min-height: 30px;
+  }
+
+  .screen-header h2 {
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+
+  .sensor-summary {
+    gap: 0.4rem;
+    padding: 0.2rem 0;
+  }
+
+  .sensor-note,
+  .sensor-summary > .sensor-reading {
+    font-size: 0.62rem;
+    line-height: 1.2;
+  }
+
+  .world-panel {
+    gap: 0;
+  }
+
+  .board-panel {
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+
+  .board-legend,
+  .equipment-card {
+    display: none;
+  }
+
+  #sheet.is-expanded {
+    height: calc(70svh + env(safe-area-inset-bottom, 0px));
   }
 }

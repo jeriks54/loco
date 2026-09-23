@@ -121,6 +121,10 @@ as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
 
 ## 6. Rendering
 
+The Workshop implementation on `codex/workshop-graphics` supersedes the historical
+appearance below; see §13 and `briefs/m22-workshop-implementation.md`. It remains
+local pending play-test and release approval.
+
 - Canvas is sized to the level grid with a fixed tile size (letterboxed/responsive via CSS).
 - Robot is a simple vector-drawn sprite with a facing indicator; moves/turns tween between tiles over one tick.
 - Crash feedback: brief shake + color flash. Goal feedback: simple celebration pulse.
@@ -301,6 +305,9 @@ Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic i
 
 ## 12. Board art — direction A, tabletop flat-shape (#22, slice 1 shipped 2026-09-17)
 
+Historical shipped direction. Workshop (§13) supersedes these palette and chrome
+restrictions for the approved follow-up implementation.
+
 The board is a **physical object inside the console**: oiled-walnut planks under oxide-clay
 brick, drawn with flat shapes only — no gradients, no noise, no image assets. The concept is
 the split: the graphite terminal is the programmer's console, the board is the machine the
@@ -354,3 +361,39 @@ visual reference; the values below are the contract and were read off it.
   good.
 
 Implementation contract, ownership and acceptance: `briefs/m22-board-art.md`.
+
+## 13. Workshop — approved graphics and sensor clarity
+
+Jonas selected the primary agent's revised Workshop concept on 2026-09-20 and
+requested Luna-high implementation with primary-agent review. Visual reference:
+`reference/graphics-2026/v2/warm.html`. Implementation contract:
+`briefs/m22-workshop-implementation.md`. This changes appearance and presentation,
+not levels, program semantics, sensor physics, saved progress or equipment rules.
+
+- **One visual language:** ivory panels, dark forest-green controls, a walnut board
+  with light walkable tiles, and a brass robot. Welcome, level selection and game
+  screens share stylesheet tokens. The mobile editor uses opaque ivory surfaces.
+- **Overhead geometry:** paired tracks, a shaped nose and a roof arrow establish
+  facing even without equipment. `render/workshop-art.js` supplies the shared robot
+  renderer for the scene and equipment portrait. Walls are contiguous top surfaces;
+  holes remain recessed voids, with persistent start and exit markings.
+- **Equipment:** a front-mounted green module is present only on equipped levels.
+  The equipment card names it and explains its limitations. A bracket marks exactly
+  the adjacent tile being checked; outside-grid readings use an inward edge bracket.
+- **Sensor timing:** `createScene` accepts optional `onSensorChange` and retains its
+  existing `render`/`handleEvent` API. It emits deduplicated snapshots with `equipped`,
+  `blocked` and `phase` (`ready`, `moving`, `turning`, `unavailable`). Readings and
+  markers refer to the settled visible pose. During a tween the marker is hidden;
+  falling stays unavailable until reset. Reduced motion settles immediately.
+- **Accessible status:** one polite live region says “Wall detected”, “No wall
+  detected”, “Moving…”, “Turning…” or “Reading unavailable”. Shape accompanies color.
+  The duplicate equipment-card reading is not a second live region. A negative
+  reading never says safe: holes are not walls and sensing does not brake.
+- **Fit:** the 900px mobile breakpoint, stable board size across sheet detents,
+  safe-area support, minimum 14px tiles and reduced-motion behavior are retained.
+  Desktop controls stay accessible; mobile program content scrolls independently.
+
+The local Workshop checks supplement the retained gameplay/browser suites with
+real-paced sensor transitions, all four headings, boundary/hole readings, reset
+while turning, fall unavailability, and all 25 levels at narrow/landscape sizes.
+Release still requires Jonas' play-test approval.

@@ -70,7 +70,11 @@ try {
     await add('end');
     assert.equal(await page.locator('#memory-count').textContent(), '7 / 7');
     assert.equal(await page.locator('#program .filled').nth(1).evaluate(e => e.style.getPropertyValue('--indent')), '1');
-    assert.equal(await page.locator('#program .filled').nth(3).evaluate(e => e.style.getPropertyValue('--indent')), '0');
+    assert.equal(
+      await page.locator('#program .filled').nth(3).evaluate(e => e.style.getPropertyValue('--indent')),
+      await page.locator('#program .filled').nth(1).evaluate(e => e.style.getPropertyValue('--indent')),
+      'else aligns with its matching if inside the outer loop',
+    );
     assert.ok(await page.locator('#program .line-no').allTextContents().then(lines => lines.includes('07')));
     await run.click();
     assert.match(await page.locator('#program').getAttribute('class'), /locked/);
