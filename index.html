@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#232827">
+  <meta name="theme-color" content="#eee8dc">
   <title>LoCo — Lines of Code</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,15 +64,20 @@
 
     <section id="screen-game" class="screen hidden">
       <header class="screen-header">
+        <span class="game-brand" aria-label="LoCo">LoCo</span>
         <button id="btn-back" class="btn btn-ghost">← Levels</button>
         <h2 id="level-name"></h2>
         <span id="level-progress" class="level-progress"></span>
       </header>
-      <p id="sensor-note" class="sensor-note hidden">Front wall sensor fitted. Detects the next tile ahead; holes are not walls.</p>
+      <div class="sensor-summary">
+        <p id="sensor-note" class="sensor-note hidden">Front wall sensor fitted. Detects the next tile ahead; holes are not walls. Does not brake automatically.</p>
+        <p id="sensor-reading" class="sensor-reading" role="status" aria-live="polite" aria-atomic="true" data-phase="unavailable" data-blocked="unknown" hidden></p>
+      </div>
       <div class="game-layout">
-        <div class="board-panel">
+        <div class="world-panel">
+          <div class="board-panel">
           <div class="canvas-wrap">
-            <canvas id="board"></canvas>
+            <canvas id="board" aria-label="Maze board" aria-describedby="sensor-note sensor-reading"></canvas>
             <div id="result-overlay" class="result-overlay hidden">
               <p id="result-text" class="result-text"></p>
               <div class="result-actions">
@@ -81,6 +86,24 @@
               </div>
             </div>
           </div>
+          </div>
+          <div class="board-legend" aria-label="Board legend">
+            <span><i class="legend-wall" aria-hidden="true"></i>Wall</span>
+            <span><i class="legend-hole" aria-hidden="true"></i>Hole</span>
+            <span><i class="legend-exit" aria-hidden="true"></i>Exit</span>
+          </div>
+          <section id="equipment-card" class="equipment-card" aria-label="Robot equipment">
+            <canvas id="equipment-portrait" width="78" height="78" aria-hidden="true"></canvas>
+            <div class="equipment-copy">
+              <span id="equipment-label" class="equipment-label">EQUIPMENT</span>
+              <h3 id="equipment-name">No sensor fitted</h3>
+              <p id="equipment-description">This level has no front wall sensor.</p>
+            </div>
+            <div class="equipment-state">
+              <span class="equipment-reading-label">CURRENT READING</span>
+              <p id="equipment-reading" class="sensor-reading" data-phase="unavailable" data-blocked="unknown">No sensor fitted</p>
+            </div>
+          </section>
         </div>
         <aside class="side-panel sheet is-collapsed" id="sheet">
           <div class="sheet-grip" id="sheet-grip">
@@ -99,7 +122,7 @@
               <div id="palette" class="palette"></div>
             </div>
             <div class="panel-section">
-              <h3>Robot memory <span id="memory-count" class="memory-count"></span></h3>
+              <h3>Your program <span id="memory-count" class="memory-count"></span></h3>
               <div id="program" class="program"></div>
               <button id="btn-clear" class="btn btn-ghost btn-small">Clear program</button>
             </div>

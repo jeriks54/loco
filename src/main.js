@@ -20,6 +20,7 @@ import { createLevelState } from './game/state.js';
 import { createExecutor } from './game/executor.js';
 import { createScene } from './render/scene.js';
 import { createEditor } from './ui/editor.js';
+import { createEquipment } from './ui/equipment.js';
 import { createHud } from './ui/hud.js';
 import { createSheet } from './ui/sheet.js';
 import { createScreens, renderLevelList } from './ui/screens.js';
@@ -142,7 +143,11 @@ const screens = createScreens({
   onLeaveGame: stopRun,
 });
 
-const scene = createScene({ canvas: document.getElementById('board') });
+const equipment = createEquipment();
+const scene = createScene({
+  canvas: document.getElementById('board'),
+  onSensorChange: equipment.update,
+});
 
 const editor = createEditor({
   paletteEl: document.getElementById('palette'),
@@ -205,6 +210,7 @@ function loadLevel(index) {
   hud.setRunning(false);
   sheet.collapse(); // a level always opens with the board unobstructed
   screens.showScreen('game'); // show first so the panel has a size to fit into
+  window.scrollTo(0, 0);
   scene.render(state);
 }
 

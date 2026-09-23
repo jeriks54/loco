@@ -104,3 +104,18 @@ It reads the shipped `color-mix` percentages and the colour tokens straight from
 `styles/main.css`, so it tracks whichever dial pair is live, and fails if `--muted`
 drops below 4.5:1 over the lit brick top, the wall base or the walnut floor. Run it
 whenever the board palette or the dial changes: `node tests/contrast.mjs`.
+
+### Workshop graphics verification
+
+`node tests/workshop-browser.mjs` uses the same `LOCO_PLAYWRIGHT_MODULE` setting.
+It checks the real renderer's equipment snapshots and UI readings with normal and
+reduced motion, four headings, boundaries, holes, fall timing and reset during a
+turn. Its all-level layout matrix covers 280/320/390/900/901/1280px widths and a
+short 844x390 landscape viewport, including stable board geometry across detents.
+The contrast check now covers the Workshop's opaque surfaces and primary controls.
+The fall/direction canvas probes observe the shared Workshop chassis fill; the
+underlying movement, fade, persistence and retry assertions remain unchanged.
+
+Older loop/sensor browser assertions now recognize the 25-level registry. The
+nested Chapter 4 `else` indentation check aligns it with its matching `if`, rather
+than incorrectly expecting the outermost indentation inside a counted loop.

@@ -26,8 +26,8 @@ try {
     });
     await page.goto(url);
     await page.locator('#btn-play').click();
-    assert.equal(await page.locator('.level-item').count(), 20);
-    assert.equal(await page.locator('.chapter-header').last().textContent(), 'CHAPTER 3 — SENSING');
+    assert.equal(await page.locator('.level-item').count(), 25);
+    assert.equal(await page.locator('.chapter-header').nth(2).textContent(), 'CHAPTER 3 — SENSING');
     await page.locator('.level-item').first().click();
     assert.equal(await page.locator('#sensor-note').isVisible(), false);
     await page.locator('#btn-back').click();
@@ -86,27 +86,33 @@ try {
       const panel = document.createElement('div'); panel.style.cssText = 'width:320px;height:320px;padding:0;position:fixed;top:0;left:0';
       const wrap = document.createElement('div'), canvas = document.createElement('canvas');
       panel.append(wrap); wrap.append(canvas); document.body.append(panel);
-      const ctx = canvas.getContext('2d'), captured = [];
-      const stroke = ctx.strokeRect.bind(ctx), fill = ctx.fillRect.bind(ctx);
-      ctx.strokeRect = (...args) => { if (ctx.shadowBlur === 8) captured.push({ kind: 'outline', args, matrix: Array.from(ctx.getTransform().toFloat64Array()) }); return stroke(...args); };
-      ctx.fillRect = (...args) => { if (ctx.shadowBlur === 8) captured.push({ kind: 'filled' }); return fill(...args); };
-      const scene = createScene({ canvas });
+      const ctx = canvas.getContext('2d'), captured = [], readings = [];
+      const fill = ctx.fill.bind(ctx);
+      ctx.fill = (...args) => {
+        if (String(ctx.fillStyle).toLowerCase() === '#c88e42') {
+          captured.push({ matrix: Array.from(ctx.getTransform().toFloat64Array()) });
+        }
+        return fill(...args);
+      };
+      const scene = createScene({ canvas, onSensorChange: value => readings.push(value) });
       await document.fonts.ready; await Promise.resolve();
       const state = createLevelState({ id: 'cue', grid: ['#####', '#S.G#', '#H..#', '#####'], startDir: 'E', memory: 3, sensor: 'frontWall' });
       const results = [];
       for (const dir of ['E', 'N', 'S', 'W']) {
         state.robot.dir = dir; captured.length = 0; scene.render(state);
-        results.push({ dir, marks: structuredClone(captured) });
+        results.push({ dir, marks: structuredClone(captured), reading: readings.at(-1) });
       }
       state.sensor = null; captured.length = 0; scene.render(state);
-      results.push({ dir: 'none', marks: structuredClone(captured) });
+      results.push({ dir: 'none', marks: structuredClone(captured), reading: readings.at(-1) });
       panel.remove(); return results;
     });
     for (const item of cues) {
-      assert.equal(item.marks.filter(m => m.kind === 'outline').length, item.dir === 'none' ? 0 : 1);
-      assert.equal(item.marks.filter(m => m.kind === 'filled').length, ['N', 'W'].includes(item.dir) ? 1 : 0);
+      assert.equal(item.marks.length, 1, 'one overhead robot per settled frame');
+      assert.equal(item.reading.equipped, item.dir !== 'none');
       if (item.dir !== 'none') {
-        const matrix = item.marks.find(m => m.kind === 'outline').matrix;
+        assert.equal(item.reading.phase, 'ready');
+        assert.equal(item.reading.blocked, ['N', 'W'].includes(item.dir));
+        const matrix = item.marks[0].matrix;
         const angle = Math.atan2(matrix[1], matrix[0]);
         const expected = { E: 0, N: -Math.PI / 2, S: Math.PI / 2, W: Math.PI }[item.dir];
         assert.ok(Math.abs(angle - expected) < 0.001, `cue rotates ${item.dir}`);
