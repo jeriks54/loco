@@ -44,6 +44,12 @@ is offered. This supersedes the older D9/D11/D13 condition-control proposal.
 
 ## Sensor presentation
 
+The visual instructions below describe the original M6 cue and are superseded by
+the Workshop presentation in PR #28: visible named hardware, an adjacent-tile
+bracket, text-plus-shape readings, and an unavailable state during a fall. The
+sensor rules and level contracts in this brief remain current; see
+`docs/design.md` §13 and `m22-workshop-implementation.md` for current UI behavior.
+
 Draw a small outlined square at the chevron's forward tip, in the robot's local
 rotated coordinate system. Use existing mint colour; hollow when no wall is ahead,
 filled when detected. Fit within the tile and make the cue shape-based. It follows

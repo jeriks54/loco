@@ -1,6 +1,7 @@
 # M22 — graphics clarity and interface coherence
 
-Status: Workshop selected for implementation, 2026-09-20. Jonas approved the
+Status: Workshop selected on 2026-09-20; implementation shipped in PR #28 and
+deployed to production on 2026-09-23. Jonas approved the
 revised Workshop concept and explicitly requested Luna-high implementation with
 primary-agent review. See `m22-workshop-implementation.md` for the active contract.
 This brief extends #22. Older slice-1 restrictions against chrome changes do not
@@ -46,23 +47,24 @@ until-wall / move / end / right / loop 4 / move / end / right / until-wall / mov
 - Board, background and controls share a coherent palette and surface treatment.
 - Phone sheets preserve board sizing; readable text and touch controls take priority.
 
-## Manager review and selection
+## Concept review and selection — completed
 
-The primary agent renders and inspects all scenes, checks the real level grid
-and program, verifies absence of clipping, and corrects defects directly. Bring
-Jonas two reviewed options with a recommendation and remaining tradeoffs.
+The primary agent rendered and inspected all scenes, checked the real level grid
+and program, verified clipping, and corrected defects. Jonas reviewed both revised
+options and selected Workshop. The side-by-side concepts remain available at
+`docs/reference/graphics-2026/index.html`; their review is recorded in
+`docs/reference/graphics-2026/v2/REVIEW.md`.
 
-## Following selection
+## Selected direction and delivered work
 
-Record the chosen geometry, palette, spacing, responsive simplifications and sensor
-feedback timing in an implementation contract before production work. Luna-high
-agents implement the renderer, UI and sensor feedback; the primary agent reviews
-their changes and independently verifies the integrated game, as Jonas requested
-after selecting Workshop.
+The implementation contract records the chosen geometry, palette, spacing,
+responsive simplifications and sensor feedback timing. Luna-high agents implemented
+the renderer, UI and sensor feedback; the primary agent reviewed their changes and
+independently verified the integrated game.
 
-Preserve levels, execution, stored progress and existing controls. No inventory,
-economy, additional sensors or gameplay changes. Validate all headings, sensing
-after movement/turn/reset/retry, boundaries and holes, reduced motion, contrast,
-small-tile readability and desktop/mobile fit. Run relevant retained Node/browser
-checks. Review motion in a playable preview and obtain Jonas' play-test approval
-before a production release.
+The delivered design preserves levels, execution, stored progress and gameplay.
+It adds no inventory, economy or sensor types. The implementation passed all
+headings, sensing after movement/turn/reset/retry, boundaries, holes, reduced motion,
+contrast, small-tile readability and desktop/mobile fit checks. Jonas accepted the
+playable preview before PR #28 was merged and deployed. See the implementation
+brief for the complete review and validation record.

@@ -1,12 +1,13 @@
 # M22 slice 1 brief — board art, direction A (#22; #8 base sprite)
 
-**Status:** direction approved by Jonas on 2026-09-14 against
-`docs/reference/m22-board-directions.html` (treatment A). Rules live in `design.md` §12.
-**Implementation awaits Jonas' explicit green light.** Branch: `feat/m22-board-art`,
-from `main` at `86c820a`.
+**Historical status:** this initial direction-A slice shipped on 2026-09-17. It was
+superseded by the Workshop redesign in PR #28, merged and production deployed on
+2026-09-23. See `m22-workshop-implementation.md` and `design.md` §13 for current
+visual guidance. Issue #8 is now closed; issue #22 remains open for tracking.
+The contract below records the original slice and its review, not current styling.
 
-Slice 1 is board materials + semantics + the robot base sprite. Slice 2 (later,
-separate) is richer motion, outcome feedback and the UI-coherence pass.
+The original scope was board materials + semantics + the robot base sprite. The
+later Workshop pass unified the board, robot, sensor feedback and interface styling.
 
 ## Purpose and release scope
 

@@ -121,19 +121,22 @@ as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
 
 ## 6. Rendering
 
-The Workshop implementation on `codex/workshop-graphics` supersedes the historical
-appearance below; see §13 and `briefs/m22-workshop-implementation.md`. It remains
-local pending play-test and release approval.
+The shipped Workshop implementation supersedes the historical appearance below;
+see §13 and `briefs/m22-workshop-implementation.md`. It shipped in PR #28 and
+production deployed on 2026-09-23.
 
 - Canvas is sized to the level grid with a fixed tile size (letterboxed/responsive via CSS).
-- Robot is a simple vector-drawn sprite with a facing indicator; moves/turns tween between tiles over one tick.
+- Robot is the Workshop's overhead brass chassis with paired tracks, a distinct nose and a roof arrow. Moves/turns tween between tiles over one tick.
 - Crash feedback: brief shake + color flash. Goal feedback: simple celebration pulse.
 - M5 adds a persistent outlined `S`, double-rim inset holes, and a 180ms shrink/fade
   after movement into a hole. Reduced motion hides immediately; reset restores.
-- M6 automatically equips `sensor: 'frontWall'` on Chapter 3 levels only. A square
-  at the robot's front is hollow for no wall and filled for a wall/boundary. It
-  rotates/fades with the robot; holes never trigger it. A short level explanation
-  wraps above the game layout, so its height is naturally excluded from board fit.
+- M6 automatically equips `sensor: 'frontWall'` on Chapter 3 levels only. The
+  Workshop presents its hardware on the robot, brackets the one adjacent tile, and
+  pairs shape cues with a text reading. Walls/boundaries are detected; holes are
+  not. The note explains that the sensor does not brake automatically.
+- M22 Workshop rendering presents the robot overhead, shares its artwork with the
+  equipment portrait, and synchronizes the adjacent-tile marker and text reading
+  with settled robot pose. See §13 for the active visual and sensor contract.
 
 ## 7. Persistence
 
@@ -157,15 +160,19 @@ earlier entry. Exact grids and solutions live in `level-design.md` §§4 and 11.
 | **M5 (#19 first slice, shipped PR #23)** | Tile lookup, start marker and fatal holes; original 15 levels preserved. Merged 2026-09-08 as `2d4bd42`; ladders remain chapter-5 work |
 | **M6 (#17, shipped PR #24)** | Five Chapter 3 levels, front wall equipment and two operand drop slots. Merged 2026-09-09 as `ee25b75`; contracts: `briefs/m6-front-wall-sensor.md`, `briefs/m6-condition-slots.md` and `briefs/m6-uneven-spiral.md` |
 | **M7 (#18, Chapter 4)** | Five conditional-branching levels, explicit `if` / `else` / `end`, front-wall condition reuse, structural validation and desktop/touch coverage. Shipped in PR #27 on 2026-09-19 as `8614ff1`; contract: `briefs/m7-if-branching.md` |
-| **M22 slice 1 (#22 / #8, shipped)** | Direction-A board materials and the brass robot base sprite. Merged to `main` on 2026-09-17 as `0d209c1`; acceptance and review are recorded in `briefs/m22-board-art.md`. Richer motion, outcome feedback and UI coherence remain slice 2 |
+| **M22 slice 1 (#22 / #8, shipped)** | Initial board materials and robot sprite, recorded in `briefs/m22-board-art.md`. Superseded by the complete Workshop redesign below. Issue #8 is closed. |
+| **M22 Workshop (#22, shipped)** | Unified board, robot, sensor feedback, background and controls. PR #28 merged and production deployed 2026-09-23; issue #22 remains open as a tracking issue. Contract and review: `briefs/m22-workshop-implementation.md`. |
 
-Merged baseline: `main` at `8614ff1` (PR #27). Chapter-3 sensing, Chapter 4
-branching and the direction-A board art are shipped; M22 slice 2, memory upgrades
-and explicit ladder `climb` remain future work.
+Merged baseline: `main` at `2315384` (PR #28). Chapter-3 sensing, Chapter 4
+branching and the Workshop graphics are shipped. Memory upgrades and explicit
+ladder `climb` remain future work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
 
 The following records the original decisions and measured implementation history.
+Its translucency and opaque-card proposals are historical; the current Workshop
+sheet uses opaque ivory surfaces as documented in §13. The mobile breakpoint,
+gesture, detent and fit decisions remain relevant unless called out otherwise.
 The original driver was phone play requiring landscape: the old `.game-layout`
 used a fixed `minmax(0,1fr) 340px` grid without a width-based media query.
 
@@ -281,38 +288,41 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 
 ## 10. Open design questions
 
-- Robot board sprite: M22 slice 1 replaced M1's facing chevron with the canvas-rendered brass base sprite (body, treads and facing visor). Richer move/crash/goal animation remains part of M22 slice 2; no image assets are planned.
+- Robot board sprite: the M22 Workshop renderer replaced M1's facing chevron with the overhead brass robot, visible facing cues and front sensor. It is shared with the equipment portrait; issue #8 is closed. No image assets are used.
 - Sound: skip for MVP; tiny synth blips could come later.
 - Accessibility (color-blind safe tiles, reduced motion) — track as polish items, cheap to include from the start of M1.
 - Mobile UX details (bottom-sheet gesture vs arrow button, tap-to-add interaction) — **shipped in PR #20**, recorded in §8.1 and tracked in issue #15.
 - **#17 shipped (PR #24):** Chapter 3 keeps its automatically fitted front wall sensor and players construct `loop until [wall sensor] = [blocked]` by dragging operands into two initially empty slots. No mounting selector or hole sensor. See `briefs/m6-condition-slots.md`; this superseded the fixed-label implementation before merge.
 - **#19 first slice shipped PR #23:** tile infrastructure, start marker and fatal holes. Ladders and explicit `climb` remain chapter-5 work.
 - **Future equipment/rewards:** sensors can eventually be acquired and mounted at selected robot locations. Candidate types: wall, hole, distance, terrain. Purchase using earned rewards versus automatic chapter rewards is deliberately undecided; do not build that system into M6.
-- Broader graphics improvement — **#22 slice 1 shipped** to `main` as `0d209c1` on 2026-09-17. Direction A, tabletop flat-shape board art is implemented with the console chrome unchanged; the implementation contract and acceptance results are in `briefs/m22-board-art.md`. Motion/outcome feedback and UI coherence remain a second slice.
+- Broader graphics improvement — **Workshop shipped** in PR #28 and deployed 2026-09-23. It updates board, robot, equipment feedback and interface styling together; see §13. Issue #22 remains open for tracking. The slice-1 brief in `briefs/m22-board-art.md` is historical.
 
 ## 11. Visual language
 
-Locked 2026-08-23 (decided with the welcome-screen warm-up): **ASCII aesthetic inside a modern mobile app** — terminal/roguelike glyph art with contemporary app polish. Amended 2026-09-14 for #22: these rules stay locked for the **console chrome** (title screen, panels, sheet, ticker); the **board inside the console** follows §12, direction A, approved against `docs/reference/m22-board-directions.html`.
+The active product direction is the Workshop (see §13), selected 2026-09-20 and
+shipped in PR #28. The title retains its ASCII logo and maze; game screens use a
+coordinated warm, clear visual language rather than the former graphite palette.
 
 - **Typography:** two voices — clean system sans for human-facing copy (subtitle, tagline, buttons, tab labels); JetBrains Mono for terminal/ASCII elements (maze art, boot log/ticker, version).
-- **Palette:** warm green-tinted charcoal surfaces, near-white text, muted grey-green secondary text, one mint neon accent. Reference: `docs/reference/welcome-mockup.png`. Exact values live as CSS custom properties in `styles/main.css` (source of truth).
-- **Decoration:** figlet-style ASCII logo (block glyphs, mint glow — user preferred it over a line-art SVG variant, 2026-08-25); ASCII maze teaser with the robot and a glowing path to an `[EXIT]` badge; box-drawing wall fragments; blinking robot eyes. No code-rain background, no scanlines/CRT kitsch — it should feel 2026, not 1983.
-- **Welcome structure (per reference):** figlet logo → maze teaser → tagline → outline-glow "Start Game" + secondary "Tutorial" → bottom tab bar (Settings / High Scores) with mini version. No subtitle line. Not-yet-built modules answer with a terminal "not found" joke.
+- **Palette:** warm ivory surfaces, walnut board, brass robot and forest-green controls. Exact values live as CSS custom properties in `styles/main.css` (source of truth).
+- **Decoration:** ASCII logo and maze teaser remain on the title screen. Game screens use the Workshop robot and board artwork, with restrained surface detail. No code-rain background or scanlines.
+- **Welcome structure:** ASCII logo → maze teaser → tagline → Start Game and Tutorial → bottom tab bar (Settings / High Scores) with mini version. Not-yet-built modules still answer with a terminal “not found” message.
 - **Version:** one `VERSION` constant in `src/main.js` is the single source of truth — it is interpolated into the ticker and written into the empty `.version-mini` span at boot, so `index.html` carries no literal and the two cannot drift. Bump that constant only. Scheme agreed 2026-09-14: one minor per shipped curriculum chapter — v0.1 chapter 2, v0.2 mobile + tiles, v0.3 chapter 3, and v0.4 Chapter 4, shipped in PR #27.
 - **Motion:** subtle — fade-ins, cursor blink, glow pulses; must honor `prefers-reduced-motion`.
-- **Layout:** desktop board/editor panels plus the shipped M4 mobile bottom sheet (requirements §3.7). The welcome screen uses a centered column on phones.
+- **Layout:** desktop board/editor panels plus the shipped M4 mobile bottom sheet (requirements §3.7). Its Workshop surfaces are opaque ivory; the board stays stable across detents. The welcome screen uses a centered column on phones.
 - **Copy voice:** terminal boot voice — short, dry, playful; no lorem ipsum.
 
 ## 12. Board art — direction A, tabletop flat-shape (#22, slice 1 shipped 2026-09-17)
 
 Historical shipped direction. Workshop (§13) supersedes these palette and chrome
-restrictions for the approved follow-up implementation.
+restrictions. Issue #8 later closed with the Workshop robot; the slice-one note below
+records its then-pending approval condition.
 
 The board is a **physical object inside the console**: oiled-walnut planks under oxide-clay
 brick, drawn with flat shapes only — no gradients, no noise, no image assets. The concept is
-the split: the graphite terminal is the programmer's console, the board is the machine the
-robot runs on. Approved against `docs/reference/m22-board-directions.html`, which remains the
-visual reference; the values below are the contract and were read off it.
+the split between the programmer's console and the physical board. It was approved against
+`docs/reference/m22-board-directions.html`; that mockup is an archive, not the current visual
+reference. Section §13 now defines the shipped Workshop appearance.
 
 **Palette (board only; chrome keeps §11 tokens):**
 
@@ -344,15 +354,13 @@ visual reference; the values below are the contract and were read off it.
 - **A hole is absence.** Never a surface, never lit, never shadow-casting. Its double rim is
   the only cue, so ch3-03/ch3-04 keep teaching that a wall sensor misses a hole.
 - **Console chrome is untouched**: title screen, panels, sheet, ticker keep §11 exactly.
-- **Sheet contrast was re-measured for slice 1** against the new worst case (a lit wall top
-  `#7E6047` behind the sheet), not eyeballed. The current `styles/main.css` dial is 0.6 / 0.6
-  (16% leak): `--muted` measures 4.65:1 over the lit top, 4.96:1 over the wall base and
-  5.28:1 over the walnut floor; `--text` remains at least 11.1:1. If a future board or dial
-  change drops below 4.5:1, raise sheet opacity per the dial and never lighten the text.
-  `tests/contrast.mjs` gates these surfaces; the pure-accent blurred-region cost is 3.66:1.
-- **No new motion.** Existing tween / shake / fall-shrink / goal-pulse behaviour and
-  `prefers-reduced-motion` handling are unchanged; richer motion and outcome feedback are
-  #22 slice 2.
+- **Historical sheet contrast for slice 1:** the translucent M4 sheet was re-measured
+  against the lit wall top `#7E6047`; its then-current dial was 0.6 / 0.6 (16% leak),
+  with `--muted` at 4.65:1 over that top, 4.96:1 over the wall base and 5.28:1 over
+  the walnut floor. These values do not describe the current opaque Workshop sheet;
+  see `tests/contrast.mjs` for the active palette check.
+- **No new motion in slice 1.** The follow-up motion and interface-coherence work was
+  delivered with Workshop in PR #28; see §13 for the current behavior.
 - **Future tile types follow the same rules.** When #19's ladders land, they get a material,
   a shadow behaviour and an LOD plan under this section, not a one-off style.
 - **#8 folds in here.** The brass robot base sprite (body, treads, facing visor) ships with
@@ -362,13 +370,15 @@ visual reference; the values below are the contract and were read off it.
 
 Implementation contract, ownership and acceptance: `briefs/m22-board-art.md`.
 
-## 13. Workshop — approved graphics and sensor clarity
+## 13. Workshop — shipped graphics and sensor clarity
 
 Jonas selected the primary agent's revised Workshop concept on 2026-09-20 and
 requested Luna-high implementation with primary-agent review. Visual reference:
 `reference/graphics-2026/v2/warm.html`. Implementation contract:
 `briefs/m22-workshop-implementation.md`. This changes appearance and presentation,
 not levels, program semantics, sensor physics, saved progress or equipment rules.
+The design was accepted, merged in PR #28 and deployed to production on 2026-09-23.
+Issue #22 remains open as a tracking item; issue #8 is closed.
 
 - **One visual language:** ivory panels, dark forest-green controls, a walnut board
   with light walkable tiles, and a brass robot. Welcome, level selection and game
@@ -393,7 +403,7 @@ not levels, program semantics, sensor physics, saved progress or equipment rules
   safe-area support, minimum 14px tiles and reduced-motion behavior are retained.
   Desktop controls stay accessible; mobile program content scrolls independently.
 
-The local Workshop checks supplement the retained gameplay/browser suites with
+The Workshop checks supplement the retained gameplay/browser suites with
 real-paced sensor transitions, all four headings, boundary/hole readings, reset
 while turning, fall unavailability, and all 25 levels at narrow/landscape sizes.
-Release still requires Jonas' play-test approval.
+Review and deployment details are in `briefs/m22-workshop-implementation.md`.
