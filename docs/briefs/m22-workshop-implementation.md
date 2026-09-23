@@ -3,7 +3,8 @@
 Jonas selected Workshop from `docs/reference/graphics-2026/v2/warm.html` and asked
 for Luna-high implementation with primary-agent review. This supersedes the earlier
 request to avoid Luna for concept design; the approved artwork must be ported,
-not redesigned. No push, PR, merge or deployment in this assignment.
+not redesigned. **Status:** accepted by Jonas, merged in PR #28 and deployed to
+production on 2026-09-23. The issue #22 tracker remains open; issue #8 is closed.
 
 ## Ownership and invariants
 
@@ -116,5 +117,6 @@ headings, equipment absence, boundaries, floors, holes, movement, turning,
 fall, reset and reduced motion. Existing gameplay and saved-progress rules remain
 unchanged. `git diff --check` passed.
 
-Playable local preview: `http://127.0.0.1:4175/`. Pending user play-test;
-no production deployment, push, merge or PR performed.
+The playable preview was `http://127.0.0.1:4175/`; Jonas accepted the result and
+requested PR creation and merge. PR #28 merged to `main` as `2315384`; the Vercel
+production deployment for that commit completed successfully on 2026-09-23.

@@ -1,4 +1,4 @@
-# LoCo — cold-start briefing
+# LoCo — current project briefing
 
 LoCo ("Lines of Code") is a browser puzzle game that teaches programming: you drag command
 blocks into a robot's limited memory slots, then run it through a maze. The memory limit *is*
@@ -9,17 +9,18 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-09-19
+## State as of 2026-09-23
 
-Merged baseline: `main` = `8614ff1` (PR #27). Chapter 4 is shipped as `v0.4`;
-issue #18 is closed. Shipped features:
+Merged baseline: `main` = `2315384` (PR #28). The product version remains `v0.4`;
+the latest release adds Workshop graphics without changing gameplay. Shipped features:
 
 - **Chapter 1 — Sequence**, 7 levels (`ch1-01..07`), move / turn left / turn right.
 - **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), programs rendered as numbered mono lines. Counted `loop n` / `end` replaced historical M2 `repeat` / `while front clear` in PR #21.
 - **Chapter 3 — Sensing**, 5 levels (`ch3-01..05`), automatic front wall sensor and player-constructed `loop until [wall sensor] = [blocked]` / `end` via two typed operand slots. Shipped in PR #24.
 - **Chapter 4 — Decisions**, 5 levels (`ch4-01..05`), explicit `if` / `else` / `end` branching that reuses the Chapter 3 condition slots. Shipped in PR #27 as `v0.4`.
 - **Persistence** — `localStorage['loco.progress.v1']` stores completed level ids only. Programs are never saved, so block renames have no migration cost.
-- **M4 mobile bottom sheet** (PR #20) — under `max-width: 900px` the board fills the screen and the program panel is a floating translucent overlay sheet with a grip + chevron, a peek bar carrying Run / Reset / memory count, and auto-collapse on run. Play-tested on a Samsung S26 in Chrome.
+- **M4 mobile editor** (PR #20) — under `max-width: 900px`, the board stays a stable size above a two-detent editor sheet. The current sheet uses opaque ivory surfaces; Run / Reset / memory count remain available at the collapsed detent, and the sheet auto-collapses on run.
+- **M22 Workshop graphics** (PR #28, merged and deployed 2026-09-23) — overhead brass robot, visible front sensor, one-tile sensor marker and reading, walnut board, ivory panels and forest-green controls. The same visual language carries through welcome, level selection and play. Issue #8 is closed; issue #22 remains open although its approved redesign shipped.
 
 25 merged levels across four chapters; Chapter 4 appends five levels
 (`ch4-01..05`) without changing the existing IDs.
@@ -66,30 +67,28 @@ with no test framework or dependencies.
 
 ## What's next
 
-Open roadmap issues, all labeled `enhancement` + `roadmap`:
+Open roadmap issues, checked 2026-09-23 (both labeled `enhancement` + `roadmap`):
 
 | # | What | Note |
 |---|---|---|
-| **#18** | Chapter 4 — `if` statements | Shipped in PR #27; reuses Chapter 3's condition model |
-| **#19** | Tile types + map art | First slice shipped PR #23; ladders stay with chapter 5 |
-| **#8** | Robot board sprite (replace the facing chevron) | Cosmetic; touches `scene.js`, so never parallel with renderer work |
-| **#22** | Improve the game's overall graphics | Direction A (tabletop board) agreed 2026-09-14 against `docs/reference/m22-board-directions.html`; rules in `design.md` §12, contract in `briefs/m22-board-art.md`. Slice 1 = board materials + robot base sprite (#8); slice 2 = motion/feedback/UI coherence |
+| **#19** | Tile types + richer map graphics | First slice shipped in PR #23; ladders and explicit `climb` remain future chapter-5 work |
+| **#22** | Improve the game's overall graphics | Workshop redesign shipped and deployed in PR #28; issue remains open for tracking. Current design and implementation: `design.md` §13 and `briefs/m22-workshop-implementation.md` |
 
 Shipped and closed: **#17** (Chapter 3 — front wall sensor + constructed loop
 condition, two operand slots, five levels, no hole sensor) in PR #24; **#18**
 (Chapter 4 — conditional branching, five levels, structural validation and
 desktop/touch coverage) in PR #27.
 
-Chapter 3, the tile groundwork, M22 slice 1 and Chapter 4 are merged to `main`.
-Equipment acquisition and mounting, M22 slice 2, memory upgrades and explicit
-ladder `climb` remain future work.
+Chapter 3, tile groundwork, Chapter 4 and the Workshop redesign are merged to
+`main`. Equipment acquisition and mounting, memory upgrades and explicit ladder
+`climb` remain future work.
 
 ## Where things are documented
 
-- `docs/design.md` — architecture (§2), level format (§3), editor (§5), milestones (§8), **M4 mobile decisions (§8.1)**, workflow + roles + **delegation protocol (§9)**, open design questions (§10), visual language (§11).
-- `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), decisions (§7), sensor equipment direction (§9), five Chapter 3 levels (§10) and the fixed Chapter 4 pack (§11).
+- `docs/design.md` — architecture (§2), level format (§3), editor (§5), current rendering and milestones (§6, §8), historical M4 mobile decisions (§8.1), workflow + roles + **delegation protocol (§9)**, current visual language (§11–§13).
+- `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), decisions (§7), sensor equipment direction (§9), Chapter 3 levels (§10), Chapter 4 pack (§11) and Workshop sensor presentation (§12).
 - `docs/requirements.md` — the product requirements and the post-MVP roadmap (§5).
-- `docs/briefs/` — milestone contracts, including `m7-if-branching.md` and historical M3/M5/M6 records.
+- `docs/briefs/` — milestone contracts, including the shipped Workshop implementation, `m7-if-branching.md` and historical M3/M5/M6 records.
 - `tests/README.md` — retained Node verification and browser play-test checklist.
 
 ## Hard rules
@@ -100,11 +99,9 @@ ladder `climb` remain future work.
 - **Agents never run git.** The manager reviews and commits everything. See `docs/design.md` §9.3 for the full delegation protocol, including how to detect a stalled agent.
 - **Self-reported verification is never accepted.** An M2 level pack claimed it was verified and failed 7 of 8 checks under real cross-check. Recompute independently.
 - `.gitignore` carries jonas' uncommitted duplicate `.vercel` line. **Leave it alone** — do not commit or revert it without asking.
-- Visual identity is locked (`docs/design.md` §11): JetBrains Mono for terminal elements, system sans for human copy, dark graphite palette, one mint accent, restrained motion that honours `prefers-reduced-motion`.
+- Current visual identity is the Workshop language (`docs/design.md` §13): warm walnut board, ivory surfaces, brass overhead robot, forest-green controls and clear sensor equipment/readings. JetBrains Mono remains for program/code details; motion honours `prefers-reduced-motion`.
 
 ## Known loose ends
 
 - **Three dead buttons on the title screen.** Tutorial, Settings and High Scores all still answer with the `> loading X.module .......... not found` joke (`main.js` wires every `[data-module]` except Start Game to it). Documented as intentional in `design.md` §11, but it shipped, and Tutorial is the biggest onboarding gap for a game whose whole promise is teaching.
-- **Five M4 play-test items were never reported on** before the merge: chip-drag versus sheet-drag arbitration, right-edge clipping on ch2-01/ch2-08, the board not rescaling across detents, the desktop check across 900px, and heading legibility over the maze. The chip-drag one is the interaction that could only be verified by reading code — look there first if anything feels off.
-- **Sheet translucency is a dial, not a settled value.** Currently 25% leak. `styles/main.css`'s "Sheet translucency" comment has the measured contrast table and how to change it.
 - **Start marker:** persistent outlined `S` shipped in PR #23.

@@ -1,7 +1,9 @@
 # LoCo graphics — direct redesign, 2026-09-20
 
 The primary agent rebuilt these concepts after Jonas rejected the initial Luna
-drafts. These are static visual proposals, not changes to the running game.
+drafts. Workshop was selected, implemented in PR #28 and deployed on 2026-09-23;
+Robot Lab remains an unselected concept. This folder preserves the design review
+and reference images; see the implementation brief for the shipped product.
 
 ## Choices
 
@@ -36,10 +38,10 @@ scrolling the editor reveals those below the initial viewport.
   Workshop, and 6.99:1 to 13.58:1 in Robot lab.
 
 Captured and visually inspected desktop, collapsed/expanded phone and details
-images. No production files changed. Full responsive regression checks, animation
-timing, touch interactions, accessibility semantics and integration remain work for
-the selected design's playable implementation. A static visual review cannot
-establish whether new players understand the game without a usability play-test.
+images. The mockups were static design material only; the selected Workshop was
+later implemented and passed responsive, animation, touch, sensor and accessibility
+checks. Jonas accepted the playable preview before its production release. A static
+visual review alone cannot establish whether new players understand the game.
 
 ## Files
 

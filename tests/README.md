@@ -95,15 +95,15 @@ must have no counted-only solution. `sensors-browser.mjs` plays all five levels.
 tap and drag insertion for `if` / `else` / `end`, indentation, line numbers,
 incomplete and invalid nesting feedback, nested programs, memory locking, pointer
 highlighting, completion/retry and board fit at 280/320/390/900/901px. It also
-retains the Chapter 2 and Chapter 3 flow checks. Human play-testing remains the
-release gate for feel and visual review.
+retains the Chapter 2 and Chapter 3 flow checks. Automated checks complement
+human review of play feel and visual clarity; Jonas accepted the Workshop preview
+before its PR #28 production release.
 
-`contrast.mjs` (standalone, not part of `verify.mjs`) re-checks the mobile sheet's
-translucency dial against the direction-A board's worst-case pixels (design.md §12).
-It reads the shipped `color-mix` percentages and the colour tokens straight from
-`styles/main.css`, so it tracks whichever dial pair is live, and fails if `--muted`
-drops below 4.5:1 over the lit brick top, the wall base or the walnut floor. Run it
-whenever the board palette or the dial changes: `node tests/contrast.mjs`.
+`contrast.mjs` (standalone, not part of `verify.mjs`) checks the current Workshop
+text and control colors against its opaque ivory surfaces. It reads the active CSS
+tokens from `styles/main.css` and fails when required text contrast falls below
+4.5:1. Run it when changing the Workshop palette or surface colors:
+`node tests/contrast.mjs`.
 
 ### Workshop graphics verification
 
@@ -112,10 +112,12 @@ It checks the real renderer's equipment snapshots and UI readings with normal an
 reduced motion, four headings, boundaries, holes, fall timing and reset during a
 turn. Its all-level layout matrix covers 280/320/390/900/901/1280px widths and a
 short 844x390 landscape viewport, including stable board geometry across detents.
-The contrast check now covers the Workshop's opaque surfaces and primary controls.
+The contrast check covers the Workshop's opaque surfaces and primary controls.
 The fall/direction canvas probes observe the shared Workshop chassis fill; the
 underlying movement, fade, persistence and retry assertions remain unchanged.
 
 Older loop/sensor browser assertions now recognize the 25-level registry. The
 nested Chapter 4 `else` indentation check aligns it with its matching `if`, rather
-than incorrectly expecting the outermost indentation inside a counted loop.
+than incorrectly expecting the outermost indentation inside a counted loop. These
+browser checks passed for the Workshop release merged as PR #28 on 2026-09-23;
+Jonas accepted the desktop and phone preview before merge.

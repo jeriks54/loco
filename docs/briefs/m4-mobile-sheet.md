@@ -1,5 +1,10 @@
 # M4 Brief — Mobile bottom sheet
 
+**Historical visual contract:** this brief records the original M4 graphite and
+translucent-sheet treatment. The Workshop redesign (PR #28) supersedes those visual
+rules with opaque ivory surfaces; the mobile breakpoint, stable board sizing,
+gestures and controls remain. Current styling: `docs/design.md` §13.
+
 Implements `docs/design.md` §8.1 (decisions agreed with jonas 2026-09-05). Issue: #15 (label `M4`).
 
 **Team rules:** vanilla HTML/CSS/JS, zero dependencies, zero build step. Visual voice per design.md §11 (JetBrains Mono for terminal elements, mint accent via the existing CSS custom properties, honor `prefers-reduced-motion`). **Agents never run git** — the team manager reviews and commits every delivery.

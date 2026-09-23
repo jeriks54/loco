@@ -1,5 +1,10 @@
 # Brief — Welcome screen (visual identity warm-up)
 
+**Historical visual brief:** the graphite palette and title-screen styling below
+record the original M1 direction. The Workshop redesign (PR #28) supersedes those
+colors and styles across the game. The title still uses ASCII logo/maze art; current
+product styling is documented in `docs/design.md` §11–§13.
+
 **Date:** 2026-08-23 · **Milestone:** M1 (issue #1, game shell) · **Branch:** `feat/m1-playable-core`
 
 ## Context

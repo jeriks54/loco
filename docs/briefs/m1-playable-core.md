@@ -1,5 +1,10 @@
 # Brief — M1 playable core
 
+**Historical implementation brief:** the title-screen and graphite-style constraints
+below describe the original M1 shell. The Workshop redesign (PR #28) supersedes
+those visual instructions; current presentation is documented in `docs/design.md`
+§11–§13. Gameplay and architecture history below remain useful context.
+
 **Date:** 2026-08-25 · **Milestone:** M1 (issues #1–#5) · **Branch:** `feat/m1-playable-core`
 
 ## Context

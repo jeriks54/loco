@@ -9,7 +9,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - **Genre:** Puzzle / educational programming game (Karel-the-Robot / Lightbot lineage)
 - **Platform:** Browser (desktop-first, mouse), static hosting, no backend
 - **Audience:** All ages, no prior programming knowledge assumed
-- **Look & feel:** Clean, minimal, friendly — not childish
+- **Look & feel:** Warm workshop; clear overhead maze and robot, readable equipment, friendly coordinated controls and surfaces.
 
 ## 2. Core loop
 
@@ -68,20 +68,28 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Desktop-first, mouse input.
 - Maze/board on the **left** as the dominant element; program editor (palette + memory) on the **right**.
 - Commands are placed by dragging them from the palette into memory.
-- Shipped M4 mobile layout: at widths up to 900px the program editor is a floating bottom sheet with grip/chevron, Run/Reset/memory peek bar, tap-to-add and auto-collapse on run.
+- Shipped M4 mobile layout: at widths up to 900px the board keeps a stable size as the two-detent program sheet opens, with grip/chevron, Run/Reset/memory peek bar, tap-to-add and auto-collapse on run. At short heights the expanded sheet may cover part of the board; the collapsed board remains usable. Workshop uses opaque ivory sheet surfaces.
 
-## 4. Current scope (through M7 / M22 slice 1)
+### 3.8 Visual clarity and sensor feedback
 
-Merged baseline is `main` at `8614ff1` (PR #27). M2 shipped loops and M4 shipped mobile;
+- The board and robot read from above: contiguous wall tops, distinct floor and holes, paired robot tracks, and a visible front direction.
+- Fitted front-wall sensor hardware is visible and named. A marker shows exactly the adjacent tile being checked.
+- The reading uses text and shape: “Wall detected” or “No wall detected.” Walls and the outer boundary are detected; floors, starts, goals and holes are not.
+- Explain that the sensor does not detect holes and does not brake automatically. Never describe a negative reading as safe.
+- During movement and turns, do not imply the sensor has already read the destination tile. During a fall, the reading is unavailable.
+- Reduced-motion behavior preserves the same reading semantics and usable controls.
+
+## 4. Current scope (through M22 Workshop)
+
+Merged baseline is `main` at `2315384` (PR #28). M2 shipped loops and M4 shipped mobile;
 the counted-only chapter-2 revision #16 was play-tested and merged in PR #21 on
 2026-09-07. Historical M2 mechanics remain in its brief. The #19 tile-system first
 slice was play-tested and merged in PR #23 on 2026-09-08. M6's five Chapter 3
 levels, the automatic front wall sensor and the two operand slots merged in PR #24
 on 2026-09-09; #17 is closed and production deployed. Chapter 4's conditional
-branching shipped as `v0.4` in PR #27 on 2026-09-19. M22 slice 1's direction-A
-board materials and brass robot base sprite were merged to `main` on 2026-09-17;
-its review, visual checks and contrast measurements are recorded in
-`briefs/m22-board-art.md`.
+branching shipped as `v0.4` in PR #27 on 2026-09-19. The selected Workshop graphics
+redesign shipped in PR #28 and deployed on 2026-09-23. The visual contract,
+review and validation are recorded in `briefs/m22-workshop-implementation.md`.
 
 In:
 
@@ -92,12 +100,12 @@ In:
 - **25 hand-crafted levels**: seven sequence, eight counted-loop, five sensing and five decision levels, with per-level palettes and memory budgets
 - Level select screen; progress saved to `localStorage`
 - Mobile bottom-sheet editor and touch controls
-- Direction-A tabletop board art: walnut floor, clay-brick walls, wall shadows, material LOD, persistent start/exit markers, fatal-hole absence and brass robot base sprite
+- Workshop graphics: overhead brass robot with paired tracks, walnut walls and light floor, recessed holes, persistent start/exit markers, coordinated ivory/forest-green controls, visible sensor equipment, adjacent-tile marker and explicit readings
 
-M5 shipped tile types and holes; M6 shipped conditional loops and one front wall sensor; Chapter 4 adds front-wall `if`/`else` branching.
+M5 shipped tile types and holes; M6 shipped conditional loops and one front wall sensor; Chapter 4 adds front-wall `if`/`else` branching. M22 unified the board and interface while retaining the same sensor rules.
 Out: hole/distance/terrain sensors, selectable mounting, rewards/shop,
-ladders, memory upgrades and scoring. M22 slice 2's richer motion, outcome
-feedback and UI-coherence work is also not yet shipped.
+ladders, memory upgrades and scoring. Issue #19 remains open for further tile types
+and ladders. Issue #22 remains open as a tracking issue although its redesign shipped.
 
 ## 5. Roadmap (post-MVP)
 
@@ -107,7 +115,7 @@ feedback and UI-coherence work is also not yet shipped.
 4. **Shipped — #18, PR #27:** Chapter 4 adds explicit `if`/`else` branching, reusing Chapter 3's front-wall condition vocabulary. The five-level pack and structural control-flow contracts are recorded in `briefs/m7-if-branching.md`; the release is `v0.4`.
 5. **Mobile — shipped in PR #20:** M4's width-based bottom sheet and touch controls are current functionality. Decisions and measured history remain in `design.md` §8.1.
 6. **Ideas beyond:** chapter-5 Mastery and memory upgrades; fog of war, par/star ratings for efficient programs, level sharing.
-7. **Slice 1 shipped — #22 / #8:** Direction A's tabletop board art and the brass robot base sprite are merged to `main` as `0d209c1` on 2026-09-17. The contract, acceptance checks and visual review are recorded in `briefs/m22-board-art.md`; the console chrome, puzzle readability and reduced-motion support remain preserved. M22 slice 2 still covers richer motion/outcome feedback and UI coherence.
+7. **Workshop graphics shipped — #22 / #8:** The selected warm Workshop design shipped in PR #28 and production deployed on 2026-09-23. It clarifies the overhead robot, equipment and sensor reading, and unifies the board, background and controls. Issue #8 is closed; #22 remains open for tracking. Design and implementation record: `briefs/m22-workshop-implementation.md`.
 8. **Sensor equipment and rewards — future intent, 2026-09-08:** allow players to select sensor mounting locations and acquire wall, hole, distance and terrain sensors. Decide later between buying with rewards earned from levels and automatic chapter rewards. No economy or inventory implementation in M6.
 
 ## 6. Non-functional requirements
@@ -115,7 +123,7 @@ feedback and UI-coherence work is also not yet shipped.
 - Pure client-side: vanilla HTML/CSS/JS, no build step, deployable as static files (Vercel).
 - Runs smoothly on current Chrome/Edge/Firefox; keyboard not required for MVP.
 - Load time: instant (static assets only, no framework).
-- Desktop and mobile layouts use self-contained panels; the M4 bottom sheet is shipped.
+- Desktop and mobile layouts use self-contained panels; the current Workshop mobile sheet has opaque ivory surfaces and keeps the board size stable across its detents.
 - Retain dependency-free checks with `node tests/verify.mjs`; coverage and manual checks are documented in `tests/README.md`. No test framework or dependencies are required.
 
 ## 7. Open questions

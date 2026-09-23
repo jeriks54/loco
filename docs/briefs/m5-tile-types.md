@@ -1,5 +1,10 @@
 # M5 brief — Tile types, start marker and holes (#19)
 
+**Historical visual contract:** the tile and sprite treatment below describes the
+original M5 release. The Workshop redesign (PR #28) supersedes the board palette,
+robot and interface styling; tile behavior and hole semantics remain unchanged.
+For current visuals see `docs/design.md` §13.
+
 Status: **approved for implementation by Jonas**, 2026-09-07, after reading this
 proposal. Jonas also requested a separate roadmap item for broader game graphics
 improvements. Branch: `feat/m5-tile-types`, from `6a67e86`.

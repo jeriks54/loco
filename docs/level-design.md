@@ -3,9 +3,9 @@
 Curriculum, concept progression, and level plan. Counted Chapter 2 shipped in PR #21;
 tile infrastructure shipped in PR #23; Chapter 3 sensing shipped in PR #24; Chapter
 4 branching is the M7 milestone recorded in §11 and `briefs/m7-if-branching.md`.
-Sections 9–11 record the current sensor direction, Chapter 3 implementation and
-the exact Chapter 4 contract. Earlier decisions remain historical where superseded
-explicitly by §9 or §11.
+Sections 9–12 record the current sensor direction, Chapter 3 implementation,
+Chapter 4 contract and Workshop presentation. Earlier decisions remain historical
+where superseded explicitly by later sections.
 
 ## 1. Purpose
 
@@ -391,3 +391,18 @@ nesting and incomplete operands; nested loop/conditional programs; desktop and
 touch editor interaction; pointer highlighting through a branch; capacity and
 lock behavior; and layout checks at 280, 320, 390, 900 and 901px. Chapter 1–3
 flows remain regression checks, and `v0.4` shipped with PR #27.
+
+## 12. Workshop presentation of existing rules
+
+The Workshop redesign shipped in PR #28 without changing the curriculum, levels,
+or sensing rules. Its overhead robot shows heading with a nose and roof arrow;
+the front-wall unit is visible and named. One bracket marks the adjacent tile under
+inspection. A textual reading accompanies its shape: “Wall detected” or “No wall
+detected.” Walls and the boundary count as blocked; floor, start, goal and holes do
+not. The interface explicitly says holes are not detected and the sensor does not
+brake automatically. While moving or turning, the displayed reading follows the
+settled pose rather than the destination; a fall makes it unavailable until reset.
+
+This presentation does not add a hole sensor, equipment inventory, mounting choices,
+or a new player decision. For palette and layout details see `design.md` §13 and
+`briefs/m22-workshop-implementation.md`.
