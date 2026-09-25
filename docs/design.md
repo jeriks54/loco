@@ -161,10 +161,11 @@ earlier entry. Exact grids and solutions live in `level-design.md` §§4 and 11.
 | **M6 (#17, shipped PR #24)** | Five Chapter 3 levels, front wall equipment and two operand drop slots. Merged 2026-09-09 as `ee25b75`; contracts: `briefs/m6-front-wall-sensor.md`, `briefs/m6-condition-slots.md` and `briefs/m6-uneven-spiral.md` |
 | **M7 (#18, Chapter 4)** | Five conditional-branching levels, explicit `if` / `else` / `end`, front-wall condition reuse, structural validation and desktop/touch coverage. Shipped in PR #27 on 2026-09-19 as `8614ff1`; contract: `briefs/m7-if-branching.md` |
 | **M22 slice 1 (#22 / #8, shipped)** | Initial board materials and robot sprite, recorded in `briefs/m22-board-art.md`. Superseded by the complete Workshop redesign below. Issue #8 is closed. |
-| **M22 Workshop (#22, shipped)** | Unified board, robot, sensor feedback, background and controls. PR #28 merged and production deployed 2026-09-23; issue #22 remains open as a tracking issue. Contract and review: `briefs/m22-workshop-implementation.md`. |
+| **M22 Workshop (#22, shipped)** | Unified board, robot, sensor feedback, background and controls. PR #28 merged and production deployed 2026-09-23; issue #22 is closed. Contract and review: `briefs/m22-workshop-implementation.md`. |
+| **Title teaser (#37, shipped)** | Cropped Workshop board, one-command reveal and arrow-free Start Game. PR #41 merged 2026-09-25; issue #37 is closed. Contract and review: `briefs/issue-37-title-screen-plan.md`. |
 
-Merged baseline: `main` at `2315384` (PR #28). Chapter-3 sensing, Chapter 4
-branching and the Workshop graphics are shipped. Memory upgrades and explicit
+Latest feature merge: PR #41 (`fee2bda`). Chapter-3 sensing, Chapter 4
+branching, Workshop graphics and the title teaser are shipped. Memory upgrades and explicit
 ladder `climb` remain future work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
@@ -295,14 +296,14 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 - **#17 shipped (PR #24):** Chapter 3 keeps its automatically fitted front wall sensor and players construct `loop until [wall sensor] = [blocked]` by dragging operands into two initially empty slots. No mounting selector or hole sensor. See `briefs/m6-condition-slots.md`; this superseded the fixed-label implementation before merge.
 - **#19 first slice shipped PR #23:** tile infrastructure, start marker and fatal holes. Ladders and explicit `climb` remain chapter-5 work.
 - **Future equipment/rewards:** sensors can eventually be acquired and mounted at selected robot locations. Candidate types: wall, hole, distance, terrain. Purchase using earned rewards versus automatic chapter rewards is deliberately undecided; do not build that system into M6.
-- Broader graphics improvement — **Workshop shipped** in PR #28 and deployed 2026-09-23. It updates board, robot, equipment feedback and interface styling together; see §13. Issue #22 remains open for tracking. The slice-1 brief in `briefs/m22-board-art.md` is historical.
+- Broader graphics improvement — **Workshop shipped** in PR #28 and deployed 2026-09-23. It updates board, robot, equipment feedback and interface styling together; see §13. Issue #22 is closed. The slice-1 brief in `briefs/m22-board-art.md` is historical.
 
 ## 11. Visual language
 
 The active product direction is the Workshop (see §13), selected 2026-09-20 and
-shipped in PR #28. Issue #37 updates the title on its feature branch to give a
-cropped glimpse of the same board and robot. Its implementation and review contract
-is in `briefs/issue-37-title-screen-plan.md`; it awaits human play-testing.
+shipped in PR #28. The cropped title glimpse of the same board and robot shipped
+in PR #41 on 2026-09-25 after Jonas accepted the preview; issue #37 is closed.
+Its implementation and review record is in `briefs/issue-37-title-screen-plan.md`.
 
 - **Typography:** two voices — clean system sans for human-facing copy (headline, pitch, buttons); JetBrains Mono for code details, boot ticker and version.
 - **Palette:** warm ivory surfaces, walnut board, brass robot and forest-green controls. Exact values live as CSS custom properties in `styles/main.css` (source of truth).
@@ -379,7 +380,7 @@ requested Luna-high implementation with primary-agent review. Visual reference:
 `briefs/m22-workshop-implementation.md`. This changes appearance and presentation,
 not levels, program semantics, sensor physics, saved progress or equipment rules.
 The design was accepted, merged in PR #28 and deployed to production on 2026-09-23.
-Issue #22 remains open as a tracking item; issue #8 is closed.
+Issues #22 and #8 are closed.
 
 - **One visual language:** ivory panels, dark forest-green controls, a walnut board
   with light walkable tiles, and a brass robot. Welcome, level selection and game

@@ -79,17 +79,18 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - During movement and turns, do not imply the sensor has already read the destination tile. During a fall, the reading is unavailable.
 - Reduced-motion behavior preserves the same reading semantics and usable controls.
 
-## 4. Current scope (through M22 Workshop)
+## 4. Current scope (through issue #37 title teaser)
 
-Merged baseline is `main` at `2315384` (PR #28). M2 shipped loops and M4 shipped mobile;
+Latest feature merge is PR #41 (`fee2bda`). M2 shipped loops and M4 shipped mobile;
 the counted-only chapter-2 revision #16 was play-tested and merged in PR #21 on
 2026-09-07. Historical M2 mechanics remain in its brief. The #19 tile-system first
 slice was play-tested and merged in PR #23 on 2026-09-08. M6's five Chapter 3
 levels, the automatic front wall sensor and the two operand slots merged in PR #24
 on 2026-09-09; #17 is closed and production deployed. Chapter 4's conditional
 branching shipped as `v0.4` in PR #27 on 2026-09-19. The selected Workshop graphics
-redesign shipped in PR #28 and deployed on 2026-09-23. The visual contract,
-review and validation are recorded in `briefs/m22-workshop-implementation.md`.
+redesign shipped in PR #28 and deployed on 2026-09-23. The title teaser shipped
+in PR #41 on 2026-09-25. The visual contracts, reviews and validation are recorded
+in `briefs/m22-workshop-implementation.md` and `briefs/issue-37-title-screen-plan.md`.
 
 In:
 
@@ -101,11 +102,12 @@ In:
 - Level select screen; progress saved to `localStorage`
 - Mobile bottom-sheet editor and touch controls
 - Workshop graphics: overhead brass robot with paired tracks, walnut walls and light floor, recessed holes, persistent start/exit markers, coordinated ivory/forest-green controls, visible sensor equipment, adjacent-tile marker and explicit readings
+- Title teaser: cropped Chapter 1 board and robot, one-command reveal, arrow-free Start Game button
 
 M5 shipped tile types and holes; M6 shipped conditional loops and one front wall sensor; Chapter 4 adds front-wall `if`/`else` branching. M22 unified the board and interface while retaining the same sensor rules.
 Out: hole/distance/terrain sensors, selectable mounting, rewards/shop,
 ladders, memory upgrades and scoring. Issue #19 remains open for further tile types
-and ladders. Issue #22 remains open as a tracking issue although its redesign shipped.
+and ladders. Issues #22 and #37 are closed after their visual updates shipped.
 
 ## 5. Roadmap (post-MVP)
 
@@ -115,8 +117,9 @@ and ladders. Issue #22 remains open as a tracking issue although its redesign sh
 4. **Shipped — #18, PR #27:** Chapter 4 adds explicit `if`/`else` branching, reusing Chapter 3's front-wall condition vocabulary. The five-level pack and structural control-flow contracts are recorded in `briefs/m7-if-branching.md`; the release is `v0.4`.
 5. **Mobile — shipped in PR #20:** M4's width-based bottom sheet and touch controls are current functionality. Decisions and measured history remain in `design.md` §8.1.
 6. **Ideas beyond:** chapter-5 Mastery and memory upgrades; fog of war, par/star ratings for efficient programs, level sharing.
-7. **Workshop graphics shipped — #22 / #8:** The selected warm Workshop design shipped in PR #28 and production deployed on 2026-09-23. It clarifies the overhead robot, equipment and sensor reading, and unifies the board, background and controls. Issue #8 is closed; #22 remains open for tracking. Design and implementation record: `briefs/m22-workshop-implementation.md`.
+7. **Workshop graphics shipped — #22 / #8:** The selected warm Workshop design shipped in PR #28 and production deployed on 2026-09-23. It clarifies the overhead robot, equipment and sensor reading, and unifies the board, background and controls. Issues #8 and #22 are closed. Design and implementation record: `briefs/m22-workshop-implementation.md`.
 8. **Sensor equipment and rewards — future intent, 2026-09-08:** allow players to select sensor mounting locations and acquire wall, hole, distance and terrain sensors. Decide later between buying with rewards earned from levels and automatic chapter rewards. No economy or inventory implementation in M6.
+9. **Title teaser shipped — #37, PR #41:** The welcome screen hints at the Workshop through a cropped real board, one command and one legal move. Start Game has no arrow. Issue #37 is closed; see `briefs/issue-37-title-screen-plan.md`.
 
 ## 6. Non-functional requirements
 

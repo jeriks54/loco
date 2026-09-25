@@ -3,7 +3,7 @@
 **Historical status:** this initial direction-A slice shipped on 2026-09-17. It was
 superseded by the Workshop redesign in PR #28, merged and production deployed on
 2026-09-23. See `m22-workshop-implementation.md` and `design.md` §13 for current
-visual guidance. Issue #8 is now closed; issue #22 remains open for tracking.
+visual guidance. Issues #8 and #22 are closed.
 The contract below records the original slice and its review, not current styling.
 
 The original scope was board materials + semantics + the robot base sprite. The

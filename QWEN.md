@@ -9,10 +9,10 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-09-23
+## State as of 2026-09-25
 
-Merged baseline: `main` = `2315384` (PR #28). The product version remains `v0.4`;
-the latest release adds Workshop graphics without changing gameplay. Shipped features:
+Latest feature merge: PR #41 (`fee2bda`). The product version remains `v0.4`;
+the title now offers a cropped Workshop teaser without changing gameplay. Shipped features:
 
 - **Chapter 1 — Sequence**, 7 levels (`ch1-01..07`), move / turn left / turn right.
 - **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), programs rendered as numbered mono lines. Counted `loop n` / `end` replaced historical M2 `repeat` / `while front clear` in PR #21.
@@ -20,7 +20,8 @@ the latest release adds Workshop graphics without changing gameplay. Shipped fea
 - **Chapter 4 — Decisions**, 5 levels (`ch4-01..05`), explicit `if` / `else` / `end` branching that reuses the Chapter 3 condition slots. Shipped in PR #27 as `v0.4`.
 - **Persistence** — `localStorage['loco.progress.v1']` stores completed level ids only. Programs are never saved, so block renames have no migration cost.
 - **M4 mobile editor** (PR #20) — under `max-width: 900px`, the board stays a stable size above a two-detent editor sheet. The current sheet uses opaque ivory surfaces; Run / Reset / memory count remain available at the collapsed detent, and the sheet auto-collapses on run.
-- **M22 Workshop graphics** (PR #28, merged and deployed 2026-09-23) — overhead brass robot, visible front sensor, one-tile sensor marker and reading, walnut board, ivory panels and forest-green controls. The same visual language carries through welcome, level selection and play. Issue #8 is closed; issue #22 remains open although its approved redesign shipped.
+- **M22 Workshop graphics** (PR #28, merged and deployed 2026-09-23) — overhead brass robot, visible front sensor, one-tile sensor marker and reading, walnut board, ivory panels and forest-green controls. The same visual language carries through welcome, level selection and play. Issues #8 and #22 are closed.
+- **Workshop title teaser** (PR #41, merged 2026-09-25) — a cropped Chapter 1 board, one-command slip and one legal move invite players into the game without revealing the full maze or solution. Start Game has no arrow. Issue #37 is closed; see `docs/briefs/issue-37-title-screen-plan.md`.
 
 25 merged levels across four chapters; Chapter 4 appends five levels
 (`ch4-01..05`) without changing the existing IDs.
@@ -67,19 +68,29 @@ with no test framework or dependencies.
 
 ## What's next
 
-Open roadmap issues, checked 2026-09-23 (both labeled `enhancement` + `roadmap`):
+Open GitHub issues, checked 2026-09-25:
 
 | # | What | Note |
 |---|---|---|
 | **#19** | Tile types + richer map graphics | First slice shipped in PR #23; ladders and explicit `climb` remain future chapter-5 work |
-| **#22** | Improve the game's overall graphics | Workshop redesign shipped and deployed in PR #28; issue remains open for tracking. Current design and implementation: `design.md` §13 and `briefs/m22-workshop-implementation.md` |
+| **#30** | Basic tutorial and chapter introductions | Tutorial button still has placeholder behavior |
+| **#31** | Three-star ratings | Replayable level challenges |
+| **#32** | Sensor loadouts and progression | Equipment and unlocks |
+| **#33** | Android and iOS distribution | Assess app options |
+| **#34** | Head-to-head multiplayer | Race to solve a level |
+| **#35** | Faster run speeds | Up to 8× |
+| **#36** | Loop iteration progress | Show progress while running |
+| **#38** | Larger maps on small screens | Board navigation |
+| **#39** | Future curriculum | Rank programming concepts by game fit |
+| **#40** | First-time player research | Validate onboarding and learning |
 
 Shipped and closed: **#17** (Chapter 3 — front wall sensor + constructed loop
 condition, two operand slots, five levels, no hole sensor) in PR #24; **#18**
 (Chapter 4 — conditional branching, five levels, structural validation and
-desktop/touch coverage) in PR #27.
+desktop/touch coverage) in PR #27; **#22** (Workshop graphics) in PR #28; and
+**#37** (title teaser) in PR #41.
 
-Chapter 3, tile groundwork, Chapter 4 and the Workshop redesign are merged to
+Chapter 3, tile groundwork, Chapter 4, the Workshop redesign and the title teaser are merged to
 `main`. Equipment acquisition and mounting, memory upgrades and explicit ladder
 `climb` remain future work.
 

@@ -1,10 +1,12 @@
 # Issue #37 — Workshop title screen redesign
 
-**Status:** implemented on this branch; browser checked, awaiting human play-test.
+**Status:** accepted by Jonas, merged to `main` in PR #41 on 2026-09-25; issue #37 closed.
 
 **Branch:** `codex/issue-37-title-screen`
 
 **Issue:** https://github.com/jeriks54/loco/issues/37
+
+**PR:** https://github.com/jeriks54/loco/pull/41
 
 **Concept:** [responsive mockup](../reference/issue-37-title-concept.html)
 
@@ -74,4 +76,4 @@ With `prefers-reduced-motion: reduce`, show the settled still frame immediately.
 
 The live title now uses the cropped Workshop board, one-line program slip, one legal move and settled reduced-motion frame. The footer keeps the existing module buttons and boot ticker. The static concept remains a visual reference rather than a pixel-for-pixel rendering of the live layout.
 
-Browser review at 1280 × 800, 390 × 844, 320 × 568 and 844 × 390 found no page errors or horizontal overflow. Start Game is above the fold on both portrait phone sizes. Canvas frames differ before and after the one-move reveal and remain identical under reduced motion. Start Game, return-to-title, Tutorial, Settings and High Scores were exercised in the retained `tests/title-browser.mjs`; the desktop/touch editor browser suite also passed. Human play-testing should judge the invitation, motion timing and visual feel before any merge.
+Browser review at 1280 × 800, 390 × 844, 320 × 568 and 844 × 390 found no page errors or horizontal overflow. Start Game is above the fold on both portrait phone sizes. Canvas frames differ before and after the one-move reveal and remain identical under reduced motion. Start Game, return-to-title, Tutorial, Settings and High Scores were exercised in the retained `tests/title-browser.mjs`; the desktop/touch editor browser suite also passed. Jonas accepted the result and requested the merge. PR #41 merged as `fee2bda`; the production deployment succeeded and issue #37 closed.
