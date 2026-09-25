@@ -2,8 +2,8 @@
    LoCo — main.js (M1 boot wiring, M2 loop outcomes + progress)
    Wires screens, level registry, and the game screen's
    state / executor / scene / editor / HUD into one flow.
-   Welcome-screen interactions (module boot-log joke, ambient
-   ticker, robot blink) are kept intact — except Start Game,
+   Welcome-screen interactions (module boot-log joke and ambient
+   ticker) are kept intact — except Start Game,
    which now opens the level select (brief §7).
    M2: the terminal-event fan-out also covers the loop-era
    'syntax' (refused run) and 'runaway' (tick cap) outcomes.
@@ -24,6 +24,7 @@ import { createEquipment } from './ui/equipment.js';
 import { createHud } from './ui/hud.js';
 import { createSheet } from './ui/sheet.js';
 import { createScreens, renderLevelList } from './ui/screens.js';
+import { createTitlePreview } from './ui/title-preview.js';
 import { loadProgress, markCompleted } from './persist.js';
 
 /* ---------- Welcome screen (kept from the warm-up) ---------- */
@@ -44,15 +45,8 @@ const TICKER_START_DELAY_MS = 650;
 const TICKER_CHAR_MS = 22;
 const TICKER_LINE = `> loco.system ${VERSION} — ready_`;
 
-const BLINK_CLOSE_MS = 130;
-const BLINK_GAP_MS = 140;
-
-const EYES_OPEN = '▪ ▪';
-const EYES_CLOSED = '─ ─';
-
 const bootLog = document.querySelector('.boot-log');
 const tickerText = document.getElementById('ticker-text');
-const robotEyes = document.querySelector('.robot-eyes');
 const versionMini = document.querySelector('.version-mini');
 // Start Game (#btn-play) is wired to the level select instead —
 // the boot-log joke stays for the not-yet-built modules only.
@@ -65,8 +59,6 @@ function playBootSequence(button) {
   button.disabled = true;
   bootLog.textContent = '';
   bootLog.hidden = false;
-  blink(2); // the robot noticed you pressed something
-
   lines.forEach((line, index) => {
     window.setTimeout(() => {
       bootLog.textContent += (index > 0 ? '\n' : '') + line;
@@ -96,31 +88,19 @@ function typeTicker() {
   }, TICKER_START_DELAY_MS);
 }
 
-function blink(times) {
-  if (!robotEyes || REDUCED_MOTION || times <= 0) return;
-  robotEyes.textContent = EYES_CLOSED;
-  window.setTimeout(() => {
-    robotEyes.textContent = EYES_OPEN;
-    window.setTimeout(() => blink(times - 1), BLINK_GAP_MS);
-  }, BLINK_CLOSE_MS);
-}
-
-function scheduleBlink() {
-  if (!robotEyes || REDUCED_MOTION) return;
-  const delay = 2400 + Math.random() * 2200;
-  window.setTimeout(() => {
-    blink(Math.random() < 0.25 ? 2 : 1);
-    scheduleBlink();
-  }, delay);
-}
-
 moduleButtons.forEach((button) => {
   button.addEventListener('click', () => playBootSequence(button));
 });
 
 if (versionMini) versionMini.textContent = VERSION;
 typeTicker();
-scheduleBlink();
+
+const titlePreview = createTitlePreview({
+  canvas: document.getElementById('title-preview-board'),
+  commandEl: document.getElementById('title-preview-command'),
+  root: document.getElementById('title-preview'),
+});
+titlePreview.show();
 
 /* ---------- Game flow (M1 playable core) ---------- */
 
@@ -141,6 +121,10 @@ function stopRun() {
 
 const screens = createScreens({
   onLeaveGame: stopRun,
+  onScreenChange: (name) => {
+    if (name === 'title') titlePreview.show();
+    else titlePreview.hide();
+  },
 });
 
 const equipment = createEquipment();

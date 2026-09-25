@@ -51,6 +51,11 @@ on desktop and touch, and saves screenshots to the ignored `tests/tmp/` director
 It uses offline fallback fonts, reduced motion, and accelerated executor timers;
 real phone feel, animation and downloaded-font appearance still need play-testing.
 
+`node tests/title-browser.mjs` checks the issue-37 Workshop title teaser at desktop,
+phone and short landscape sizes with normal and reduced motion. It verifies the
+single robot move versus a stable reduced-motion frame, Start Game visibility and
+navigation, keyboard focus, and the existing Tutorial/Settings/High Scores responses.
+
 Run `node tests/tiles-browser.mjs` with the same Playwright setting for real-paced
 desktop/touch fall animation, reduced motion, repeated Run, Reset, Retry, safe
 detour/completion and 280/320/390/900/901px tile screenshots. Canvas draw observations

@@ -14,43 +14,55 @@
   <main id="app">
     <section id="screen-title" class="screen">
       <div class="title-card">
-        <pre class="ascii-logo" aria-hidden="true">██╗      ██████╗  ██████╗ ██████╗ 
-██║     ██╔═══██╗██╔════╝██╔═══██╗
-██║     ██║   ██║██║     ██║   ██║
-██║     ██║   ██║██║     ██║   ██║
-███████╗╚██████╔╝╚██████╗╚██████╔╝
-╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝ </pre>
-        <h1 class="sr-only">LoCo — Lines of Code</h1>
-        <pre class="maze" aria-hidden="true"><span class="w"> #─#  #───#  #─#  #──#
- #      │      #     │
- #─# #──┼──# #──# #──┤
-   │ #  │   │  # │   #
- #─┼──# │ #─┼─# ────┤
- # │    </span><span class="r">▫</span><span class="w">    │  │    #
- #─┼─  </span><span class="r">───┐</span><span class="w">  ─┼──┼───
-   │   </span><span class="r">│</span><span class="robot-eyes">▪ ▪</span><span class="r">│</span><span class="w">   │  │   #
- #─┼─  </span><span class="r">╔╧═╧╗</span><span class="w"> ─┼──┼───
- # │   </span><span class="r">║ ► ║</span><span class="p"> ████ </span><span class="w"> ╞═
- #─┼─  </span><span class="r">╚╦═╦╝</span><span class="w">  ─┼──  ─┤ </span><span class="exit-badge">EXIT</span><span class="w">
-   │    </span><span class="r">╨ ╨</span><span class="w">    │  </span><span class="p">██</span><span class="w">   │
- #─┼──#──#──#──┼──</span><span class="p">██</span><span class="w">───┘</span></pre>
-        <p class="tagline">Can you escape the maze using<br>minimal commands?</p>
-        <button id="btn-play" class="btn btn-primary btn-large" data-module="maze">Start Game</button>
-        <button id="btn-tutorial" class="btn btn-secondary" data-module="tutorial">Tutorial</button>
-        <pre class="boot-log" hidden aria-live="polite"></pre>
+        <header class="title-masthead">
+          <div class="title-identity">
+            <span class="title-mark" aria-hidden="true">L↳</span>
+            <div>
+              <div class="title-wordmark">LoCo</div>
+              <span class="title-identity-note">LINES OF CODE</span>
+            </div>
+          </div>
+          <span class="title-version">WORKSHOP · <span class="version-mini"></span></span>
+        </header>
+        <div class="title-hero">
+          <section class="title-intro" aria-labelledby="title-heading">
+            <p class="title-eyebrow">THE ROBOT PROGRAMMING GAME</p>
+            <h1 id="title-heading">Give a little robot <em>a way out.</em></h1>
+            <p class="title-lead">One command changes everything. What will you tell it to do next?</p>
+            <div class="title-actions">
+              <button id="btn-play" class="btn btn-primary btn-large" data-module="maze">Start game</button>
+              <button id="btn-tutorial" class="btn btn-secondary" data-module="tutorial">Tutorial</button>
+            </div>
+            <p class="title-meta"><span>25 LEVELS</span><i aria-hidden="true"></i><span>4 CHAPTERS</span><i aria-hidden="true"></i><span>ONE WAY OUT</span></p>
+            <pre class="boot-log" hidden aria-live="polite"></pre>
+          </section>
+          <aside id="title-preview" class="title-preview" aria-labelledby="title-preview-heading" aria-describedby="title-preview-description">
+            <div class="title-preview-header">
+              <h2 id="title-preview-heading"><i aria-hidden="true"></i>A PEEK INSIDE THE WORKSHOP</h2>
+              <span>CHAPTER 01</span>
+            </div>
+            <div class="title-preview-board-panel">
+              <div class="canvas-wrap">
+                <canvas id="title-preview-board" aria-hidden="true"></canvas>
+              </div>
+            </div>
+            <div class="title-preview-program" aria-hidden="true">
+              <div class="title-preview-program-head"><span>YOUR PROGRAM</span><span>01 / 06</span></div>
+              <div id="title-preview-command" class="title-preview-line is-active"><span>01</span><b>move</b></div>
+              <div class="title-preview-line title-preview-line-empty"><span>02</span><i></i></div>
+            </div>
+            <div class="title-preview-prompt" aria-hidden="true"><small>YOUR NEXT MOVE</small><strong>The next line is yours.</strong></div>
+            <p id="title-preview-description" class="sr-only">A cropped glimpse of the Workshop shows a small brass robot on a walnut maze board. Its program has one move command and an empty second line for you to write.</p>
+          </aside>
+        </div>
       </div>
-      <pre class="boot-ticker" aria-hidden="true"><span id="ticker-text"></span></pre>
-      <nav class="tab-bar" aria-label="Main">
-        <button class="tab" data-module="settings">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M18.8 5.2l-2.1 2.1M7.3 16.7l-2.1 2.1" /></svg>
-          <span>Settings</span>
-        </button>
-        <span class="version-mini"></span>
-        <button class="tab" data-module="scores">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4ZM17 5h3.5a3.5 3.5 0 0 1-3.5 4M7 5H3.5A3.5 3.5 0 0 0 7 9M12 13v4M8 20h8M8 20c0-2 1.8-3 4-3s4 1 4 3" /></svg>
-          <span>High Scores</span>
-        </button>
-      </nav>
+      <footer class="title-footer">
+        <pre class="boot-ticker" aria-hidden="true"><span id="ticker-text"></span></pre>
+        <nav class="tab-bar" aria-label="Main">
+          <button class="tab" data-module="settings">Settings</button>
+          <button class="tab" data-module="scores">High Scores</button>
+        </nav>
+      </footer>
     </section>
 
     <section id="screen-levels" class="screen hidden">

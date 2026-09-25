@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LoCo · Title screen concept for issue 37</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <style>
+    body { min-width: 0; }
+    .concept {
+      min-height: 100svh;
+      padding: 0 clamp(20px, 4vw, 64px) max(22px, env(safe-area-inset-bottom));
+      color: var(--text);
+      background: radial-gradient(60rem 42rem at 86% 42%, #ddc9aa60, transparent 68%), linear-gradient(110deg, #f7f3ea, #eee8dc 68%, #e5d9c6);
+    }
+    .shell { width: min(100%, 1440px); min-height: 100svh; margin: auto; display: flex; flex-direction: column; }
+    .masthead { min-height: 90px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid #d2c6b4; }
+    .identity { display: flex; align-items: center; gap: 13px; }
+    .mark { width: 36px; height: 36px; display: grid; place-items: center; padding-right: 5px; border: 2px solid var(--accent); border-radius: 11px; color: var(--accent); font: 700 20px var(--font-mono); letter-spacing: -5px; }
+    .wordmark { font-size: 26px; font-weight: 800; letter-spacing: -.07em; line-height: 1; }
+    .identity small { display: block; margin-top: 2px; color: var(--muted); font: 600 9px var(--font-mono); letter-spacing: .16em; }
+    .masthead-note { display: flex; align-items: center; gap: 24px; color: var(--muted); font: 600 10px var(--font-mono); letter-spacing: .11em; text-transform: uppercase; }
+    .masthead-note b { padding: 7px 9px; border: 1px solid #cabb9f; border-radius: 5px; color: var(--accent-ink); font-weight: 700; }
+    .hero { flex: 1; display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); gap: clamp(35px, 5vw, 86px); align-items: center; padding: 55px 0 62px; }
+    .intro { max-width: 525px; }
+    .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; color: var(--accent); font: 700 10px var(--font-mono); letter-spacing: .16em; }
+    .eyebrow::before { content: ""; width: 21px; height: 2px; background: var(--accent); }
+    .intro h1 { font-size: clamp(50px, 5vw, 82px); font-weight: 750; letter-spacing: -.076em; line-height: 1.03; text-wrap: balance; }
+    .intro h1 em { color: var(--accent); font-style: normal; }
+    .lead { max-width: 410px; margin-top: 27px; color: #586254; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.55; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+    .action { min-height: 55px; display: inline-flex; align-items: center; justify-content: center; padding: 0 23px; border-radius: 7px; font-size: 15px; font-weight: 700; cursor: default; }
+    .action-primary { min-width: 178px; background: var(--accent); color: #fff; border: 1px solid var(--accent); box-shadow: 0 9px 20px #194d3529; }
+    .action-secondary { background: #fbf8ef91; color: var(--accent-ink); border: 1px solid #b9c8b6; }
+    .meta { display: flex; align-items: center; gap: 9px; margin-top: 28px; color: #69715f; font: 600 10px var(--font-mono); letter-spacing: .05em; }
+    .meta i { width: 5px; height: 5px; border-radius: 50%; background: #bcae95; }
+    .teaser { position: relative; height: 480px; min-width: 0; overflow: hidden; isolation: isolate; border: 1px solid #1c4f38; border-radius: 20px; background: radial-gradient(30rem 25rem at 25% 72%, #467257, transparent 72%), #173f2e; box-shadow: 0 30px 60px #3c3e2b2d, 0 3px 10px #172c2030; }
+    .teaser::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .22; background: repeating-linear-gradient(125deg, transparent 0 53px, #a8bda31a 53px 54px); }
+    .teaser-head { position: absolute; z-index: 2; inset: 0 0 auto; height: 67px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 26px; border-bottom: 1px solid #aac1aa38; color: #dfeddc; font: 700 10px var(--font-mono); letter-spacing: .13em; }
+    .teaser-head span:first-child { display: flex; align-items: center; gap: 9px; }
+    .teaser-head i { width: 7px; height: 7px; border-radius: 50%; background: #e4c279; box-shadow: 0 0 0 4px #e4c27924; }
+    .teaser-head span:last-child { opacity: .65; }
+    .board-fragment { position: absolute; left: -32px; top: 115px; width: 304px; height: 300px; overflow: hidden; transform: rotate(-7deg); border: 7px solid #c5a46d; border-radius: 16px; background: #ad8b60; box-shadow: 12px 18px 26px #001c1560, inset 0 2px 8px #4f3a2345; }
+    .board-panel { width: 430px; height: 430px; display: grid; place-items: center; padding: 0; background: #ad8b60; }
+    .canvas-wrap { display: grid; place-items: center; }
+    .canvas-wrap canvas { display: block; }
+    .board-fragment::after { content: ""; position: absolute; inset: auto 0 0; height: 60px; background: linear-gradient(transparent, #173f2e55); pointer-events: none; }
+    .program-slip { position: absolute; z-index: 2; right: 30px; top: 154px; width: 265px; padding: 0 15px 15px; transform: rotate(3deg); border: 1px solid #dbc9a8; border-radius: 9px; background: #fbf8ef; box-shadow: 0 20px 30px #051e1770; }
+    .slip-top { height: 47px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid #ded3c0; color: #4f6253; font: 700 10px var(--font-mono); letter-spacing: .09em; }
+    .slip-top span:last-child { color: #8b9484; font-size: 9px; }
+    .slip-line { height: 41px; display: flex; align-items: center; gap: 15px; padding: 0 9px; color: #304d3b; font: 700 13px var(--font-mono); }
+    .slip-line.active { margin: 12px -6px 0; padding-left: 15px; border-left: 3px solid var(--accent); border-radius: 3px; background: #dce9da; }
+    .slip-line .line-no { color: #839686; font-size: 10px; }
+    .slip-line.blank { color: #aab3a4; }
+    .slip-line.blank span:last-child { width: 46px; border-bottom: 1px solid #bbc6b8; }
+    .teaser-prompt { position: absolute; z-index: 2; right: 33px; bottom: 44px; width: 264px; color: #f0ecdb; }
+    .teaser-prompt small { color: #dfc386; font: 700 10px var(--font-mono); letter-spacing: .18em; }
+    .teaser-prompt strong { display: block; margin-top: 10px; font-size: clamp(23px, 2.4vw, 34px); font-weight: 650; letter-spacing: -.04em; line-height: 1.12; }
+    .footer { min-height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #d2c6b4; color: #68715f; font-size: 11px; }
+    .footer nav { display: flex; gap: 24px; }
+    .footer nav span { color: var(--accent-ink); font-weight: 600; }
+    @media (max-width: 1100px) {
+      .hero { gap: 25px; }
+      .intro h1 { font-size: clamp(45px, 5vw, 68px); }
+      .teaser { height: 430px; }
+      .board-fragment { left: -70px; top: 96px; }
+      .program-slip { right: 15px; width: 220px; }
+      .teaser-prompt { right: 20px; bottom: 32px; width: 205px; }
+    }
+    @media (max-width: 760px) {
+      .concept { padding-inline: 18px; }
+      .masthead { min-height: 64px; }
+      .mark { width: 29px; height: 29px; border-radius: 8px; font-size: 16px; }
+      .wordmark { font-size: 21px; }
+      .identity small { font-size: 7px; }
+      .masthead-note > span { display: none; }
+      .hero { display: flex; flex-direction: column; align-items: stretch; gap: 27px; padding: 30px 0 28px; }
+      .intro { max-width: none; }
+      .eyebrow { margin-bottom: 15px; font-size: 9px; }
+      .intro h1 { max-width: 500px; font-size: clamp(39px, 10.4vw, 60px); line-height: 1.04; }
+      .lead { margin-top: 14px; font-size: 14px; line-height: 1.45; }
+      .actions { flex-wrap: nowrap; margin-top: 21px; }
+      .action { min-height: 49px; padding: 0 16px; font-size: 13px; }
+      .action-primary { min-width: 0; flex: 1; }
+      .meta { margin-top: 14px; font-size: 9px; }
+      .teaser { height: 318px; border-radius: 14px; }
+      .teaser-head { height: 44px; padding: 0 15px; font-size: 8px; }
+      .board-fragment { top: 79px; left: -56px; width: 212px; height: 190px; border-width: 5px; border-radius: 10px; }
+      .board-panel { width: 310px; height: 310px; }
+      .program-slip { top: 91px; right: 13px; width: 165px; padding: 0 8px 8px; border-radius: 6px; }
+      .slip-top { height: 32px; font-size: 7px; }
+      .slip-top span:last-child { font-size: 7px; }
+      .slip-line { height: 30px; gap: 8px; padding: 0 5px; font-size: 10px; }
+      .slip-line.active { margin: 7px -3px 0; padding-left: 8px; }
+      .slip-line .line-no { font-size: 8px; }
+      .teaser-prompt { right: 14px; bottom: 22px; width: 165px; }
+      .teaser-prompt small { font-size: 8px; }
+      .teaser-prompt strong { font-size: 22px; }
+      .footer { min-height: 47px; font-size: 9px; }
+      .footer nav { gap: 10px; }
+    }
+    @media (max-width: 350px) {
+      .concept { padding-inline: 14px; }
+      .intro h1 { font-size: 39px; }
+      .lead { font-size: 13px; }
+      .action { font-size: 12px; padding: 0 12px; }
+      .teaser { height: 300px; }
+      .board-fragment { left: -75px; top: 75px; }
+      .program-slip { right: 8px; width: 150px; }
+      .teaser-prompt { right: 9px; width: 150px; }
+      .teaser-prompt strong { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="concept">
+    <div class="shell">
+      <header class="masthead">
+        <div class="identity"><span class="mark" aria-hidden="true">L↳</span><div><div class="wordmark">LoCo</div><small>LINES OF CODE</small></div></div>
+        <div class="masthead-note"><span>Issue 37 · title concept</span><b>v0.4</b></div>
+      </header>
+      <main class="hero">
+        <section class="intro">
+          <p class="eyebrow">THE ROBOT PROGRAMMING GAME</p>
+          <h1>Give a little robot <em>a way out.</em></h1>
+          <p class="lead">One command changes everything. What will you tell it to do next?</p>
+          <div class="actions"><button class="action action-primary" type="button">Start game</button><button class="action action-secondary" type="button">Tutorial</button></div>
+          <div class="meta"><span>25 LEVELS</span><i></i><span>4 CHAPTERS</span><i></i><span>ONE WAY OUT</span></div>
+        </section>
+        <section class="teaser" aria-label="A glimpse of the Workshop: brass robot on a cropped walnut maze board, beside a program with one move command and an empty second line">
+          <div class="teaser-head"><span><i></i> A PEEK INSIDE THE WORKSHOP</span><span>CHAPTER 01</span></div>
+          <div class="board-fragment"><div class="board-panel"><div class="canvas-wrap"><canvas id="preview-board" aria-hidden="true"></canvas></div></div></div>
+          <div class="program-slip" aria-hidden="true"><div class="slip-top"><span>YOUR PROGRAM</span><span>01 / 06</span></div><div class="slip-line active"><span class="line-no">01</span><span>move</span></div><div class="slip-line blank"><span class="line-no">02</span><span></span></div></div>
+          <div class="teaser-prompt"><small>YOUR NEXT MOVE</small><strong>The next line is yours.</strong></div>
+        </section>
+      </main>
+      <footer class="footer"><span>Design concept · static preview</span><nav aria-label="Concept of title footer"><span>Settings</span><span>High scores</span></nav></footer>
+    </div>
+  </div>
+  <script type="module">
+    import { chapter1 } from '../../src/levels/chapter1.js';
+    import { createLevelState } from '../../src/game/state.js';
+    import { createScene } from '../../src/render/scene.js';
+    const state = createLevelState(chapter1.find(level => level.id === 'ch1-02'));
+    state.robot = { x: 2, y: 1, dir: 'E' };
+    createScene({ canvas: document.getElementById('preview-board') }).render(state);
+  </script>
+</body>
+</html>

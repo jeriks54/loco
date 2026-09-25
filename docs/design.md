@@ -300,16 +300,17 @@ Subagents run **in-process** — there is no separate PID to inspect, only the t
 ## 11. Visual language
 
 The active product direction is the Workshop (see §13), selected 2026-09-20 and
-shipped in PR #28. The title retains its ASCII logo and maze; game screens use a
-coordinated warm, clear visual language rather than the former graphite palette.
+shipped in PR #28. Issue #37 updates the title on its feature branch to give a
+cropped glimpse of the same board and robot. Its implementation and review contract
+is in `briefs/issue-37-title-screen-plan.md`; it awaits human play-testing.
 
-- **Typography:** two voices — clean system sans for human-facing copy (subtitle, tagline, buttons, tab labels); JetBrains Mono for terminal/ASCII elements (maze art, boot log/ticker, version).
+- **Typography:** two voices — clean system sans for human-facing copy (headline, pitch, buttons); JetBrains Mono for code details, boot ticker and version.
 - **Palette:** warm ivory surfaces, walnut board, brass robot and forest-green controls. Exact values live as CSS custom properties in `styles/main.css` (source of truth).
-- **Decoration:** ASCII logo and maze teaser remain on the title screen. Game screens use the Workshop robot and board artwork, with restrained surface detail. No code-rain background or scanlines.
-- **Welcome structure:** ASCII logo → maze teaser → tagline → Start Game and Tutorial → bottom tab bar (Settings / High Scores) with mini version. Not-yet-built modules still answer with a terminal “not found” message.
+- **Decoration:** the title uses a cropped, partly veiled rendering of a real Chapter 1 board with the shared brass robot, plus a one-command program slip. It does not show a full solution or editor. Game screens use the same Workshop artwork with restrained surface detail. No code-rain background or scanlines.
+- **Welcome structure:** LoCo wordmark → headline and short pitch → Start Game and Tutorial → Workshop glimpse, with ticker and tertiary Settings / High Scores in the footer. Not-yet-built modules still answer with a terminal “not found” message.
 - **Version:** one `VERSION` constant in `src/main.js` is the single source of truth — it is interpolated into the ticker and written into the empty `.version-mini` span at boot, so `index.html` carries no literal and the two cannot drift. Bump that constant only. Scheme agreed 2026-09-14: one minor per shipped curriculum chapter — v0.1 chapter 2, v0.2 mobile + tiles, v0.3 chapter 3, and v0.4 Chapter 4, shipped in PR #27.
-- **Motion:** subtle — fade-ins, cursor blink, glow pulses; must honor `prefers-reduced-motion`.
-- **Layout:** desktop board/editor panels plus the shipped M4 mobile bottom sheet (requirements §3.7). Its Workshop surfaces are opaque ivory; the board stays stable across detents. The welcome screen uses a centered column on phones.
+- **Motion:** title entrance is restrained; its preview makes one legal move and stops. Reduced motion shows the settled still frame immediately. Other game motion retains its own reduced-motion behavior.
+- **Layout:** desktop board/editor panels plus the shipped M4 mobile bottom sheet (requirements §3.7). Its Workshop surfaces are opaque ivory; the board stays stable across detents. The welcome screen becomes a two-column hero on desktop and puts actions above the glimpse on phones.
 - **Copy voice:** terminal boot voice — short, dry, playful; no lorem ipsum.
 
 ## 12. Board art — direction A, tabletop flat-shape (#22, slice 1 shipped 2026-09-17)
