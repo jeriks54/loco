@@ -10,73 +10,62 @@
     .concept {
       min-height: 100svh;
       padding: 0 clamp(20px, 4vw, 64px) max(22px, env(safe-area-inset-bottom));
-      background:
-        radial-gradient(60rem 42rem at 87% 42%, #d7c6a856, transparent 68%),
-        linear-gradient(110deg, #f5f1e8, #eee8dc 65%, #e6dac7);
       color: var(--text);
+      background: radial-gradient(60rem 42rem at 86% 42%, #ddc9aa60, transparent 68%), linear-gradient(110deg, #f7f3ea, #eee8dc 68%, #e5d9c6);
     }
     .shell { width: min(100%, 1440px); min-height: 100svh; margin: auto; display: flex; flex-direction: column; }
     .masthead { min-height: 90px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid #d2c6b4; }
     .identity { display: flex; align-items: center; gap: 13px; }
-    .mark { width: 36px; height: 36px; border: 2px solid var(--accent); border-radius: 11px; display: grid; place-items: center; color: var(--accent); font: 700 20px var(--font-mono); letter-spacing: -5px; padding-right: 5px; }
+    .mark { width: 36px; height: 36px; display: grid; place-items: center; padding-right: 5px; border: 2px solid var(--accent); border-radius: 11px; color: var(--accent); font: 700 20px var(--font-mono); letter-spacing: -5px; }
     .wordmark { font-size: 26px; font-weight: 800; letter-spacing: -.07em; line-height: 1; }
     .identity small { display: block; margin-top: 2px; color: var(--muted); font: 600 9px var(--font-mono); letter-spacing: .16em; }
     .masthead-note { display: flex; align-items: center; gap: 24px; color: var(--muted); font: 600 10px var(--font-mono); letter-spacing: .11em; text-transform: uppercase; }
     .masthead-note b { padding: 7px 9px; border: 1px solid #cabb9f; border-radius: 5px; color: var(--accent-ink); font-weight: 700; }
-    .hero { flex: 1; display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: clamp(35px, 5vw, 86px); align-items: center; padding: 55px 0 62px; }
-    .intro { max-width: 515px; }
+    .hero { flex: 1; display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); gap: clamp(35px, 5vw, 86px); align-items: center; padding: 55px 0 62px; }
+    .intro { max-width: 525px; }
     .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; color: var(--accent); font: 700 10px var(--font-mono); letter-spacing: .16em; }
     .eyebrow::before { content: ""; width: 21px; height: 2px; background: var(--accent); }
     .intro h1 { font-size: clamp(50px, 5vw, 82px); font-weight: 750; letter-spacing: -.076em; line-height: 1.03; text-wrap: balance; }
     .intro h1 em { color: var(--accent); font-style: normal; }
-    .lead { max-width: 420px; margin-top: 28px; color: #586254; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.55; }
+    .lead { max-width: 410px; margin-top: 27px; color: #586254; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.55; }
     .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
-    .action { min-height: 55px; display: inline-flex; align-items: center; justify-content: center; gap: 16px; padding: 0 23px; border-radius: 7px; font-size: 15px; font-weight: 700; cursor: default; }
-    .action-primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); box-shadow: 0 9px 20px #194d3529; }
-    .action-primary span { font-size: 18px; font-weight: 400; }
+    .action { min-height: 55px; display: inline-flex; align-items: center; justify-content: center; padding: 0 23px; border-radius: 7px; font-size: 15px; font-weight: 700; cursor: default; }
+    .action-primary { min-width: 178px; background: var(--accent); color: #fff; border: 1px solid var(--accent); box-shadow: 0 9px 20px #194d3529; }
     .action-secondary { background: #fbf8ef91; color: var(--accent-ink); border: 1px solid #b9c8b6; }
     .meta { display: flex; align-items: center; gap: 9px; margin-top: 28px; color: #69715f; font: 600 10px var(--font-mono); letter-spacing: .05em; }
     .meta i { width: 5px; height: 5px; border-radius: 50%; background: #bcae95; }
-    .showcase { min-width: 0; overflow: hidden; background: var(--surface); border: 1px solid #d4c6af; border-radius: 18px; box-shadow: 0 28px 60px #523c261c, 0 2px 6px #523c2610; }
-    .showcase-top { min-height: 62px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 0 22px; border-bottom: 1px solid #ded5c6; }
-    .showcase-title { display: flex; align-items: center; gap: 11px; font: 700 11px var(--font-mono); letter-spacing: .08em; color: var(--text); }
-    .preview-icon { width: 22px; height: 22px; border: 1px solid var(--accent); border-radius: 5px; display: grid; place-items: center; color: var(--accent); font-size: 13px; letter-spacing: 0; }
-    .showcase-top small { color: var(--muted); font: 600 10px var(--font-mono); letter-spacing: .05em; }
-    .showcase-body { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(185px, .82fr); gap: 18px; padding: 19px; }
-    .board-area { min-width: 0; }
-    .board-panel { height: 365px; display: grid; place-items: center; overflow: hidden; padding: 12px; border: 1px solid #8b704d; border-radius: 12px; background: #ad8b60; box-shadow: inset 0 2px 9px #503c2d38; }
+    .teaser { position: relative; height: 480px; min-width: 0; overflow: hidden; isolation: isolate; border: 1px solid #1c4f38; border-radius: 20px; background: radial-gradient(30rem 25rem at 25% 72%, #467257, transparent 72%), #173f2e; box-shadow: 0 30px 60px #3c3e2b2d, 0 3px 10px #172c2030; }
+    .teaser::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .22; background: repeating-linear-gradient(125deg, transparent 0 53px, #a8bda31a 53px 54px); }
+    .teaser-head { position: absolute; z-index: 2; inset: 0 0 auto; height: 67px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 26px; border-bottom: 1px solid #aac1aa38; color: #dfeddc; font: 700 10px var(--font-mono); letter-spacing: .13em; }
+    .teaser-head span:first-child { display: flex; align-items: center; gap: 9px; }
+    .teaser-head i { width: 7px; height: 7px; border-radius: 50%; background: #e4c279; box-shadow: 0 0 0 4px #e4c27924; }
+    .teaser-head span:last-child { opacity: .65; }
+    .board-fragment { position: absolute; left: -32px; top: 115px; width: 304px; height: 300px; overflow: hidden; transform: rotate(-7deg); border: 7px solid #c5a46d; border-radius: 16px; background: #ad8b60; box-shadow: 12px 18px 26px #001c1560, inset 0 2px 8px #4f3a2345; }
+    .board-panel { width: 430px; height: 430px; display: grid; place-items: center; padding: 0; background: #ad8b60; }
     .canvas-wrap { display: grid; place-items: center; }
-    .canvas-wrap canvas { display: block; max-width: 100%; max-height: 100%; }
-    .board-note { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 13px 2px 2px; color: var(--muted); font: 600 10px var(--font-mono); }
-    .board-note span:first-child { display: flex; align-items: center; gap: 7px; }
-    .board-note i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
-    .program { min-width: 0; display: flex; flex-direction: column; overflow: hidden; background: #f5f1e7; border: 1px solid #d8cfbe; border-radius: 10px; }
-    .program-head { min-height: 53px; display: flex; align-items: center; justify-content: space-between; gap: 7px; padding: 0 13px; border-bottom: 1px solid #ddd2c0; }
-    .program-head strong { font-size: 13px; }
-    .program-head span { font: 600 9px var(--font-mono); color: var(--muted); white-space: nowrap; }
-    .lines { list-style: none; padding: 11px 7px; margin: 0; flex: 1; }
-    .lines li { min-height: 40px; display: flex; align-items: center; gap: 11px; border: 1px solid transparent; border-radius: 5px; padding: 0 8px; font: 600 12px var(--font-mono); white-space: nowrap; }
-    .lines .number { color: #8a9484; font-size: 10px; }
-    .lines .command { color: #314838; }
-    .lines .active { background: #dce9da; border-color: #b7d3bd; box-shadow: inset 3px 0 var(--accent); }
-    .lines .active .number, .lines .active .command { color: var(--accent-ink); }
-    .program-foot { display: flex; align-items: center; gap: 8px; padding: 13px 14px; border-top: 1px solid #ddd2c0; color: var(--accent-ink); font: 700 10px var(--font-mono); }
-    .program-foot i { font-style: normal; font-size: 13px; }
-    .showcase-bottom { height: 42px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 22px; background: #ece5d8; border-top: 1px solid #ddd3c2; color: #5f695b; font: 700 9px var(--font-mono); letter-spacing: .12em; }
-    .mini-progress { width: 92px; height: 3px; border-radius: 4px; background: #c8c1af; overflow: hidden; }
-    .mini-progress i { width: 50%; height: 100%; display: block; background: var(--accent); }
+    .canvas-wrap canvas { display: block; }
+    .board-fragment::after { content: ""; position: absolute; inset: auto 0 0; height: 60px; background: linear-gradient(transparent, #173f2e55); pointer-events: none; }
+    .program-slip { position: absolute; z-index: 2; right: 30px; top: 154px; width: 265px; padding: 0 15px 15px; transform: rotate(3deg); border: 1px solid #dbc9a8; border-radius: 9px; background: #fbf8ef; box-shadow: 0 20px 30px #051e1770; }
+    .slip-top { height: 47px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid #ded3c0; color: #4f6253; font: 700 10px var(--font-mono); letter-spacing: .09em; }
+    .slip-top span:last-child { color: #8b9484; font-size: 9px; }
+    .slip-line { height: 41px; display: flex; align-items: center; gap: 15px; padding: 0 9px; color: #304d3b; font: 700 13px var(--font-mono); }
+    .slip-line.active { margin: 12px -6px 0; padding-left: 15px; border-left: 3px solid var(--accent); border-radius: 3px; background: #dce9da; }
+    .slip-line .line-no { color: #839686; font-size: 10px; }
+    .slip-line.blank { color: #aab3a4; }
+    .slip-line.blank span:last-child { width: 46px; border-bottom: 1px solid #bbc6b8; }
+    .teaser-prompt { position: absolute; z-index: 2; right: 33px; bottom: 44px; width: 264px; color: #f0ecdb; }
+    .teaser-prompt small { color: #dfc386; font: 700 10px var(--font-mono); letter-spacing: .18em; }
+    .teaser-prompt strong { display: block; margin-top: 10px; font-size: clamp(23px, 2.4vw, 34px); font-weight: 650; letter-spacing: -.04em; line-height: 1.12; }
     .footer { min-height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #d2c6b4; color: #68715f; font-size: 11px; }
     .footer nav { display: flex; gap: 24px; }
     .footer nav span { color: var(--accent-ink); font-weight: 600; }
-    @media (max-width: 1000px) {
-      .hero { gap: 25px; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+    @media (max-width: 1100px) {
+      .hero { gap: 25px; }
       .intro h1 { font-size: clamp(45px, 5vw, 68px); }
-      .showcase-body { gap: 10px; padding: 12px; grid-template-columns: minmax(0, 1.25fr) minmax(125px, .9fr); }
-      .board-panel { height: 310px; padding: 6px; }
-      .lines li { min-height: 34px; padding: 0 5px; gap: 6px; font-size: 10px; }
-      .program-head { min-height: 43px; padding: 0 7px; }
-      .program-head strong { font-size: 11px; }
-      .program-head span { font-size: 8px; }
+      .teaser { height: 430px; }
+      .board-fragment { left: -70px; top: 96px; }
+      .program-slip { right: 15px; width: 220px; }
+      .teaser-prompt { right: 20px; bottom: 32px; width: 205px; }
     }
     @media (max-width: 760px) {
       .concept { padding-inline: 18px; }
@@ -85,30 +74,28 @@
       .wordmark { font-size: 21px; }
       .identity small { font-size: 7px; }
       .masthead-note > span { display: none; }
-      .hero { display: flex; flex-direction: column; align-items: stretch; gap: 28px; padding: 30px 0 28px; }
+      .hero { display: flex; flex-direction: column; align-items: stretch; gap: 27px; padding: 30px 0 28px; }
       .intro { max-width: none; }
       .eyebrow { margin-bottom: 15px; font-size: 9px; }
       .intro h1 { max-width: 500px; font-size: clamp(39px, 10.4vw, 60px); line-height: 1.04; }
       .lead { margin-top: 14px; font-size: 14px; line-height: 1.45; }
       .actions { flex-wrap: nowrap; margin-top: 21px; }
       .action { min-height: 49px; padding: 0 16px; font-size: 13px; }
-      .action-primary { flex: 1; }
+      .action-primary { min-width: 0; flex: 1; }
       .meta { margin-top: 14px; font-size: 9px; }
-      .showcase-top { min-height: 44px; padding: 0 13px; }
-      .showcase-title { gap: 7px; font-size: 9px; }
-      .preview-icon { width: 18px; height: 18px; font-size: 11px; }
-      .showcase-top small { font-size: 8px; }
-      .showcase-body { grid-template-columns: minmax(0, 1.23fr) minmax(0, 1fr); gap: 8px; padding: 9px; }
-      .board-panel { height: 228px; padding: 3px; border-radius: 7px; }
-      .board-note { padding-top: 8px; font-size: 8px; }
-      .program-head { min-height: 32px; }
-      .program-head strong { font-size: 10px; }
-      .program-head span { display: none; }
-      .lines { padding: 6px 3px; }
-      .lines li { min-height: 26px; gap: 5px; font-size: 9px; padding: 0 3px; }
-      .lines .number { font-size: 8px; }
-      .program-foot { padding: 8px 6px; font-size: 8px; gap: 3px; }
-      .showcase-bottom { height: 29px; padding: 0 11px; font-size: 8px; }
+      .teaser { height: 318px; border-radius: 14px; }
+      .teaser-head { height: 44px; padding: 0 15px; font-size: 8px; }
+      .board-fragment { top: 79px; left: -56px; width: 212px; height: 190px; border-width: 5px; border-radius: 10px; }
+      .board-panel { width: 310px; height: 310px; }
+      .program-slip { top: 91px; right: 13px; width: 165px; padding: 0 8px 8px; border-radius: 6px; }
+      .slip-top { height: 32px; font-size: 7px; }
+      .slip-top span:last-child { font-size: 7px; }
+      .slip-line { height: 30px; gap: 8px; padding: 0 5px; font-size: 10px; }
+      .slip-line.active { margin: 7px -3px 0; padding-left: 8px; }
+      .slip-line .line-no { font-size: 8px; }
+      .teaser-prompt { right: 14px; bottom: 22px; width: 165px; }
+      .teaser-prompt small { font-size: 8px; }
+      .teaser-prompt strong { font-size: 22px; }
       .footer { min-height: 47px; font-size: 9px; }
       .footer nav { gap: 10px; }
     }
@@ -117,10 +104,11 @@
       .intro h1 { font-size: 39px; }
       .lead { font-size: 13px; }
       .action { font-size: 12px; padding: 0 12px; }
-      .showcase-body { grid-template-columns: 1fr; }
-      .board-panel { height: 225px; }
-      .lines { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
-      .program-foot { padding: 7px 10px; }
+      .teaser { height: 300px; }
+      .board-fragment { left: -75px; top: 75px; }
+      .program-slip { right: 8px; width: 150px; }
+      .teaser-prompt { right: 9px; width: 150px; }
+      .teaser-prompt strong { font-size: 20px; }
     }
   </style>
 </head>
@@ -135,20 +123,18 @@
         <section class="intro">
           <p class="eyebrow">THE ROBOT PROGRAMMING GAME</p>
           <h1>Give a little robot <em>a way out.</em></h1>
-          <p class="lead">Build a program. Follow the path. Learn to think like a coder, one move at a time.</p>
-          <div class="actions"><button class="action action-primary" type="button">Start game <span aria-hidden="true">↗</span></button><button class="action action-secondary" type="button">Tutorial</button></div>
+          <p class="lead">One command changes everything. What will you tell it to do next?</p>
+          <div class="actions"><button class="action action-primary" type="button">Start game</button><button class="action action-secondary" type="button">Tutorial</button></div>
           <div class="meta"><span>25 LEVELS</span><i></i><span>4 CHAPTERS</span><i></i><span>ONE WAY OUT</span></div>
         </section>
-        <section class="showcase" aria-label="Static concept of The Bend level and its six-command program">
-          <div class="showcase-top"><div class="showcase-title"><span class="preview-icon" aria-hidden="true">⌁</span>CHAPTER 01 / THE BEND</div><small>GAME PREVIEW</small></div>
-          <div class="showcase-body">
-            <div class="board-area"><div class="board-panel"><div class="canvas-wrap"><canvas id="preview-board" aria-label="The Bend maze with the brass robot at the middle, facing down toward the exit"></canvas></div></div><div class="board-note"><span><i></i>THE ROBOT FOLLOWS YOUR CODE</span><span>EXIT ◎</span></div></div>
-            <div class="program"><div class="program-head"><strong>Your program</strong><span>6 LINES</span></div><ol class="lines"><li><span class="number">01</span><span class="command">move</span></li><li><span class="number">02</span><span class="command">turn right</span></li><li><span class="number">03</span><span class="command">move</span></li><li class="active"><span class="number">04</span><span class="command">move</span></li><li><span class="number">05</span><span class="command">turn right</span></li><li><span class="number">06</span><span class="command">move</span></li></ol><div class="program-foot"><i aria-hidden="true">▶</i> RUNNING · LINE 04 / 06</div></div>
-          </div>
-          <div class="showcase-bottom"><span>THINK → PROGRAM → ESCAPE</span><span class="mini-progress" aria-hidden="true"><i></i></span></div>
+        <section class="teaser" aria-label="A glimpse of the Workshop: brass robot on a cropped walnut maze board, beside a program with one move command and an empty second line">
+          <div class="teaser-head"><span><i></i> A PEEK INSIDE THE WORKSHOP</span><span>CHAPTER 01</span></div>
+          <div class="board-fragment"><div class="board-panel"><div class="canvas-wrap"><canvas id="preview-board" aria-hidden="true"></canvas></div></div></div>
+          <div class="program-slip" aria-hidden="true"><div class="slip-top"><span>YOUR PROGRAM</span><span>01 / 06</span></div><div class="slip-line active"><span class="line-no">01</span><span>move</span></div><div class="slip-line blank"><span class="line-no">02</span><span></span></div></div>
+          <div class="teaser-prompt"><small>YOUR NEXT MOVE</small><strong>The next line is yours.</strong></div>
         </section>
       </main>
-      <footer class="footer"><span>Design concept · static preview, not playable</span><nav aria-label="Concept of title footer"><span>Settings</span><span>High scores</span></nav></footer>
+      <footer class="footer"><span>Design concept · static preview</span><nav aria-label="Concept of title footer"><span>Settings</span><span>High scores</span></nav></footer>
     </div>
   </div>
   <script type="module">
@@ -156,7 +142,7 @@
     import { createLevelState } from '../../src/game/state.js';
     import { createScene } from '../../src/render/scene.js';
     const state = createLevelState(chapter1.find(level => level.id === 'ch1-02'));
-    state.robot = { x: 2, y: 2, dir: 'S' };
+    state.robot = { x: 2, y: 1, dir: 'E' };
     createScene({ canvas: document.getElementById('preview-board') }).render(state);
   </script>
 </body>
