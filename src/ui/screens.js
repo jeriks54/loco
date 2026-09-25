@@ -15,10 +15,10 @@ const SCREEN_IDS = {
 };
 
 /**
- * @param {{onLeaveGame?:()=>void}} opts onLeaveGame fires when the
- *   player navigates away from the game screen (stop a live run).
+ * @param {{onLeaveGame?:()=>void, onScreenChange?:(name:string)=>void}} opts
+ *   onLeaveGame stops a live run; onScreenChange manages screen-owned effects.
  */
-export function createScreens({ onLeaveGame = () => {} } = {}) {
+export function createScreens({ onLeaveGame = () => {}, onScreenChange = () => {} } = {}) {
   const els = {};
   for (const [name, id] of Object.entries(SCREEN_IDS)) {
     els[name] = document.getElementById(id);
@@ -28,6 +28,7 @@ export function createScreens({ onLeaveGame = () => {} } = {}) {
     for (const [key, el] of Object.entries(els)) {
       el.classList.toggle('hidden', key !== name);
     }
+    onScreenChange(name);
   }
 
   // Title -> levels (replaces the placeholder joke for this button only)

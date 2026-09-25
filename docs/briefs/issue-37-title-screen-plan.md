@@ -1,6 +1,6 @@
 # Issue #37 — Workshop title screen redesign
 
-**Status:** revised concept for visual review.
+**Status:** implemented on this branch; browser checked, awaiting human play-test.
 
 **Branch:** `codex/issue-37-title-screen`
 
@@ -70,6 +70,8 @@ With `prefers-reduced-motion: reduce`, show the settled still frame immediately.
 - Keyboard, touch and pointer controls remain reachable; focus is visible, copy is legible, and the main action remains above the fold at the target phone sizes.
 - No page errors, clipped board fragment outside its intended mask, horizontal overflow, or significant mobile load cost.
 
-## Review decision
+## Implementation review
 
-This is a static design mockup; its board fragment is rendered from the shipped level and scene code. The live title remains unchanged until the composition is reviewed. The one-command reveal and final wording should be judged in the playable build.
+The live title now uses the cropped Workshop board, one-line program slip, one legal move and settled reduced-motion frame. The footer keeps the existing module buttons and boot ticker. The static concept remains a visual reference rather than a pixel-for-pixel rendering of the live layout.
+
+Browser review at 1280 × 800, 390 × 844, 320 × 568 and 844 × 390 found no page errors or horizontal overflow. Start Game is above the fold on both portrait phone sizes. Canvas frames differ before and after the one-move reveal and remain identical under reduced motion. Start Game, return-to-title, Tutorial, Settings and High Scores were exercised in the retained `tests/title-browser.mjs`; the desktop/touch editor browser suite also passed. Human play-testing should judge the invitation, motion timing and visual feel before any merge.
