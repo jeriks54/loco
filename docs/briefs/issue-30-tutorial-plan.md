@@ -19,6 +19,28 @@ A compact hint panel stays readable alongside the mobile sheet. It changes at
 meaningful points, never on each executor step, and does not lock editing or give
 away the full solution. Copy:
 
+Before free practice, a four-step guide explains one area at a time. A brass
+outline and dimmed surroundings identify the area being described. The guide
+shows the map, command palette, numbered memory lines and Run/Reset controls in
+that order. On phones it opens the editor sheet for commands and memory, then
+closes it to show the persistent Run/Reset bar. Each step has Back and Next;
+Skip guide starts practice immediately. The guide starts again when Tutorial is
+selected from the title, but never gates level selection. Its text explains:
+
+- **Read the map:** the robot begins at S, its arrow shows facing, EXIT is the
+  destination, walls block movement and `move` advances one tile.
+- **Choose commands:** `move` advances; turns only change facing. Commands can be
+  dragged or tapped (tap on phones).
+- **Fill the memory:** execution follows numbered lines from top to bottom, the
+  counter shows the six-line budget, and selecting a filled line removes it.
+- **Run and try again:** Run starts at the entrance and lights the active line;
+  Reset returns the robot to start without erasing commands; speed changes only
+  the playback pace.
+
+The guide uses a labelled dialog, moves focus to each step title, traps focus in
+its actions, and returns focus to the practice editor when closed. Highlight
+position follows viewport and sheet changes without an entrance animation.
+
 - Start: “Reach EXIT. Commands run from line 01 downward. Drag a command to a
   line or tap it to add it.”
 - Narrow start: “Reach EXIT. Tap the arrow below to open the program panel.

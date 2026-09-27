@@ -418,6 +418,13 @@ commands, relative turns, Run/Reset and retry through short contextual hints,
 and offers Skip, Exit and Start Chapter 1. Its `tutorial-01` level is not part
 of the 25-level registry or `loco.progress.v1` completion data.
 
+The phone play-test revision opens with a four-step spotlight guide: map,
+commands, memory, then Run/Reset. Each step explains the highlighted area in
+text and offers Back, Next and Skip guide. The mobile editor sheet opens for the
+commands and memory steps, then closes to reveal its persistent run bar. Closing
+the guide begins the same free practice flow and contextual hints. The guide
+repeats on each entry from the title and does not record progress.
+
 Chapters 2–4 each show one short, skippable introduction on first level entry,
 with Replay intro at the chapter header. Chapter 1 has no card. A separate,
 guarded `loco.onboarding.v1` key stores seen chapter prefixes; completed levels

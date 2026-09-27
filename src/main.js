@@ -25,6 +25,7 @@ import { createHud } from './ui/hud.js';
 import { createSheet } from './ui/sheet.js';
 import { createScreens, renderLevelList } from './ui/screens.js';
 import { createTitlePreview } from './ui/title-preview.js';
+import { createTutorialTour } from './ui/tutorial-tour.js';
 import { loadProgress, markCompleted } from './persist.js';
 import { tutorialLevel, chapterIntros, loadSeenChapters, markChapterSeen } from './onboarding.js';
 
@@ -199,6 +200,19 @@ const sheet = createSheet({
   body: document.getElementById('sheet-body'),
 });
 
+const tutorialTour = createTutorialTour({
+  root: document.getElementById('tutorial-tour'),
+  game: document.getElementById('screen-game'),
+  sheet,
+  onFinish: () => {
+    if (mode !== 'tutorial') return;
+    tutorialHints.classList.remove('hidden');
+    setTutorialHint(editor.getProgram().length ? 'edited' : 'start');
+    document.querySelector(window.matchMedia('(max-width: 900px)').matches
+      ? '#sheet-chevron' : '#palette .block-chip')?.focus();
+  },
+});
+
 function closeIntro() {
   if (!introContext) return;
   const { trigger, onProceed } = introContext;
@@ -273,6 +287,7 @@ function handleEvent(type, payload) {
 
 function loadLevel(index) {
   stopRun();
+  tutorialTour.stop();
   mode = 'campaign';
   document.getElementById('screen-game').classList.remove('is-tutorial');
   tutorialHints.classList.add('hidden');
@@ -295,13 +310,14 @@ function loadLevel(index) {
 
 function loadTutorial() {
   stopRun();
+  tutorialTour.stop();
   mode = 'tutorial';
   document.getElementById('screen-game').classList.add('is-tutorial');
   currentIndex = -1;
   state = createLevelState(tutorialLevel);
   executor = null;
   tutorialHintPhase = '';
-  tutorialHints.classList.remove('hidden');
+  tutorialHints.classList.add('hidden');
   document.getElementById('board').setAttribute('aria-describedby', 'tutorial-board-description');
   backButton.textContent = '← Exit tutorial';
   editor.loadLevel(tutorialLevel);
@@ -313,6 +329,7 @@ function loadTutorial() {
   screens.showScreen('game');
   window.scrollTo(0, 0);
   scene.render(state);
+  tutorialTour.start();
 }
 
 function run() {

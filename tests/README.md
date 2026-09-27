@@ -10,8 +10,9 @@ Issue #30 adds `tests/onboarding.mjs` to this retained check. It proves the
 practice maze is outside the campaign registry, has a five-line route under
 its memory limit, and produces real goal, crash and unfinished outcomes.
 With the same Playwright setting used below, run `node tests/onboarding-browser.mjs`
-for tutorial keyboard, Reset/Retry, progress isolation, chapter-card first visit,
-replay, existing progress, and 320px touch layout. The older chapter browser
+for the four guided spotlights (including mobile sheet changes), tutorial
+keyboard, Reset/Retry, progress isolation, chapter-card first visit, replay,
+existing progress, and 320px touch layout. The older chapter browser
 checks pre-mark introductions as seen so they continue testing their own game
 mechanics; onboarding-browser verifies the actual first-visit behavior.
 

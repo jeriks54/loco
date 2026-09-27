@@ -56,6 +56,8 @@ try {
   assert.equal(await page.evaluate(() => document.activeElement.id), 'btn-play', 'first keyboard focus should reach Start game');
   await page.locator('#btn-tutorial').click();
   assert.equal(await page.locator('#screen-game').isVisible(), true, 'tutorial did not open the practice game');
+  assert.equal(await page.locator('#tutorial-tour').isVisible(), true);
+  await page.locator('#btn-tour-skip').click();
   assert.equal(await page.locator('#tutorial-hints').isVisible(), true);
   await page.locator('#btn-back').click();
   assert.equal(await page.locator('#screen-title').isVisible(), true, 'tutorial Exit did not return to title');

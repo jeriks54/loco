@@ -19,9 +19,49 @@ try {
   await desktop.route('https://fonts.googleapis.com/**', route => route.fulfill({ status: 200, contentType: 'text/css', body: '' }));
   await desktop.goto(url);
   await desktop.locator('#btn-tutorial').click();
-  assert.equal(await desktop.locator('#tutorial-hints').isVisible(), true);
+  assert.equal(await desktop.locator('#tutorial-tour').isVisible(), true);
+  assert.equal(await desktop.locator('#tutorial-hints').isVisible(), false);
   assert.match(await desktop.locator('#level-progress').textContent(), /PRACTICE/);
   await desktop.screenshot({ path: fileURLToPath(new URL('./tmp/onboarding-desktop.png', import.meta.url)) });
+
+  async function spotlightCovers(page, selector) {
+    await page.waitForTimeout(30);
+    const boxes = await page.evaluate((targetSelector) => {
+      const spot = document.getElementById('tutorial-spotlight').getBoundingClientRect();
+      const target = document.querySelector(targetSelector).getBoundingClientRect();
+      return { spot: { left: spot.left, top: spot.top, right: spot.right, bottom: spot.bottom },
+        target: { left: target.left, top: target.top, right: target.right, bottom: target.bottom },
+        width: innerWidth, height: innerHeight };
+    }, selector);
+    assert.ok(boxes.spot.left <= Math.max(boxes.target.left, 4) + 2
+      && boxes.spot.top <= Math.max(boxes.target.top, 4) + 2
+      && boxes.spot.right >= Math.min(boxes.target.right, boxes.width - 4) - 2
+      && boxes.spot.bottom >= Math.min(boxes.target.bottom, boxes.height - 4) - 2,
+    `spotlight missed ${selector}: ${JSON.stringify(boxes)}`);
+  }
+
+  assert.equal(await desktop.locator('#tutorial-tour-title').textContent(), 'Read the map');
+  assert.match(await desktop.locator('#tutorial-tour-copy').textContent(), /EXIT.*Walls/);
+  assert.equal(await desktop.evaluate(() => document.activeElement.id), 'tutorial-tour-title');
+  await desktop.keyboard.press('Tab');
+  assert.equal(await desktop.evaluate(() => document.activeElement.id), 'btn-tour-skip');
+  await spotlightCovers(desktop, '#board');
+  await desktop.locator('#btn-tour-next').click();
+  assert.equal(await desktop.locator('#tutorial-tour-title').textContent(), 'Choose commands');
+  await spotlightCovers(desktop, '#palette');
+  await desktop.locator('#btn-tour-back').click();
+  assert.equal(await desktop.locator('#tutorial-tour-title').textContent(), 'Read the map');
+  await desktop.locator('#btn-tour-next').click();
+  await desktop.locator('#btn-tour-next').click();
+  assert.equal(await desktop.locator('#tutorial-tour-title').textContent(), 'Fill the memory');
+  assert.match(await desktop.locator('#tutorial-tour-copy').textContent(), /six lines/);
+  await spotlightCovers(desktop, '#program');
+  await desktop.locator('#btn-tour-next').click();
+  assert.equal(await desktop.locator('#tutorial-tour-title').textContent(), 'Run and try again');
+  await spotlightCovers(desktop, '.panel-section.controls');
+  await desktop.locator('#btn-tour-next').click();
+  assert.equal(await desktop.locator('#tutorial-tour').isVisible(), false);
+  assert.equal(await desktop.locator('#tutorial-hints').isVisible(), true);
 
   async function keyAdd(id) {
     await desktop.locator(`#palette [data-block="${id}"]`).focus();
@@ -110,7 +150,9 @@ try {
   await phone.route('https://fonts.googleapis.com/**', route => route.fulfill({ status: 200, contentType: 'text/css', body: '' }));
   await phone.goto(url);
   await phone.locator('#btn-tutorial').click();
-  assert.equal(await phone.locator('#tutorial-hints').isVisible(), true);
+  assert.equal(await phone.locator('#tutorial-tour').isVisible(), true);
+  assert.equal(await phone.locator('#sheet-chevron').getAttribute('aria-expanded'), 'false');
+  await spotlightCovers(phone, '#board');
   const layout = await phone.evaluate(() => ({ width: document.documentElement.scrollWidth, board: document.getElementById('board').width }));
   assert.ok(layout.width <= 320, 'phone overflow');
   assert.ok(layout.board > 0, 'practice board missing');
@@ -125,6 +167,19 @@ try {
     assert.ok(fit.board.width > 0 && fit.board.height > 0, `tutorial board missing at ${width}px`);
   }
   await phone.setViewportSize({ width: 320, height: 568 });
+  await phone.locator('#btn-tour-next').click();
+  assert.equal(await phone.locator('#sheet-chevron').getAttribute('aria-expanded'), 'true');
+  await spotlightCovers(phone, '#palette');
+  await phone.screenshot({ path: fileURLToPath(new URL('./tmp/onboarding-phone-commands.png', import.meta.url)) });
+  await phone.locator('#btn-tour-next').click();
+  await spotlightCovers(phone, '#program');
+  await phone.screenshot({ path: fileURLToPath(new URL('./tmp/onboarding-phone-memory.png', import.meta.url)) });
+  await phone.locator('#btn-tour-next').click();
+  assert.equal(await phone.locator('#sheet-chevron').getAttribute('aria-expanded'), 'false');
+  await spotlightCovers(phone, '#sheet-peek');
+  await phone.screenshot({ path: fileURLToPath(new URL('./tmp/onboarding-phone-run.png', import.meta.url)) });
+  await phone.locator('#btn-tour-skip').click();
+  assert.equal(await phone.locator('#tutorial-hints').isVisible(), true);
   await phone.locator('#sheet-chevron').click();
   assert.equal(await phone.locator('#tutorial-hints').isVisible(), true, 'hint obscured by sheet');
   assert.equal(await phone.locator('#board').evaluate(el => el.width), layout.board, 'sheet resized board');
@@ -138,6 +193,10 @@ try {
   await phone.locator('#btn-back').click();
   await phone.locator('#btn-title').click();
   await phone.locator('#btn-tutorial').click();
+  assert.equal(await phone.locator('#tutorial-tour-title').textContent(), 'Read the map');
+  await phone.keyboard.press('Escape');
+  assert.equal(await phone.locator('#tutorial-tour').isVisible(), false);
+  assert.equal(await phone.evaluate(() => document.activeElement.id), 'sheet-chevron');
   await phone.locator('#btn-back').click();
   assert.equal(await phone.locator('#screen-title').isVisible(), true);
   assert.deepEqual(phoneErrors, [], 'phone page errors');

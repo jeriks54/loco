@@ -794,6 +794,39 @@ button {
 #screen-game.is-tutorial .sensor-summary,
 #screen-game.is-tutorial .equipment-card { display: none; }
 
+#tutorial-tour { display: contents; }
+.tutorial-tour-blocker { position: fixed; inset: 0; z-index: 80; background: transparent; }
+.tutorial-spotlight {
+  position: fixed;
+  z-index: 81;
+  pointer-events: none;
+  border: 3px solid #f1d18a;
+  border-radius: 12px;
+  box-shadow: 0 0 0 300vmax rgba(17, 35, 26, 0.72), 0 0 0 6px rgba(241, 209, 138, 0.28);
+}
+.tutorial-tour-card {
+  position: fixed;
+  z-index: 82;
+  width: min(24rem, calc(100vw - 24px));
+  max-height: calc(100svh - 24px);
+  overflow: auto;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+.tutorial-tour-progress { font: 700 0.7rem var(--font-mono); color: var(--accent); letter-spacing: 0.1em; }
+.tutorial-tour-card h3 { margin: 0.35rem 0 0.5rem; font-size: 1.2rem; line-height: 1.25; }
+.tutorial-tour-card h3:focus { outline: none; }
+.tutorial-tour-card h3:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#tutorial-tour-copy { font-size: 0.88rem; line-height: 1.45; }
+.tutorial-tour-actions { display: flex; gap: 0.4rem; margin-top: 0.85rem; }
+.tutorial-tour-actions .btn { min-height: 42px; min-width: 0; padding: 0.3rem 0.6rem; font-size: 0.78rem; }
+.tutorial-tour-actions #btn-tour-skip { margin-right: auto; }
+#screen-game.tour-active #sheet { transition: none !important; }
+
 .palette .block-chip:focus-visible,
 .program .line.filled:focus-visible {
   outline: 2px solid var(--accent);
@@ -803,6 +836,10 @@ button {
 @media (max-width: 600px) {
   .tutorial-hints { align-items: flex-start; padding: 0.4rem 0.55rem; font-size: 0.74rem; line-height: 1.3; }
   .tutorial-hints .btn { min-height: 44px; padding: 0.2rem 0.45rem; font-size: 0.7rem; }
+  .tutorial-tour-card { padding: 0.75rem; }
+  .tutorial-tour-card h3 { font-size: 1.05rem; }
+  #tutorial-tour-copy { font-size: 0.8rem; line-height: 1.35; }
+  .tutorial-tour-actions .btn { min-height: 40px; padding: 0.3rem 0.45rem; font-size: 0.7rem; }
 }
 
 /* completion mark — accent check on cleared levels */
