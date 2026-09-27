@@ -409,3 +409,19 @@ The Workshop checks supplement the retained gameplay/browser suites with
 real-paced sensor transitions, all four headings, boundary/hole readings, reset
 while turning, fall unavailability, and all 25 levels at narrow/landscape sizes.
 Review and deployment details are in `briefs/m22-workshop-implementation.md`.
+
+## 14. Optional onboarding — issue #30
+
+The Tutorial action opens a separate five-command practice maze through the real
+game screen, editor and executor. It has six memory lines, explains numbered
+commands, relative turns, Run/Reset and retry through short contextual hints,
+and offers Skip, Exit and Start Chapter 1. Its `tutorial-01` level is not part
+of the 25-level registry or `loco.progress.v1` completion data.
+
+Chapters 2–4 each show one short, skippable introduction on first level entry,
+with Replay intro at the chapter header. Chapter 1 has no card. A separate,
+guarded `loco.onboarding.v1` key stores seen chapter prefixes; completed levels
+imply a chapter was already seen for returning players. No level is gated.
+Palette chips support Enter/Space as well as pointer tap/drag, and filled program
+lines support Delete/Backspace. See `briefs/issue-30-tutorial-plan.md` for exact
+copy, flow and acceptance checks.

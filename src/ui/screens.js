@@ -15,10 +15,10 @@ const SCREEN_IDS = {
 };
 
 /**
- * @param {{onLeaveGame?:()=>void, onScreenChange?:(name:string)=>void}} opts
+ * @param {{onLeaveGame?:()=>void, onBackGame?:()=>string, onScreenChange?:(name:string)=>void}} opts
  *   onLeaveGame stops a live run; onScreenChange manages screen-owned effects.
  */
-export function createScreens({ onLeaveGame = () => {}, onScreenChange = () => {} } = {}) {
+export function createScreens({ onLeaveGame = () => {}, onBackGame = () => 'levels', onScreenChange = () => {} } = {}) {
   const els = {};
   for (const [name, id] of Object.entries(SCREEN_IDS)) {
     els[name] = document.getElementById(id);
@@ -40,7 +40,7 @@ export function createScreens({ onLeaveGame = () => {}, onScreenChange = () => {
   // Game -> levels (no confirm needed)
   document.getElementById('btn-back').addEventListener('click', () => {
     onLeaveGame();
-    showScreen('levels');
+    showScreen(onBackGame());
   });
 
   return { showScreen };
@@ -69,17 +69,29 @@ const chapterPrefix = (levelId) => String(levelId).split('-')[0];
  * @param {(index:number)=>void} onSelect
  * @param {Set<string>|string[]} [completed] completed level ids
  */
-export function renderLevelList(container, levels, onSelect, completed = new Set()) {
+export function renderLevelList(container, levels, onSelect, completed = new Set(), onReplayIntro = null) {
   const done = completed instanceof Set ? completed : new Set(completed ?? []);
   container.innerHTML = '';
   let lastPrefix = null;
   levels.forEach((level, index) => {
     const prefix = chapterPrefix(level.id);
     if (prefix !== lastPrefix) {
+      const group = document.createElement('div');
+      group.className = 'chapter-group-header';
       const header = document.createElement('h3');
       header.className = 'chapter-header';
       header.textContent = CHAPTER_HEADERS[prefix] || GENERIC_CHAPTER_HEADER;
-      container.appendChild(header);
+      group.appendChild(header);
+      if (onReplayIntro && ['ch2', 'ch3', 'ch4'].includes(prefix)) {
+        const replay = document.createElement('button');
+        replay.type = 'button';
+        replay.className = 'btn btn-ghost btn-small chapter-replay';
+        replay.textContent = 'Replay intro';
+        replay.setAttribute('aria-label', `Replay ${CHAPTER_HEADERS[prefix]} introduction`);
+        replay.addEventListener('click', () => onReplayIntro(prefix, replay));
+        group.appendChild(replay);
+      }
+      container.appendChild(group);
       lastPrefix = prefix;
     }
     const item = document.createElement('button');
@@ -91,7 +103,7 @@ export function renderLevelList(container, levels, onSelect, completed = new Set
       `<span class="level-item-name">${level.name}</span>` +
       `<span class="level-mem">MEM ${level.memory}</span>` +
       (done.has(level.id) ? '<span class="level-done" aria-label="completed">✓</span>' : '');
-    item.addEventListener('click', () => onSelect(index));
+    item.addEventListener('click', () => onSelect(index, item));
     container.appendChild(item);
   });
 }

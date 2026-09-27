@@ -41,8 +41,9 @@ export function renderPalette(container, blocks, sensor) {
     const chip = document.createElement('div');
     chip.className = 'block-chip';
     chip.dataset.block = id;
+    chip.tabIndex = 0;
     chip.setAttribute('role', 'button');
-    chip.setAttribute('aria-label', `${BLOCK_DEFS[id].label} block — drag into robot memory`);
+    chip.setAttribute('aria-label', `${BLOCK_DEFS[id].label} block — drag, tap or press Enter to add`);
     chip.innerHTML = chipHTML(id);
     container.appendChild(chip);
   }
@@ -56,8 +57,9 @@ export function renderPalette(container, blocks, sensor) {
       chip.className = 'block-chip condition-chip';
       chip.dataset.condition = id;
       chip.dataset.slot = def.slot;
+      chip.tabIndex = 0;
       chip.setAttribute('role', 'button');
-      chip.setAttribute('aria-label', `${def.label} operand — place in a ${def.slot} slot`);
+      chip.setAttribute('aria-label', `${def.label} operand — tap or press Enter to place in a ${def.slot} slot`);
       chip.innerHTML = conditionChipHTML(id);
       container.appendChild(chip);
     }

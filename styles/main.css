@@ -746,6 +746,65 @@ button {
   margin-top: 1rem;
 }
 
+.chapter-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.chapter-group-header:first-child { margin-top: 0; }
+.chapter-group-header .chapter-header { margin-top: 0; }
+.chapter-replay { min-height: 32px; padding: 0.2rem 0.55rem; font-size: 0.72rem; }
+
+.chapter-intro {
+  width: min(30rem, calc(100vw - 2rem));
+  max-height: calc(100svh - 2rem);
+  overflow: auto;
+  padding: clamp(1.2rem, 4vw, 2rem);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.chapter-intro::backdrop { background: rgba(29, 39, 30, 0.58); }
+.chapter-intro .intro-eyebrow { color: var(--accent); font: 700 0.72rem var(--font-mono); letter-spacing: 0.12em; }
+.chapter-intro h2 { margin: 0.5rem 0 0.75rem; font-size: clamp(1.25rem, 4vw, 1.8rem); }
+.chapter-intro #intro-copy { line-height: 1.6; }
+.intro-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+.tutorial-hints {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.tutorial-hints p { max-width: 66ch; }
+.tutorial-hints .btn { flex: none; min-height: 36px; padding: 0.25rem 0.65rem; font-size: 0.76rem; }
+#screen-game.is-tutorial .sensor-summary,
+#screen-game.is-tutorial .equipment-card { display: none; }
+
+.palette .block-chip:focus-visible,
+.program .line.filled:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .tutorial-hints { align-items: flex-start; padding: 0.4rem 0.55rem; font-size: 0.74rem; line-height: 1.3; }
+  .tutorial-hints .btn { min-height: 44px; padding: 0.2rem 0.45rem; font-size: 0.7rem; }
+}
+
 /* completion mark — accent check on cleared levels */
 .level-item .level-done {
   font-family: var(--font-mono);

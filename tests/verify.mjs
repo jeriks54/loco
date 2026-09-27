@@ -13,6 +13,7 @@ import './tiles.mjs';
 import './sensors.mjs';
 import './spiral-proof.mjs';
 import './decisions.mjs';
+import './onboarding.mjs';
 
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 const chapter1 = levels.filter(l => l.id.startsWith('ch1-'));

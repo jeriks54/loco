@@ -21,10 +21,16 @@ away the full solution. Copy:
 
 - Start: “Reach EXIT. Commands run from line 01 downward. Drag a command to a
   line or tap it to add it.”
+- Narrow start: “Reach EXIT. Tap the arrow below to open the program panel.
+  Tap commands into numbered lines, then Run.”
 - After editing: “Turns change the robot's facing without moving it. You have
-  six memory lines.”
+  six memory lines. Press Run when ready.”
+- Narrow after editing: “You have six memory lines. Turns change facing without
+  moving. Close the panel to inspect the maze, then Run.”
 - During a run: “The highlighted line is the command running. Reset returns
   the robot to the start and keeps your program.”
+- After Reset: “Reset returned the robot to the start and kept your program.
+  Edit it or press Run again.”
 - After a failed run: “Edit your program and try again. Run starts at the
   entrance.”
 - On success: “You reached EXIT. Ready for Chapter 1?”
@@ -40,11 +46,11 @@ select. Chapter 1 has no card. No chapter or level is gated.
 - **Chapter 2 — Loops:** “A loop repeats the commands between `loop` and `end`.
   Set its count to travel farther while using fewer memory lines.”
 - **Chapter 3 — Sensing:** “The front wall sensor checks the next tile. Build
-  `loop until [wall sensor] = [blocked]` to repeat until it sees a wall. It does
+  `loop until [wall sensor] = [blocked]` to keep going until it sees a wall. It does
   not stop the robot for you, and holes are not walls.”
 - **Chapter 4 — Decisions:** “`if` runs commands when its condition is true.
   `else` runs the other path. Fill both condition slots, then close the choice
-  with `end`. ”
+  with `end`.”
 
 Cards use a labelled modal dialog with focus trapped while open, Escape/Skip,
 and focus returned to the trigger. Reduced motion removes entrance transitions.

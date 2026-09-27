@@ -13,6 +13,7 @@ try {
   browser = await chromium.launch({ channel: 'chrome', headless: true });
   for (const reduced of [false, true]) {
     const context = await browser.newContext({ viewport: { width: 1280, height: 844 }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+    await context.addInitScript(() => localStorage.setItem('loco.onboarding.v1', JSON.stringify({ seen: ['ch2', 'ch3', 'ch4'] })));
     const page = await context.newPage(), errors = [];
     page.on('pageerror', e => errors.push(e.message));
     await page.route('https://fonts.googleapis.com/**', r => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
@@ -91,6 +92,7 @@ try {
   }
 
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, reducedMotion: 'reduce' });
+  await context.addInitScript(() => localStorage.setItem('loco.onboarding.v1', JSON.stringify({ seen: ['ch2', 'ch3', 'ch4'] })));
   const page = await context.newPage();
   await page.route('https://fonts.googleapis.com/**', r => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
   await page.goto(url); await page.locator('#btn-play').click();
