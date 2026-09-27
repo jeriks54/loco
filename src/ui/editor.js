@@ -125,6 +125,10 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       if (i < program.length) {
         line.className = 'line filled';
         line.dataset.index = String(i);
+        line.tabIndex = 0;
+        line.setAttribute('role', 'group');
+        line.setAttribute('aria-label', `Line ${i + 1}: ${BLOCK_DEFS[entryId(program[i])].label}. Press Delete to remove.`);
+        line.setAttribute('aria-keyshortcuts', 'Delete Backspace');
         line.style.setProperty('--indent', String(depths[i]));
         line.innerHTML =
           `<span class="line-no">${pad2(i + 1)}</span>` +
@@ -148,6 +152,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
     clearSelection();
     if (program.length >= memory) {
       rejectFlash();
+      setMessage('Memory full. Remove a line before adding another command.');
       return false;
     }
     const at = Math.max(0, Math.min(index, program.length));
@@ -402,6 +407,35 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
     }
   });
 
+  paletteEl.addEventListener('keydown', (e) => {
+    if (running || (e.key !== 'Enter' && e.key !== ' ')) return;
+    const chip = e.target.closest('.block-chip');
+    if (!chip || !paletteEl.contains(chip)) return;
+    e.preventDefault();
+    if (chip.dataset.condition) placeOperand(chip.dataset.condition);
+    else insertOrReject(chip.dataset.block, program.length);
+  });
+
+  function removeLine(index, restoreFocus = false) {
+    program.splice(index, 1);
+    clearSelection();
+    renderLines();
+    notify();
+    setMessage(`Removed line ${index + 1}.`);
+    if (restoreFocus) {
+      const next = lineEls[Math.min(index, program.length - 1)];
+      (next && next.classList.contains('filled') ? next : paletteEl.querySelector('.block-chip'))?.focus();
+    }
+  }
+
+  programEl.addEventListener('keydown', (e) => {
+    if (running || (e.key !== 'Delete' && e.key !== 'Backspace')) return;
+    const line = e.target.closest('.line.filled');
+    if (!line || e.target !== line || !programEl.contains(line)) return;
+    e.preventDefault();
+    removeLine(Number(line.dataset.index), true);
+  });
+
   // click a placed line -> remove it (stepper clicks adjust the count instead)
   programEl.addEventListener('click', (e) => {
     if (running) return;
@@ -425,10 +459,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
     }
     if (e.target.closest('.condition-comparison')) return;
     if (e.target.closest('.condition-expression')) return;
-    program.splice(index, 1);
-    clearSelection();
-    renderLines();
-    notify();
+    removeLine(index);
   });
 
   /* ---------- public API ---------- */
@@ -477,6 +508,11 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       running = flag;
       paletteEl.classList.toggle('locked', flag);
       programEl.classList.toggle('locked', flag);
+      for (const chip of paletteEl.querySelectorAll('.block-chip')) {
+        chip.tabIndex = flag ? -1 : 0;
+        chip.setAttribute('aria-disabled', String(flag));
+      }
+      for (const line of programEl.querySelectorAll('.line.filled')) line.tabIndex = flag ? -1 : 0;
     },
 
     /** Program pointer: highlight the executing line. */

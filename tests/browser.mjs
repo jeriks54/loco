@@ -44,6 +44,7 @@ try {
     // Accelerate only executor tick intervals. Logic and UI run unmodified; real
     // speed values are independently checked in verify.mjs.
     await page.addInitScript(() => {
+      localStorage.setItem('loco.onboarding.v1', JSON.stringify({ seen: ['ch2', 'ch3', 'ch4'] }));
       const timeout = window.setTimeout.bind(window);
       window.setTimeout = (fn, delay, ...args) => timeout(fn, [300, 600, 1200].includes(delay) ? 10 : delay, ...args);
     });

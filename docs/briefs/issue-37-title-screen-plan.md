@@ -2,6 +2,10 @@
 
 **Status:** accepted by Jonas, merged to `main` in PR #41 on 2026-09-25; issue #37 closed.
 
+**Historical scope:** references below to Tutorial's placeholder response describe
+the title-screen release at that time. Issue #30 subsequently made Tutorial
+playable; see `issue-30-tutorial-plan.md` and `issue-30-chapter-examples.md`.
+
 **Branch:** `codex/issue-37-title-screen`
 
 **Issue:** https://github.com/jeriks54/loco/issues/37

@@ -9,10 +9,11 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-09-25
+## State as of 2026-09-27
 
-Latest feature merge: PR #41 (`fee2bda`). The product version remains `v0.4`;
-the title now offers a cropped Workshop teaser without changing gameplay. Shipped features:
+The last feature merge before onboarding was PR #41 (`fee2bda`). Issue #30 adds
+guided practice on the title and at Chapters 2–4. The product version remains
+`v0.4`; the 25 campaign levels and their IDs are unchanged. Features:
 
 - **Chapter 1 — Sequence**, 7 levels (`ch1-01..07`), move / turn left / turn right.
 - **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), programs rendered as numbered mono lines. Counted `loop n` / `end` replaced historical M2 `repeat` / `while front clear` in PR #21.
@@ -22,6 +23,7 @@ the title now offers a cropped Workshop teaser without changing gameplay. Shippe
 - **M4 mobile editor** (PR #20) — under `max-width: 900px`, the board stays a stable size above a two-detent editor sheet. The current sheet uses opaque ivory surfaces; Run / Reset / memory count remain available at the collapsed detent, and the sheet auto-collapses on run.
 - **M22 Workshop graphics** (PR #28, merged and deployed 2026-09-23) — overhead brass robot, visible front sensor, one-tile sensor marker and reading, walnut board, ivory panels and forest-green controls. The same visual language carries through welcome, level selection and play. Issues #8 and #22 are closed.
 - **Workshop title teaser** (PR #41, merged 2026-09-25) — a cropped Chapter 1 board, one-command slip and one legal move invite players into the game without revealing the full maze or solution. Start Game has no arrow. Issue #37 is closed; see `docs/briefs/issue-37-title-screen-plan.md`.
+- **Optional onboarding** (#30) — Tutorial opens a four-step spotlight guide to a separate practice maze. Chapters 2–4 each open a guided example maze once on first entry; Skip reaches the selected level and Replay intro is always available. Practice does not change campaign progress. See `docs/design.md` §14 and the issue-30 briefs.
 
 25 merged levels across four chapters; Chapter 4 appends five levels
 (`ch4-01..05`) without changing the existing IDs.
@@ -68,12 +70,11 @@ with no test framework or dependencies.
 
 ## What's next
 
-Open GitHub issues, checked 2026-09-25:
+Roadmap follow-ups as of 2026-09-27:
 
 | # | What | Note |
 |---|---|---|
 | **#19** | Tile types + richer map graphics | First slice shipped in PR #23; ladders and explicit `climb` remain future chapter-5 work |
-| **#30** | Basic tutorial and chapter introductions | Tutorial button still has placeholder behavior |
 | **#31** | Three-star ratings | Replayable level challenges |
 | **#32** | Sensor loadouts and progression | Equipment and unlocks |
 | **#33** | Android and iOS distribution | Assess app options |
@@ -82,9 +83,11 @@ Open GitHub issues, checked 2026-09-25:
 | **#36** | Loop iteration progress | Show progress while running |
 | **#38** | Larger maps on small screens | Board navigation |
 | **#39** | Future curriculum | Rank programming concepts by game fit |
-| **#40** | First-time player research | Validate onboarding and learning |
+| **#40** | First-time player research | Validate the guided tutorial and early Chapter 1 levels with new players; phone feedback has already led to step-by-step spotlights and chapter examples |
 
-Shipped and closed: **#17** (Chapter 3 — front wall sensor + constructed loop
+Issue **#30** implements the basic tutorial and chapter examples; this merge
+closes its implementation work. First-time-player observation remains in #40.
+Previously shipped and closed: **#17** (Chapter 3 — front wall sensor + constructed loop
 condition, two operand slots, five levels, no hole sensor) in PR #24; **#18**
 (Chapter 4 — conditional branching, five levels, structural validation and
 desktop/touch coverage) in PR #27; **#22** (Workshop graphics) in PR #28; and
@@ -96,10 +99,10 @@ Chapter 3, tile groundwork, Chapter 4, the Workshop redesign and the title tease
 
 ## Where things are documented
 
-- `docs/design.md` — architecture (§2), level format (§3), editor (§5), current rendering and milestones (§6, §8), historical M4 mobile decisions (§8.1), workflow + roles + **delegation protocol (§9)**, current visual language (§11–§13).
+- `docs/design.md` — architecture (§2), level format (§3), editor (§5), current rendering and milestones (§6, §8), historical M4 mobile decisions (§8.1), workflow + roles + **delegation protocol (§9)**, current visual language (§11–§13), onboarding (§14).
 - `docs/level-design.md` — curriculum map (§2), counted-loop mechanics and chapter-2 revision contracts (§3–§4), difficulty/memory policy (§5), decisions (§7), sensor equipment direction (§9), Chapter 3 levels (§10), Chapter 4 pack (§11) and Workshop sensor presentation (§12).
 - `docs/requirements.md` — the product requirements and the post-MVP roadmap (§5).
-- `docs/briefs/` — milestone contracts, including the shipped Workshop implementation, `m7-if-branching.md` and historical M3/M5/M6 records.
+- `docs/briefs/` — milestone contracts, including the issue-30 tutorial and chapter-example briefs, the shipped Workshop implementation, `m7-if-branching.md` and historical M3/M5/M6 records.
 - `tests/README.md` — retained Node verification and browser play-test checklist.
 
 ## Hard rules
@@ -109,10 +112,10 @@ Chapter 3, tile groundwork, Chapter 4, the Workshop redesign and the title tease
 - One branch per milestone (`feat/mN-…`), one PR per milestone, incremental conventional-ish commits referencing issues. Keep merged branches by default; delete one only when cleanup is explicitly requested.
 - **Agents never run git.** The manager reviews and commits everything. See `docs/design.md` §9.3 for the full delegation protocol, including how to detect a stalled agent.
 - **Self-reported verification is never accepted.** An M2 level pack claimed it was verified and failed 7 of 8 checks under real cross-check. Recompute independently.
-- `.gitignore` carries jonas' uncommitted duplicate `.vercel` line. **Leave it alone** — do not commit or revert it without asking.
+- `.gitignore` contains a duplicate `.vercel` entry. Leave it alone unless Jonas asks to change it.
 - Current visual identity is the Workshop language (`docs/design.md` §13): warm walnut board, ivory surfaces, brass overhead robot, forest-green controls and clear sensor equipment/readings. JetBrains Mono remains for program/code details; motion honours `prefers-reduced-motion`.
 
 ## Known loose ends
 
-- **Three dead buttons on the title screen.** Tutorial, Settings and High Scores all still answer with the `> loading X.module .......... not found` joke (`main.js` wires every `[data-module]` except Start Game to it). Documented as intentional in `design.md` §11, but it shipped, and Tutorial is the biggest onboarding gap for a game whose whole promise is teaching.
+- **Two placeholder title buttons.** Settings and High Scores still answer with the `> loading X.module .......... not found` response. Tutorial now opens the guided practice maze.
 - **Start marker:** persistent outlined `S` shipped in PR #23.

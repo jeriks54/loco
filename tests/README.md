@@ -6,6 +6,17 @@ Run from the repo root with Node.js 22 or newer:
 node tests/verify.mjs
 ```
 
+Issue #30 adds `tests/onboarding.mjs` to this retained check. It proves the
+practice maze and three chapter examples are outside the campaign registry,
+have winning routes under the real executor, and the first maze produces
+real goal, crash and unfinished outcomes.
+With the same Playwright setting used below, run `node tests/onboarding-browser.mjs`
+for the guided spotlights (including mobile sheet changes), tutorial keyboard,
+Reset/Retry, chapter-example wins, progress isolation, first visit, replay,
+existing progress, and 320px touch layout. The older chapter browser
+checks pre-mark introductions as seen so they continue testing their own game
+mechanics; onboarding-browser verifies the actual first-visit behavior.
+
 No dependencies or test framework are installed. The checks use the real game
 executor with a synchronous fake timer queue, and an independent breadth-first
 search over grid positions and headings using only each level's move/turn palette.
@@ -54,7 +65,9 @@ real phone feel, animation and downloaded-font appearance still need play-testin
 `node tests/title-browser.mjs` checks the issue-37 Workshop title teaser at desktop,
 phone and short landscape sizes with normal and reduced motion. It verifies the
 single robot move versus a stable reduced-motion frame, Start Game visibility and
-navigation, keyboard focus, and the existing Tutorial/Settings/High Scores responses.
+navigation, keyboard focus, Tutorial entry, and the remaining Settings/High Scores
+placeholder responses. `onboarding-browser.mjs` covers the tutorial and chapter
+examples after entry.
 
 Run `node tests/tiles-browser.mjs` with the same Playwright setting for real-paced
 desktop/touch fall animation, reduced motion, repeated Run, Reset, Retry, safe

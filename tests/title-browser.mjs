@@ -1,4 +1,4 @@
-// Issue #37: title teaser, navigation, reduced motion, phone fit and placeholders.
+// Issue #37/#30: title teaser, navigation, reduced motion, phone fit and modules.
 // Set LOCO_PLAYWRIGHT_MODULE to an installed playwright/index.mjs before running.
 import assert from 'node:assert/strict';
 import { pathToFileURL } from 'node:url';
@@ -54,14 +54,21 @@ try {
   await page.goto(url);
   await page.keyboard.press('Tab');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'btn-play', 'first keyboard focus should reach Start game');
-  for (const moduleName of ['tutorial', 'settings', 'scores']) {
+  await page.locator('#btn-tutorial').click();
+  assert.equal(await page.locator('#screen-game').isVisible(), true, 'tutorial did not open the practice game');
+  assert.equal(await page.locator('#tutorial-tour').isVisible(), true);
+  await page.locator('#btn-tour-skip').click();
+  assert.equal(await page.locator('#tutorial-hints').isVisible(), true);
+  await page.locator('#btn-back').click();
+  assert.equal(await page.locator('#screen-title').isVisible(), true, 'tutorial Exit did not return to title');
+  for (const moduleName of ['settings', 'scores']) {
     await page.locator(`[data-module="${moduleName}"]`).click();
     await page.waitForTimeout(1850);
     assert.match(await page.locator('.boot-log').textContent(), /not found/, `${moduleName} placeholder response missing`);
   }
   await page.close();
 
-  console.log('PASS title: Workshop teaser, one move, reduced-motion still, desktop/phone fit, navigation, keyboard and module responses.');
+  console.log('PASS title: Workshop teaser, one move, reduced-motion still, desktop/phone fit, tutorial navigation and remaining module responses.');
 } finally {
   await browser?.close();
   server.close();

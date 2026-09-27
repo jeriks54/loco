@@ -13,6 +13,7 @@ import './tiles.mjs';
 import './sensors.mjs';
 import './spiral-proof.mjs';
 import './decisions.mjs';
+import './onboarding.mjs';
 
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 const chapter1 = levels.filter(l => l.id.startsWith('ch1-'));
@@ -30,7 +31,9 @@ for (const file of sourceFiles) {
   const checked = spawnSync(process.execPath, ['--check', path], { encoding: 'utf8' });
   if (checked.error) throw checked.error;
   assert.equal(checked.status, 0, checked.stderr);
-  assert.doesNotMatch(readFileSync(path, 'utf8'), /\brepeat\b|whileFrontClear|REPEAT_MIN|REPEAT_MAX/, path);
+  // Reject the removed command token while allowing ordinary teaching copy to
+  // use the verb "repeat" when explaining counted loops.
+  assert.doesNotMatch(readFileSync(path, 'utf8'), /['"]repeat['"]|whileFrontClear|REPEAT_MIN|REPEAT_MAX/, path);
 }
 assert.deepEqual(Object.keys(BLOCK_DEFS).sort(), ['else', 'end', 'if', 'loop', 'loopUntil', 'move', 'turnLeft', 'turnRight']);
 assert.equal(levels.length, 25);
