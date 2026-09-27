@@ -9,18 +9,26 @@ export const tutorialLevel = {
   par: 5,
 };
 
-export const chapterIntros = {
+export const chapterExamples = {
   ch2: {
-    title: 'Chapter 2 — Loops',
-    copy: 'A loop repeats the commands between loop and end. Set its count to travel farther while using fewer memory lines.',
+    id: 'example-ch2', name: 'Loop example',
+    description: 'The robot starts at the left of a straight corridor. EXIT is three tiles east.',
+    grid: ['######', '#S..G#', '######'],
+    startDir: 'E', memory: 3, blocks: ['move', 'loop', 'end'], par: 3,
   },
   ch3: {
-    title: 'Chapter 3 — Sensing',
-    copy: 'The front wall sensor checks the next tile. Build loop until [wall sensor] = [blocked] to keep going until it sees a wall. It does not stop the robot for you, and holes are not walls.',
+    id: 'example-ch3', name: 'Sensor example',
+    description: 'The robot starts at the left of a corridor. A wall lies beyond two open tiles, and EXIT is one tile south of the end.',
+    grid: ['######', '#S..##', '###G##', '######'],
+    startDir: 'E', sensor: 'frontWall', memory: 5,
+    blocks: ['move', 'turnRight', 'loopUntil', 'end'], par: 5,
   },
   ch4: {
-    title: 'Chapter 4 — Decisions',
-    copy: 'If runs commands when its condition is true. Else runs the other path. Fill both condition slots, then close the choice with end.',
+    id: 'example-ch4', name: 'Decision example',
+    description: 'The robot starts facing an open tile, followed by a wall. EXIT is south of the open tile.',
+    grid: ['#####', '#S.##', '##G##', '#####'],
+    startDir: 'E', sensor: 'frontWall', memory: 8,
+    blocks: ['move', 'turnRight', 'loop', 'if', 'else', 'end'], par: 8,
   },
 };
 
@@ -31,20 +39,20 @@ export function loadSeenChapters(completed = new Set()) {
   try {
     const parsed = JSON.parse(globalThis.localStorage.getItem(STORAGE_KEY));
     if (parsed && Array.isArray(parsed.seen)) {
-      seen = new Set(parsed.seen.filter((id) => Object.hasOwn(chapterIntros, id)));
+      seen = new Set(parsed.seen.filter((id) => Object.hasOwn(chapterExamples, id)));
     }
   } catch {
     // Storage may be missing, corrupt or unavailable.
   }
   for (const id of completed) {
     const prefix = String(id).split('-')[0];
-    if (Object.hasOwn(chapterIntros, prefix)) seen.add(prefix);
+    if (Object.hasOwn(chapterExamples, prefix)) seen.add(prefix);
   }
   return seen;
 }
 
 export function markChapterSeen(seen, prefix) {
-  if (!Object.hasOwn(chapterIntros, prefix)) return seen;
+  if (!Object.hasOwn(chapterExamples, prefix)) return seen;
   const next = new Set(seen);
   next.add(prefix);
   try {

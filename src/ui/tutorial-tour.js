@@ -1,7 +1,7 @@
 // A short, non-interactive orientation before the player builds a program.
 // The spotlight is positioned in viewport space so it can pick out controls
 // inside the mobile sheet without changing the board or editor layout.
-const STEPS = [
+const TUTORIAL_STEPS = [
   {
     title: 'Read the map',
     copy: 'The brass robot starts at S and follows the direction of its arrow. Guide it to the green EXIT. Walls block its path; each move command advances one tile.',
@@ -35,7 +35,30 @@ const STEPS = [
   },
 ];
 
-export function createTutorialTour({ root, game, sheet, onFinish }) {
+const CHAPTER_STEPS = {
+  ch2: [
+    { title: 'See the repeated path', copy: 'This example is a straight, three-tile trip to EXIT. Three move commands would fill all three memory lines. A loop can repeat one move command three times.', target: '#board', mobileSheet: 'collapsed' },
+    { title: 'Choose a counted loop', copy: 'Add loop, move, then end. The commands between loop and end become the repeated body. Tap commands to add them, or drag them into the numbered lines.', mobileCopy: 'Tap loop, move, then end. The commands between loop and end repeat together.', target: '#palette', extraTop: 32, mobileSheet: 'expanded' },
+    { title: 'Set the count', copy: 'A new loop starts at 2. Use the + button on its memory line to change it to 3. The same move line will run three times while using only three memory lines.', mobileCopy: 'A new loop starts at 2. Tap + on its line to set 3. One move line then runs three times.', target: '#program', extraTop: 32, mobileSheet: 'expanded' },
+    { title: 'Watch the repeat', copy: 'Run the program and watch the move line light up on each visit. Reset returns the robot to S and keeps the three lines so you can adjust the count.', mobileCopy: 'Run to watch the move line repeat. Reset returns the robot to S and keeps your program.', target: '.panel-section.controls', mobileTarget: '#sheet-peek', mobileSheet: 'collapsed' },
+  ],
+  ch3: [
+    { title: 'Find the wall', copy: 'The robot travels east until a wall blocks the corridor. EXIT is one tile south of that stopping point. The map shows the path, but the program must decide when to stop moving east.', target: '#board', mobileSheet: 'collapsed' },
+    { title: 'Read the front sensor', copy: 'The fitted sensor checks only the next tile ahead. It says blocked for a wall or boundary, and clear for open floor. Holes are not walls, and the sensor does not stop the robot by itself.', mobileCopy: 'The front sensor checks the next tile. Walls read blocked; open floor reads clear. Holes are not walls, and sensing does not brake.', target: '#equipment-card', mobileTarget: '#sensor-note', mobileSheet: 'collapsed' },
+    { title: 'Build a sensed loop', copy: 'Add loop until, move, and end. Fill the loop’s two empty condition slots with wall sensor and blocked from the palette. Then add turn right and move after end.', mobileCopy: 'Add loop until, move, end, turn right, move. Tap wall sensor and blocked to fill the loop’s two empty slots.', target: '#palette', extraTop: 32, mobileSheet: 'expanded' },
+    { title: 'Check before each move', copy: 'Loop until checks the condition before every trip through its body. It repeats move while the front is clear, then leaves the loop when a wall is ahead. The final turn and move reach EXIT.', mobileCopy: 'Loop until checks before each move. It repeats while clear, then leaves the loop at a wall. The final turn and move reach EXIT.', target: '#program', extraTop: 32, mobileSheet: 'expanded' },
+    { title: 'Run the sensor example', copy: 'Run to watch the loop recheck the tile ahead. Reset keeps your program if you need to change a condition slot or a line.', mobileCopy: 'Run to watch the sensor recheck ahead. Reset keeps your program for another try.', target: '.panel-section.controls', mobileTarget: '#sheet-peek', mobileSheet: 'collapsed' },
+  ],
+  ch4: [
+    { title: 'See two situations', copy: 'At S, the tile ahead is open. After one move, a wall is directly ahead. The same decision must choose move when clear and turn right when blocked, before the final move to EXIT.', mobileCopy: 'At S, ahead is clear. After one move, ahead is a wall. The decision must move when clear and turn right when blocked.', target: '#board', mobileSheet: 'collapsed' },
+    { title: 'Test the condition', copy: 'The front wall sensor reports whether the next tile is blocked. If wall sensor = blocked is true at the wall and false on open floor. Holes are not walls.', mobileCopy: 'The front sensor checks the next tile. If wall sensor = blocked is true at a wall and false on open floor. Holes are not walls.', target: '#equipment-card', mobileTarget: '#sensor-note', mobileSheet: 'collapsed' },
+    { title: 'Choose both branches', copy: 'Add if, else, and end to make a choice. Fill the if line’s two condition slots with wall sensor and blocked. Commands after if run when blocked; commands after else run when clear.', mobileCopy: 'Add if, else, end. Fill the if slots with wall sensor and blocked. If runs at a wall; else runs when clear.', target: '#palette', extraTop: 32, mobileSheet: 'expanded' },
+    { title: 'Repeat the decision', copy: 'Use loop 2 around the choice: if blocked, turn right; else, move. The first pass moves, the second pass turns. End closes if, another end closes loop, then a final move reaches EXIT. This example uses eight lines.', mobileCopy: 'Loop 2 repeats the choice. First pass: else moves. Second pass: if turns right. Close if and loop with separate ends, then move to EXIT. Eight lines fit.', target: '#program', extraTop: 32, mobileSheet: 'expanded' },
+    { title: 'Watch each branch', copy: 'Run to see the highlighted line take a different branch on each pass. Reset keeps the program so you can edit and retry.', mobileCopy: 'Run to see a different branch on each pass. Reset keeps your program for another try.', target: '.panel-section.controls', mobileTarget: '#sheet-peek', mobileSheet: 'collapsed' },
+  ],
+};
+
+export function createTutorialTour({ root, game, sheet, onFinish, onSkip = onFinish }) {
   const card = root.querySelector('#tutorial-tour-card');
   const spotlight = root.querySelector('#tutorial-spotlight');
   const progress = root.querySelector('#tutorial-tour-progress');
@@ -46,12 +69,13 @@ export function createTutorialTour({ root, game, sheet, onFinish }) {
   const skip = root.querySelector('#btn-tour-skip');
   let index = -1;
   let priorInert = null;
+  let steps = TUTORIAL_STEPS;
 
   const mobile = () => window.matchMedia('(max-width: 900px)').matches;
 
   function updateSpotlight() {
     if (index < 0) return;
-    const step = STEPS[index];
+    const step = steps[index];
     const target = game.querySelector(mobile() && step.mobileTarget || step.target);
     if (!target) return;
     const rect = target.getBoundingClientRect();
@@ -88,32 +112,40 @@ export function createTutorialTour({ root, game, sheet, onFinish }) {
 
   function showStep(nextIndex) {
     index = nextIndex;
-    const step = STEPS[index];
+    const step = steps[index];
     if (mobile()) {
       if (step.mobileSheet === 'expanded') sheet.expand();
       else sheet.collapse();
+      if (step.mobileSheet === 'expanded') {
+        const body = game.querySelector('#sheet-body');
+        const section = game.querySelector(step.target)?.closest('.panel-section');
+        if (section) body.scrollTop += section.getBoundingClientRect().top - body.getBoundingClientRect().top;
+      }
     }
-    progress.textContent = `STEP ${index + 1} OF ${STEPS.length}`;
+    progress.textContent = `STEP ${index + 1} OF ${steps.length}`;
     title.textContent = step.title;
     copy.textContent = mobile() && step.mobileCopy || step.copy;
     back.disabled = index === 0;
-    next.textContent = index === STEPS.length - 1 ? 'Start practice' : 'Next';
+    next.textContent = index === steps.length - 1 ? 'Start practice' : 'Next';
     title.focus();
     requestAnimationFrame(updateSpotlight);
   }
 
-  function stop(finished = false) {
+  function stop(outcome = null) {
     if (index < 0) return;
     index = -1;
     root.classList.add('hidden');
     game.classList.remove('tour-active');
     for (const [child, wasInert] of priorInert) child.inert = wasInert;
     priorInert = null;
-    if (finished) onFinish();
+    if (outcome === 'finish') onFinish();
+    else if (outcome === 'skip') onSkip();
   }
 
-  function start() {
+  function start(kind = 'tutorial') {
     stop();
+    steps = CHAPTER_STEPS[kind] || TUTORIAL_STEPS;
+    skip.textContent = kind === 'tutorial' ? 'Skip guide' : 'Skip example';
     priorInert = new Map([...game.children].filter(child => child !== root).map(child => [child, child.inert]));
     for (const child of priorInert.keys()) child.inert = true;
     game.classList.add('tour-active');
@@ -121,13 +153,13 @@ export function createTutorialTour({ root, game, sheet, onFinish }) {
     showStep(0);
   }
 
-  next.addEventListener('click', () => index === STEPS.length - 1 ? stop(true) : showStep(index + 1));
+  next.addEventListener('click', () => index === steps.length - 1 ? stop('finish') : showStep(index + 1));
   back.addEventListener('click', () => { if (index > 0) showStep(index - 1); });
-  skip.addEventListener('click', () => stop(true));
+  skip.addEventListener('click', () => stop('skip'));
   root.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       event.preventDefault();
-      stop(true);
+      stop('skip');
     } else if (event.key === 'Tab') {
       const buttons = [skip, back, next].filter(button => !button.disabled);
       const first = buttons[0], last = buttons.at(-1);

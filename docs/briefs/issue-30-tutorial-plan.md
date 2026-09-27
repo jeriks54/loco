@@ -59,6 +59,10 @@ position follows viewport and sheet changes without an entrance animation.
 
 ## Chapter cards
 
+The original card design below was replaced after phone play-testing with three
+guided example mazes. See [issue-30-chapter-examples.md](issue-30-chapter-examples.md)
+for the current flow, maps, copy structure and acceptance checks.
+
 The first selection of any level in Chapters 2–4 opens a short, skippable card
 before that selected level. Continue and Skip both open the selected level; Skip
 merely omits reading the card. The card appears once per chapter. A Replay intro

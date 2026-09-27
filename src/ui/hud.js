@@ -84,8 +84,8 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
     setLevel(level, index, total) {
       sensorNote.classList.toggle('hidden', level.sensor !== 'frontWall');
       levelNameEl.textContent = level.name;
-      progressEl.textContent = level.id === 'tutorial-01'
-        ? `PRACTICE · MEM ${level.memory}`
+      progressEl.textContent = level.id === 'tutorial-01' || level.id.startsWith('example-')
+        ? `${level.id === 'tutorial-01' ? 'PRACTICE' : 'EXAMPLE'} · MEM ${level.memory}`
         : `${pad2(index + 1)}/${pad2(total)} · MEM ${level.memory}`;
       memoryLimit = level.memory;
       updateMemoryCount();
@@ -97,16 +97,16 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
       }
     },
 
-    showResult(type, { hasNext, reason, tutorial = false }) {
-      resultText.textContent = tutorial && type === 'goal'
-        ? '> PRACTICE COMPLETE — you reached EXIT.'
+    showResult(type, { hasNext, reason, tutorial = false, example = false, nextLabel = null }) {
+      resultText.textContent = (tutorial || example) && type === 'goal'
+        ? `> ${example ? 'EXAMPLE' : 'PRACTICE'} COMPLETE — you reached EXIT.`
         : type === 'syntax' && reason === 'condition'
         ? '> INCOMPLETE CONDITION — fill the sensor and value slots.'
         : type === 'syntax' && reason === 'sensor'
           ? '> SENSOR MISSING — this level needs a front wall sensor.'
           : RESULT_COPY[type];
       nextBtn.classList.toggle('hidden', !(type === 'goal' && hasNext));
-      nextBtn.textContent = tutorial ? 'Start Chapter 1' : 'Next level';
+      nextBtn.textContent = nextLabel || (tutorial ? 'Start Chapter 1' : example ? 'Start selected level' : 'Next level');
       overlayEl.classList.remove('hidden');
     },
 

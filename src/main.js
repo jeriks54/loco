@@ -27,7 +27,7 @@ import { createScreens, renderLevelList } from './ui/screens.js';
 import { createTitlePreview } from './ui/title-preview.js';
 import { createTutorialTour } from './ui/tutorial-tour.js';
 import { loadProgress, markCompleted } from './persist.js';
-import { tutorialLevel, chapterIntros, loadSeenChapters, markChapterSeen } from './onboarding.js';
+import { tutorialLevel, chapterExamples, loadSeenChapters, markChapterSeen } from './onboarding.js';
 
 /* ---------- Welcome screen (kept from the warm-up) ---------- */
 
@@ -116,12 +116,11 @@ let state = null;
 let executor = null;
 let speed = 1;
 let tutorialHintPhase = '';
+let exampleContext = null;
 
 const tutorialHints = document.getElementById('tutorial-hints');
 const tutorialHintText = document.getElementById('tutorial-hint-text');
 const backButton = document.getElementById('btn-back');
-const introDialog = document.getElementById('chapter-intro');
-let introContext = null;
 
 const TUTORIAL_HINTS = {
   start: 'Reach EXIT. Commands run from line 01 downward. Drag a command to a line or tap it to add it.',
@@ -135,13 +134,33 @@ const TUTORIAL_MOBILE_HINTS = {
   start: 'Reach EXIT. Tap the arrow below to open the program panel. Tap commands into numbered lines, then Run.',
   edited: "You have six memory lines. Turns change facing without moving. Close the panel to inspect the maze, then Run.",
 };
+const EXAMPLE_START_HINTS = {
+  ch2: 'Build loop 3, move, end. Use + on the loop line to set the count, then Run.',
+  ch3: 'Build loop until [wall sensor] = [blocked], move, end, turn right, move. Fill both condition slots.',
+  ch4: 'Build loop 2, if blocked, turn right, else, move, end, end, move. Fill the if condition slots.',
+};
+const EXAMPLE_HINTS = {
+  edited: 'Check the numbered lines and condition or count controls, then Run. Reset keeps your program.',
+  running: 'The highlighted line is running. Watch for a repeated line or a different branch.',
+  reset: 'Reset returned the robot to S and kept your program. Edit it or Run again.',
+  failed: 'Edit your program and try again. Run starts at S.',
+  complete: 'You reached EXIT. Ready for the selected level?',
+};
 
 function setTutorialHint(phase) {
-  if (mode !== 'tutorial' || phase === tutorialHintPhase) return;
+  if ((mode !== 'tutorial' && mode !== 'example') || phase === tutorialHintPhase) return;
   tutorialHintPhase = phase;
-  tutorialHintText.textContent = window.matchMedia('(max-width: 900px)').matches
-    ? TUTORIAL_MOBILE_HINTS[phase] || TUTORIAL_HINTS[phase]
-    : TUTORIAL_HINTS[phase];
+  if (mode === 'example') {
+    tutorialHintText.textContent = phase === 'start'
+      ? EXAMPLE_START_HINTS[exampleContext.prefix]
+      : phase === 'complete' && exampleContext.destination === null
+        ? 'You reached EXIT. Choose another level when ready.'
+        : EXAMPLE_HINTS[phase];
+  } else {
+    tutorialHintText.textContent = window.matchMedia('(max-width: 900px)').matches
+      ? TUTORIAL_MOBILE_HINTS[phase] || TUTORIAL_HINTS[phase]
+      : TUTORIAL_HINTS[phase];
+  }
 }
 
 function stopRun() {
@@ -172,7 +191,7 @@ const editor = createEditor({
   countEl: document.getElementById('memory-count'),
   onChange: (len) => {
     hud.setProgramLength(len);
-    if (mode === 'tutorial' && tutorialHintPhase !== 'running' && tutorialHintPhase !== 'complete') {
+    if (mode !== 'campaign' && tutorialHintPhase !== 'running' && tutorialHintPhase !== 'complete') {
       setTutorialHint(len ? 'edited' : 'start');
     }
   },
@@ -182,7 +201,9 @@ const hud = createHud({
   onRun: run,
   onReset: resetRun,
   onRetry: retry,
-  onNext: () => mode === 'tutorial' ? loadLevel(0) : selectLevel(currentIndex + 1, document.getElementById('btn-next')),
+  onNext: () => mode === 'tutorial' ? loadLevel(0)
+    : mode === 'example' ? skipExample()
+      : selectLevel(currentIndex + 1, document.getElementById('btn-next')),
   onSpeed: (value) => {
     speed = value;
     if (executor) executor.setSpeed(value);
@@ -204,63 +225,43 @@ const tutorialTour = createTutorialTour({
   root: document.getElementById('tutorial-tour'),
   game: document.getElementById('screen-game'),
   sheet,
-  onFinish: () => {
-    if (mode !== 'tutorial') return;
-    tutorialHints.classList.remove('hidden');
-    setTutorialHint(editor.getProgram().length ? 'edited' : 'start');
-    document.querySelector(window.matchMedia('(max-width: 900px)').matches
-      ? '#sheet-chevron' : '#palette .block-chip')?.focus();
-  },
+  onFinish: showPracticeHints,
+  onSkip: () => mode === 'example' ? skipExample() : showPracticeHints(),
 });
 
-function closeIntro() {
-  if (!introContext) return;
-  const { trigger, onProceed } = introContext;
-  introContext = null;
-  introDialog.close();
-  if (onProceed) {
-    onProceed();
-    backButton.focus();
-  } else {
+function showPracticeHints() {
+  tutorialHints.classList.remove('hidden');
+  setTutorialHint(editor.getProgram().length ? 'edited' : 'start');
+  document.querySelector(window.matchMedia('(max-width: 900px)').matches
+    ? '#sheet-chevron' : '#palette .block-chip')?.focus();
+}
+
+function skipExample() {
+  const { destination, trigger } = exampleContext;
+  if (destination === null) {
+    stopRun();
+    screens.showScreen('levels');
     trigger?.focus();
+  } else {
+    loadLevel(destination);
+    backButton.focus();
   }
 }
-
-function openIntro(prefix, trigger, onProceed = null) {
-  const intro = chapterIntros[prefix];
-  if (!intro) {
-    onProceed?.();
-    return;
-  }
-  introContext = { trigger, onProceed };
-  document.getElementById('intro-title').textContent = intro.title;
-  document.getElementById('intro-copy').textContent = intro.copy;
-  document.getElementById('btn-intro-continue').textContent = onProceed ? 'Continue' : 'Close';
-  document.getElementById('btn-intro-skip').classList.toggle('hidden', !onProceed);
-  introDialog.showModal();
-  document.getElementById('btn-intro-continue').focus();
-}
-
-document.getElementById('btn-intro-continue').addEventListener('click', closeIntro);
-document.getElementById('btn-intro-skip').addEventListener('click', closeIntro);
-introDialog.addEventListener('cancel', (event) => {
-  event.preventDefault();
-  closeIntro();
-});
 
 function selectLevel(index, trigger = null) {
   if (index < 0 || index >= levels.length) return;
   const prefix = levels[index].id.split('-')[0];
-  if (chapterIntros[prefix] && !seenChapters.has(prefix)) {
+  if (chapterExamples[prefix] && !seenChapters.has(prefix)) {
     seenChapters = markChapterSeen(seenChapters, prefix);
-    openIntro(prefix, trigger, () => loadLevel(index));
+    loadExample(prefix, index, trigger);
   } else {
     loadLevel(index);
   }
 }
 
 function renderLevels() {
-  renderLevelList(levelListEl, levels, selectLevel, progress, (prefix, trigger) => openIntro(prefix, trigger));
+  renderLevelList(levelListEl, levels, selectLevel, progress,
+    (prefix, trigger) => loadExample(prefix, null, trigger));
 }
 
 function handleEvent(type, payload) {
@@ -273,11 +274,17 @@ function handleEvent(type, payload) {
     editor.setRunning(false);
     editor.clearHighlight();
     hud.setRunning(false);
-    const tutorial = mode === 'tutorial';
-    hud.showResult(type, { hasNext: tutorial || currentIndex < levels.length - 1, reason: payload?.reason, tutorial });
-    if (tutorial) setTutorialHint(type === 'goal' ? 'complete' : 'failed');
+    const practice = mode !== 'campaign';
+    hud.showResult(type, {
+      hasNext: practice || currentIndex < levels.length - 1,
+      reason: payload?.reason,
+      tutorial: mode === 'tutorial',
+      example: mode === 'example',
+      nextLabel: mode === 'example' && exampleContext.destination === null ? 'Choose levels' : null,
+    });
+    if (practice) setTutorialHint(type === 'goal' ? 'complete' : 'failed');
     if (type === 'goal') {
-      if (!tutorial) {
+      if (!practice) {
         progress = markCompleted(levels[currentIndex].id);
         renderLevels();
       }
@@ -289,7 +296,8 @@ function loadLevel(index) {
   stopRun();
   tutorialTour.stop();
   mode = 'campaign';
-  document.getElementById('screen-game').classList.remove('is-tutorial');
+  exampleContext = null;
+  document.getElementById('screen-game').classList.remove('is-tutorial', 'is-example');
   tutorialHints.classList.add('hidden');
   document.getElementById('board').setAttribute('aria-describedby', 'sensor-note sensor-reading');
   backButton.textContent = '← Levels';
@@ -312,12 +320,15 @@ function loadTutorial() {
   stopRun();
   tutorialTour.stop();
   mode = 'tutorial';
+  exampleContext = null;
   document.getElementById('screen-game').classList.add('is-tutorial');
+  document.getElementById('screen-game').classList.remove('is-example');
   currentIndex = -1;
   state = createLevelState(tutorialLevel);
   executor = null;
   tutorialHintPhase = '';
   tutorialHints.classList.add('hidden');
+  document.getElementById('btn-tutorial-skip').textContent = 'Skip tutorial';
   document.getElementById('board').setAttribute('aria-describedby', 'tutorial-board-description');
   backButton.textContent = '← Exit tutorial';
   editor.loadLevel(tutorialLevel);
@@ -332,6 +343,36 @@ function loadTutorial() {
   tutorialTour.start();
 }
 
+function loadExample(prefix, destination, trigger = null) {
+  stopRun();
+  tutorialTour.stop();
+  mode = 'example';
+  exampleContext = { prefix, destination, trigger };
+  const level = chapterExamples[prefix];
+  const game = document.getElementById('screen-game');
+  game.classList.add('is-tutorial', 'is-example');
+  currentIndex = -1;
+  state = createLevelState(level);
+  executor = null;
+  tutorialHintPhase = '';
+  tutorialHints.classList.add('hidden');
+  document.getElementById('btn-tutorial-skip').textContent = 'Skip example';
+  document.getElementById('example-board-description').textContent = level.description;
+  document.getElementById('board').setAttribute('aria-describedby',
+    level.sensor ? 'example-board-description sensor-note sensor-reading' : 'example-board-description');
+  backButton.textContent = '← Exit example';
+  editor.loadLevel(level);
+  hud.setLevel(level, 0, 1);
+  hud.setSpeedButtons(speed);
+  hud.hideOverlay();
+  hud.setRunning(false);
+  sheet.collapse();
+  screens.showScreen('game');
+  window.scrollTo(0, 0);
+  scene.render(state);
+  tutorialTour.start(prefix);
+}
+
 function run() {
   const program = editor.getProgram();
   if (program.length === 0) return;
@@ -344,7 +385,7 @@ function run() {
   scene.render(state);
   editor.setRunning(true);
   hud.setRunning(true);
-  if (mode === 'tutorial') setTutorialHint('running');
+  if (mode !== 'campaign') setTutorialHint('running');
   sheet.collapse(); // the run plays out on the board, not behind an expanded sheet
   executor.start(speed);
 }
@@ -354,7 +395,7 @@ function resetRun() {
   if (executor) executor.reset();
   hud.hideOverlay();
   scene.render(state);
-  if (mode === 'tutorial') setTutorialHint('reset');
+  if (mode !== 'campaign') setTutorialHint('reset');
 }
 
 function retry() {
@@ -364,7 +405,7 @@ function retry() {
   editor.clearHighlight();
   hud.setRunning(false);
   scene.render(state);
-  if (mode === 'tutorial') setTutorialHint('failed');
+  if (mode !== 'campaign') setTutorialHint('failed');
 }
 
 document.getElementById('btn-clear').addEventListener('click', () => {
@@ -372,7 +413,11 @@ document.getElementById('btn-clear').addEventListener('click', () => {
 });
 
 document.getElementById('btn-tutorial').addEventListener('click', loadTutorial);
+backButton.addEventListener('click', () => {
+  if (mode === 'example') exampleContext?.trigger?.focus();
+});
 document.getElementById('btn-tutorial-skip').addEventListener('click', () => {
+  if (mode === 'example') return skipExample();
   stopRun();
   mode = 'campaign';
   screens.showScreen('levels');

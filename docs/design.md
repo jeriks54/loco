@@ -425,10 +425,14 @@ commands and memory steps, then closes to reveal its persistent run bar. Closing
 the guide begins the same free practice flow and contextual hints. The guide
 repeats on each entry from the title and does not record progress.
 
-Chapters 2–4 each show one short, skippable introduction on first level entry,
-with Replay intro at the chapter header. Chapter 1 has no card. A separate,
-guarded `loco.onboarding.v1` key stores seen chapter prefixes; completed levels
-imply a chapter was already seen for returning players. No level is gated.
+Chapters 2–4 each open a short guided example maze on first level entry, with
+Replay intro at the chapter header. The map, controls and concept are explained
+through sequential spotlights before free practice. Skip example opens the
+selected level, or returns to level select when replayed. Chapter 1 has no
+example. A separate, guarded `loco.onboarding.v1` key stores seen chapter
+prefixes; completed levels imply a chapter was already seen for returning
+players. No level is gated. The revised contract is in
+`briefs/issue-30-chapter-examples.md`.
 Palette chips support Enter/Space as well as pointer tap/drag, and filled program
 lines support Delete/Backspace. See `briefs/issue-30-tutorial-plan.md` for exact
 copy, flow and acceptance checks.

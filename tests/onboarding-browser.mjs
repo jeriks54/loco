@@ -1,4 +1,4 @@
-// Tutorial and chapter-intro integration checks. Set LOCO_PLAYWRIGHT_MODULE.
+// Tutorial and chapter-example integration checks. Set LOCO_PLAYWRIGHT_MODULE.
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -96,39 +96,81 @@ try {
   assert.equal(await desktop.locator('#level-name').textContent(), 'Corridor');
   await desktop.locator('#btn-back').click();
 
+  async function finishGuide(count) {
+    for (let i = 0; i < count; i += 1) await desktop.locator('#btn-tour-next').click();
+    assert.equal(await desktop.locator('#tutorial-tour').isVisible(), false);
+    assert.equal(await desktop.locator('#tutorial-hints').isVisible(), true);
+  }
+  async function fillCondition() {
+    await desktop.locator('#palette [data-condition="wallSensor"]').focus();
+    await desktop.keyboard.press('Enter');
+    await desktop.locator('#palette [data-condition="blocked"]').focus();
+    await desktop.keyboard.press('Space');
+  }
+  async function winExample(expectedLevel) {
+    await desktop.locator('#speed [data-speed="2"]').click();
+    await desktop.locator('#btn-run').click();
+    await desktop.locator('#result-overlay').waitFor({ state: 'visible' });
+    assert.match(await desktop.locator('#result-text').textContent(), /EXAMPLE COMPLETE/);
+    assert.equal(await desktop.evaluate(() => localStorage.getItem('loco.progress.v1')), null, 'example changed campaign progress');
+    assert.equal(await desktop.locator('#btn-next').textContent(), 'Start selected level');
+    await desktop.locator('#btn-next').click();
+    assert.equal(await desktop.locator('#level-name').textContent(), expectedLevel);
+    await desktop.locator('#btn-back').click();
+  }
+
   await desktop.locator('.level-item').nth(7).click();
-  assert.equal(await desktop.locator('#chapter-intro').isVisible(), true, 'Chapter 2 card missing');
-  assert.match(await desktop.locator('#intro-copy').textContent(), /memory lines/);
-  await desktop.screenshot({ path: fileURLToPath(new URL('./tmp/onboarding-card.png', import.meta.url)) });
-  await desktop.keyboard.press('Escape');
-  assert.equal(await desktop.locator('#level-name').textContent(), 'The Long Haul');
-  await desktop.locator('#btn-back').click();
+  assert.equal(await desktop.locator('#level-name').textContent(), 'Loop example');
+  assert.equal(await desktop.locator('#tutorial-tour-title').textContent(), 'See the repeated path');
+  await spotlightCovers(desktop, '#board');
+  await desktop.locator('#btn-tour-next').click();
+  await spotlightCovers(desktop, '#palette');
+  await desktop.locator('#btn-tour-next').click();
+  await spotlightCovers(desktop, '#program');
+  await desktop.locator('#btn-tour-next').click();
+  await spotlightCovers(desktop, '.panel-section.controls');
+  await desktop.locator('#btn-tour-next').click();
+  for (const id of ['loop', 'move', 'end']) await keyAdd(id);
+  await desktop.locator('#speed [data-speed="2"]').click();
+  await desktop.locator('#btn-run').click();
+  await desktop.locator('#result-overlay').waitFor({ state: 'visible' });
+  assert.match(await desktop.locator('#result-text').textContent(), /FELL SHORT/);
+  await desktop.locator('#btn-retry').click();
+  assert.equal(await desktop.locator('#program .line.filled').count(), 3, 'example Retry lost the program');
+  await desktop.locator('#program .step-btn[data-step="1"]').click();
+  assert.equal(await desktop.locator('#program .loop-count').textContent(), '3');
+  await winExample('The Long Haul');
   await desktop.locator('.level-item').nth(7).click();
-  assert.equal(await desktop.locator('#chapter-intro').isVisible(), false, 'seen card repeated');
+  assert.equal(await desktop.locator('#tutorial-tour').isVisible(), false, 'seen chapter repeated');
   await desktop.locator('#btn-back').click();
   await desktop.locator('.chapter-replay').first().click();
-  assert.equal(await desktop.locator('#chapter-intro').isVisible(), true, 'replay failed');
-  assert.equal(await desktop.evaluate(() => document.activeElement.id), 'btn-intro-continue');
-  assert.equal(await desktop.locator('#btn-intro-continue').textContent(), 'Close');
-  await desktop.locator('#btn-intro-continue').click();
-  assert.equal(await desktop.locator('#screen-levels').isVisible(), true, 'replay Close left level select');
+  assert.equal(await desktop.locator('#level-name').textContent(), 'Loop example');
+  await desktop.locator('#btn-tour-skip').click();
+  assert.equal(await desktop.locator('#screen-levels').isVisible(), true);
   assert.equal(await desktop.evaluate(() => document.activeElement.classList.contains('chapter-replay')), true, 'replay focus was not restored');
   assert.match(await desktop.evaluate(() => localStorage.getItem('loco.onboarding.v1')), /ch2/);
 
-  for (const [index, title] of [[15, 'Chapter 3 — Sensing'], [20, 'Chapter 4 — Decisions']]) {
-    await desktop.locator('.level-item').nth(index).click();
-    assert.equal(await desktop.locator('#intro-title').textContent(), title);
-    await desktop.locator('#btn-intro-continue').click();
-    if (index === 15) {
-      await keyAdd('loopUntil');
-      await desktop.locator('#palette [data-condition="wallSensor"]').focus();
-      await desktop.keyboard.press('Enter');
-      await desktop.locator('#palette [data-condition="blocked"]').focus();
-      await desktop.keyboard.press('Space');
-      assert.match(await desktop.locator('#program .line.filled').first().textContent(), /wall sensor.*blocked/);
-    }
-    await desktop.locator('#btn-back').click();
-  }
+  await desktop.locator('.level-item').nth(15).click();
+  assert.equal(await desktop.locator('#level-name').textContent(), 'Sensor example');
+  assert.equal(await desktop.locator('#tutorial-tour-title').textContent(), 'Find the wall');
+  await desktop.locator('#btn-tour-next').click();
+  await spotlightCovers(desktop, '#equipment-card');
+  assert.match(await desktop.locator('#tutorial-tour-copy').textContent(), /Holes are not walls/);
+  await finishGuide(4);
+  for (const id of ['loopUntil', 'move', 'end', 'turnRight', 'move']) await keyAdd(id);
+  await fillCondition();
+  assert.match(await desktop.locator('#program .line.filled').first().textContent(), /wall sensor.*blocked/);
+  await winExample('Cruise Control');
+
+  await desktop.locator('.level-item').nth(20).click();
+  assert.equal(await desktop.locator('#level-name').textContent(), 'Decision example');
+  assert.equal(await desktop.locator('#tutorial-tour-title').textContent(), 'See two situations');
+  await desktop.locator('#btn-tour-next').click();
+  await spotlightCovers(desktop, '#equipment-card');
+  await finishGuide(4);
+  for (const id of ['loop', 'if', 'turnRight', 'else', 'move', 'end', 'end', 'move']) await keyAdd(id);
+  await fillCondition();
+  await winExample('The Hairpin');
   assert.deepEqual(errors, [], 'desktop page errors');
   await desktop.close();
 
@@ -141,7 +183,8 @@ try {
   await returning.reload();
   await returning.locator('#btn-play').click();
   await returning.locator('.level-item').nth(20).click();
-  assert.equal(await returning.locator('#chapter-intro').isVisible(), false, 'completed chapter should count as seen');
+  assert.equal(await returning.locator('#level-name').textContent(), 'The Hairpin');
+  assert.equal(await returning.locator('#tutorial-tour').isVisible(), false, 'completed chapter should count as seen');
   await returning.close();
 
   const phone = await browser.newPage({ viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -186,11 +229,52 @@ try {
   await phone.locator('#btn-tutorial-skip').click();
   assert.equal(await phone.locator('#screen-levels').isVisible(), true);
   await phone.locator('.level-item').nth(7).click();
-  assert.equal(await phone.locator('#chapter-intro').isVisible(), true, 'phone chapter card missing');
-  assert.ok(await phone.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'phone card overflow');
-  await phone.locator('#btn-intro-skip').click();
+  assert.equal(await phone.locator('#level-name').textContent(), 'Loop example');
+  await spotlightCovers(phone, '#board');
+  await phone.locator('#btn-tour-next').click();
+  await spotlightCovers(phone, '#palette');
+  await phone.locator('#btn-tour-next').click();
+  await spotlightCovers(phone, '#program');
+  await phone.screenshot({ path: fileURLToPath(new URL('./tmp/onboarding-phone-loop.png', import.meta.url)) });
+  await phone.locator('#btn-tour-next').click();
+  await spotlightCovers(phone, '#sheet-peek');
+  await phone.locator('#btn-tour-skip').click();
   assert.equal(await phone.locator('#level-name').textContent(), 'The Long Haul');
   await phone.locator('#btn-back').click();
+  for (const [index, name] of [[15, 'Sensor example'], [20, 'Decision example']]) {
+    await phone.locator('.level-item').nth(index).click();
+    assert.equal(await phone.locator('#level-name').textContent(), name);
+    await spotlightCovers(phone, '#board');
+    await phone.locator('#btn-tour-next').click();
+    await spotlightCovers(phone, '#sensor-note');
+    await phone.screenshot({ path: fileURLToPath(new URL(`./tmp/onboarding-phone-${name.split(' ')[0].toLowerCase()}.png`, import.meta.url)) });
+    await phone.locator('#btn-tour-next').click();
+    await spotlightCovers(phone, '#palette');
+    await phone.locator('#btn-tour-next').click();
+    await spotlightCovers(phone, '#program');
+    if (index === 20) await phone.screenshot({ path: fileURLToPath(new URL('./tmp/onboarding-phone-decision-memory.png', import.meta.url)) });
+    await phone.locator('#btn-tour-next').click();
+    await spotlightCovers(phone, '#sheet-peek');
+    if (index === 20) {
+      await phone.locator('#btn-tour-next').click();
+      await phone.locator('#sheet-chevron').click();
+      for (const id of ['loop', 'if', 'turnRight', 'else', 'move', 'end', 'end', 'move']) {
+        await phone.locator(`#palette [data-block="${id}"]`).click();
+      }
+      await phone.locator('#palette [data-condition="wallSensor"]').click();
+      await phone.locator('#palette [data-condition="blocked"]').click();
+      await phone.locator('#sheet-chevron').click();
+      await phone.locator('#btn-run-peek').click();
+      await phone.locator('#result-overlay').waitFor({ state: 'visible' });
+      assert.match(await phone.locator('#result-text').textContent(), /EXAMPLE COMPLETE/);
+      assert.equal(await phone.evaluate(() => localStorage.getItem('loco.progress.v1')), null);
+      await phone.locator('#btn-next').click();
+      assert.equal(await phone.locator('#level-name').textContent(), 'The Hairpin');
+    } else {
+      await phone.locator('#btn-tour-skip').click();
+    }
+    await phone.locator('#btn-back').click();
+  }
   await phone.locator('#btn-title').click();
   await phone.locator('#btn-tutorial').click();
   assert.equal(await phone.locator('#tutorial-tour-title').textContent(), 'Read the map');
@@ -202,7 +286,7 @@ try {
   assert.deepEqual(phoneErrors, [], 'phone page errors');
   await phone.close();
 
-  console.log('PASS onboarding: tutorial run/retry/reset/keyboard, cards, persistence, replay, and phone layout.');
+  console.log('PASS onboarding: tutorial, chapter examples, progress isolation, replay, and phone layout.');
 } finally {
   await browser?.close();
   server.close();
