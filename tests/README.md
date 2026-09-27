@@ -65,7 +65,9 @@ real phone feel, animation and downloaded-font appearance still need play-testin
 `node tests/title-browser.mjs` checks the issue-37 Workshop title teaser at desktop,
 phone and short landscape sizes with normal and reduced motion. It verifies the
 single robot move versus a stable reduced-motion frame, Start Game visibility and
-navigation, keyboard focus, and the existing Tutorial/Settings/High Scores responses.
+navigation, keyboard focus, Tutorial entry, and the remaining Settings/High Scores
+placeholder responses. `onboarding-browser.mjs` covers the tutorial and chapter
+examples after entry.
 
 Run `node tests/tiles-browser.mjs` with the same Playwright setting for real-paced
 desktop/touch fall animation, reduced motion, repeated Run, Reset, Retry, safe

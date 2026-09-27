@@ -21,6 +21,12 @@ Requirements §7 left two things to level design: the exact level count and the 
 | 4 — Decisions | Branching on the same conditions | `if`, `else`, `end` | Shipped — #18 / M7 (§11) |
 | 5 — Mastery | Everything combined, **ladders + `climb`**, memory upgrades as collectibles | `climb` | Later — #19 |
 
+Issue #30 adds optional teaching mazes before the campaign: a title practice maze
+for Chapter 1 basics and one small example each for Chapters 2–4. They use the
+same executor but sit outside the 25-level registry and do not record campaign
+completion. The example routes and entry flow are in
+`briefs/issue-30-chapter-examples.md`.
+
 Re-ordered 2026-09-05 (jonas): sensing was chapter 3 *and* chapter 4 was Mastery in the original map, with `if` bundled into "Decisions" alongside sensors. Split — chapter 3 now introduces the condition/sensor vocabulary inside a loop, chapter 4 reuses that same vocabulary for branching, and Mastery moves to chapter 5. Rationale: a wrong condition in `loop until` fails loudly (robot drives into a wall), so it is the cheaper place to learn the vocabulary that `if` then depends on.
 
 M2 originally introduced counted and sensed loops together. Revision #16 separates them: chapter 2 teaches counting and chapter 3 teaches sensing. The rename and Part B redesign ship together.

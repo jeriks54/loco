@@ -1,8 +1,8 @@
 # Issue #30 follow-up — guided chapter examples
 
 Phone play-testing found the four-step practice tour clear, while the Chapter 2–4
-introduction cards explained too little. Replace those cards with optional guided
-example mazes using the same board, editor, executor and spotlight dialog.
+introduction cards explained too little. Optional guided example mazes replaced
+those cards using the same board, editor, executor and spotlight dialog.
 
 On first selection of a level in Chapters 2–4, open that chapter's example.
 `Skip example` opens the level that was selected. `Replay intro` at the chapter

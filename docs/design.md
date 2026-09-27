@@ -41,6 +41,8 @@ src/
     hud.js           run/reset/speed controls, level result overlay
     screens.js       title / level select / game screen switching
     sheet.js         mobile bottom-sheet gestures and detents
+    tutorial-tour.js guided spotlights for optional practice mazes
+  onboarding.js      title practice and chapter example levels; seen-chapter storage
   persist.js         load/save progress in localStorage
 ```
 
@@ -140,7 +142,10 @@ production deployed on 2026-09-23.
 
 ## 7. Persistence
 
-`localStorage['loco.progress.v1'] = { completed: ['ch1-01', ...] }` — level select shows completion; nothing else stored in MVP.
+`localStorage['loco.progress.v1'] = { completed: ['ch1-01', ...] }` — level
+select shows campaign completion. Optional onboarding separately stores seen
+chapter prefixes in guarded `loco.onboarding.v1`. Practice programs and wins
+are not persisted.
 
 Revision #16 preserves all 15 level IDs and existing completion marks. Programs are
 not persisted, so the block rename requires no migration. The replacement Part B
@@ -163,10 +168,11 @@ earlier entry. Exact grids and solutions live in `level-design.md` §§4 and 11.
 | **M22 slice 1 (#22 / #8, shipped)** | Initial board materials and robot sprite, recorded in `briefs/m22-board-art.md`. Superseded by the complete Workshop redesign below. Issue #8 is closed. |
 | **M22 Workshop (#22, shipped)** | Unified board, robot, sensor feedback, background and controls. PR #28 merged and production deployed 2026-09-23; issue #22 is closed. Contract and review: `briefs/m22-workshop-implementation.md`. |
 | **Title teaser (#37, shipped)** | Cropped Workshop board, one-command reveal and arrow-free Start Game. PR #41 merged 2026-09-25; issue #37 is closed. Contract and review: `briefs/issue-37-title-screen-plan.md`. |
+| **Onboarding (#30)** | Title practice maze and guided Chapter 2–4 example mazes, outside the campaign registry. Contracts: `briefs/issue-30-tutorial-plan.md` and `briefs/issue-30-chapter-examples.md`. |
 
-Latest feature merge: PR #41 (`fee2bda`). Chapter-3 sensing, Chapter 4
-branching, Workshop graphics and the title teaser are shipped. Memory upgrades and explicit
-ladder `climb` remain future work.
+The 25 campaign levels, Workshop graphics and title teaser are shipped. Issue #30
+adds optional onboarding without changing the chapter-based `v0.4` version.
+Memory upgrades and explicit ladder `climb` remain future work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
 
@@ -434,5 +440,5 @@ prefixes; completed levels imply a chapter was already seen for returning
 players. No level is gated. The revised contract is in
 `briefs/issue-30-chapter-examples.md`.
 Palette chips support Enter/Space as well as pointer tap/drag, and filled program
-lines support Delete/Backspace. See `briefs/issue-30-tutorial-plan.md` for exact
-copy, flow and acceptance checks.
+lines support Delete/Backspace. See both issue-30 briefs for guide copy, flow
+and acceptance checks.

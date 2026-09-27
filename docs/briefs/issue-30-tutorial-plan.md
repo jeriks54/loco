@@ -57,40 +57,26 @@ position follows viewport and sheet changes without an entrance animation.
   entrance.”
 - On success: “You reached EXIT. Ready for Chapter 1?”
 
-## Chapter cards
+## Chapter examples
 
-The original card design below was replaced after phone play-testing with three
-guided example mazes. See [issue-30-chapter-examples.md](issue-30-chapter-examples.md)
-for the current flow, maps, copy structure and acceptance checks.
-
-The first selection of any level in Chapters 2–4 opens a short, skippable card
-before that selected level. Continue and Skip both open the selected level; Skip
-merely omits reading the card. The card appears once per chapter. A Replay intro
-button beside each chapter header opens the same card and closes back to level
-select. Chapter 1 has no card. No chapter or level is gated.
-
-- **Chapter 2 — Loops:** “A loop repeats the commands between `loop` and `end`.
-  Set its count to travel farther while using fewer memory lines.”
-- **Chapter 3 — Sensing:** “The front wall sensor checks the next tile. Build
-  `loop until [wall sensor] = [blocked]` to keep going until it sees a wall. It does
-  not stop the robot for you, and holes are not walls.”
-- **Chapter 4 — Decisions:** “`if` runs commands when its condition is true.
-  `else` runs the other path. Fill both condition slots, then close the choice
-  with `end`.”
-
-Cards use a labelled modal dialog with focus trapped while open, Escape/Skip,
-and focus returned to the trigger. Reduced motion removes entrance transitions.
+The initial card design was replaced after phone play-testing. The first
+selection of a level in Chapters 2–4 now opens a separate guided example maze.
+Each guide spotlights the map, concept controls, memory and Run/Reset before
+free practice. Skip example opens the selected level; Replay intro at each
+chapter header opens the example again. Examples are optional and do not gate
+campaign access. See [issue-30-chapter-examples.md](issue-30-chapter-examples.md)
+for the maps, routes and detailed flow.
 
 ## Data and integration
 
-- Keep tutorial level data outside `src/levels/index.js`. Use an explicit
-  tutorial/campaign mode in `src/main.js` so Run, Reset and Retry share the
-  current machinery but tutorial goals cannot call `markCompleted` or campaign
-  Next-level logic.
+- Keep all practice level data outside `src/levels/index.js`. Use explicit
+  tutorial/example/campaign modes in `src/main.js` so Run, Reset and Retry share
+  the current machinery but practice goals cannot call `markCompleted` or
+  campaign Next-level logic.
 - `localStorage['loco.onboarding.v1']` holds only seen chapter prefixes. Read
   and write defensively. Existing completion of any level in a chapter counts
-  as already seen; `loco.progress.v1` remains unchanged. Skipping a first card
-  counts as seen so it does not interrupt again.
+  as already seen; `loco.progress.v1` remains unchanged. Skipping a first
+  example counts as seen so it does not interrupt again.
 - Make palette chips keyboard reachable. Enter/Space uses the same append or
   operand-placement path as pointer tap. Filled lines can be removed with
   Delete/Backspace; preserve focus near the edited line. Existing steppers and
