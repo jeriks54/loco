@@ -48,6 +48,9 @@ src/
 
 **Data flow:** `editor` produces a program (simple-command strings, counted-loop objects, and typed condition objects) → `executor` walks it against `state`, emitting events (`step`, `moved`, `turned`, `crashed`, `fell`, `finished`, `goal`, `syntax`, `runaway`) → `scene` animates movement events → `editor` highlights the current block on `step` events (the program pointer) → `hud` reacts to terminal events.
 
+Issue #36 adds `loopProgress` snapshots for the editor's runtime counters; these
+events do not affect scene animation, program values or persistence.
+
 ## 3. Level format
 
 Levels are plain JS objects (modules, not JSON, so they can be validated on import):
@@ -107,6 +110,11 @@ as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
   and `else` positions. The 200-executed-line guard emits terminal `runaway`.
 - The executor is a tick machine: one block per tick; a timer drives ticks so animation can pace them (speed control changes the tick interval).
 - Each tick first emits `step` with the index of the executing block — the editor uses it to highlight the current block (program pointer).
+- A counted-loop header then emits `loopProgress`, a detached array of active
+  counted frames `{ index, remaining, total }`. Remaining includes the current
+  iteration. Nested loops update independently; exiting a loop removes its
+  frame from the snapshot. Halting clears active counted progress before the
+  terminal event. Sensor-driven loops have no countdown.
 - Crash rule: `move` into a wall or out of bounds → emit `crashed`, halt.
 - M5 hole rule: enter `H`, emit `moved`, then terminal `fell` in the same tick.
   Every Run restores the stable start pose and resets the scene before execution.
@@ -119,6 +127,13 @@ as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
 - Program area renders the program as **numbered mono lines**, one per memory slot ("program-as-lines", shipped with M2 / issue #9); loop and conditional bodies indent per nesting depth, `else` is aligned with its matching `if`, and `loop` lines carry ± steppers for the count (no typing). Drops insert a line at position; over-capacity drops reject.
 - Implemented with Pointer Events for mouse and touch rather than the HTML5 DnD API — more controllable styling and animation.
 - Click a placed line to remove it. "Clear" button empties the program.
+- During a run, active counted loops show a separate `n left` badge alongside
+  the authored count (#36). Badges wrap on narrow screens and disappear on
+  stop/reset, completion/failure, or leaving play. They have explanatory
+  accessible labels but no live announcements or animation; the current-line
+  highlight remains the execution pointer. Loop steppers are disabled while
+  running and return to their authored-count bounds afterward. See
+  `briefs/issue-36-loop-progress.md`.
 - Layout shell: board (canvas) and editor are self-contained panels — desktop shows the board left, editor right; the shipped mobile mode uses a floating bottom sheet at widths up to 900px (see §8.1). On touch, drag is complemented by tap-to-add (a pointerup under the 5px drag threshold appends the block).
 
 ## 6. Rendering
@@ -168,10 +183,11 @@ earlier entry. Exact grids and solutions live in `level-design.md` §§4 and 11.
 | **M22 slice 1 (#22 / #8, shipped)** | Initial board materials and robot sprite, recorded in `briefs/m22-board-art.md`. Superseded by the complete Workshop redesign below. Issue #8 is closed. |
 | **M22 Workshop (#22, shipped)** | Unified board, robot, sensor feedback, background and controls. PR #28 merged and production deployed 2026-09-23; issue #22 is closed. Contract and review: `briefs/m22-workshop-implementation.md`. |
 | **Title teaser (#37, shipped)** | Cropped Workshop board, one-command reveal and arrow-free Start Game. PR #41 merged 2026-09-25; issue #37 is closed. Contract and review: `briefs/issue-37-title-screen-plan.md`. |
-| **Onboarding (#30)** | Title practice maze and guided Chapter 2–4 example mazes, outside the campaign registry. Contracts: `briefs/issue-30-tutorial-plan.md` and `briefs/issue-30-chapter-examples.md`. |
+| **Onboarding (#30, shipped)** | Title practice maze and guided Chapter 2–4 example mazes, outside the campaign registry. PR #42 merged 2026-09-27; issue #30 is closed. Contracts: `briefs/issue-30-tutorial-plan.md` and `briefs/issue-30-chapter-examples.md`. |
+| **Live loop progress (#36, PR #43)** | Independent `n left` badges for active counted loops, separate from authored counts, with terminal/reset cleanup and accessible labels. Preview accepted 2026-10-01; release record: `briefs/issue-36-loop-progress.md`. |
 
-The 25 campaign levels, Workshop graphics and title teaser are shipped. Issue #30
-adds optional onboarding without changing the chapter-based `v0.4` version.
+The 25 campaign levels, Workshop graphics, title teaser and optional onboarding
+are shipped. Live loop progress preserves the chapter-based `v0.4` version.
 Memory upgrades and explicit ladder `climb` remain future work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)

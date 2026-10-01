@@ -9,10 +9,11 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-09-27
+## State as of 2026-10-01
 
-The last feature merge before onboarding was PR #41 (`fee2bda`). Issue #30 adds
-guided practice on the title and at Chapters 2–4. The product version remains
+The guided tutorial and Chapter 2–4 examples shipped in PR #42 (`f3a5211`).
+Issue #36 adds live counted-loop progress after Jonas accepted its preview on
+2026-10-01. The product version remains
 `v0.4`; the 25 campaign levels and their IDs are unchanged. Features:
 
 - **Chapter 1 — Sequence**, 7 levels (`ch1-01..07`), move / turn left / turn right.
@@ -24,6 +25,7 @@ guided practice on the title and at Chapters 2–4. The product version remains
 - **M22 Workshop graphics** (PR #28, merged and deployed 2026-09-23) — overhead brass robot, visible front sensor, one-tile sensor marker and reading, walnut board, ivory panels and forest-green controls. The same visual language carries through welcome, level selection and play. Issues #8 and #22 are closed.
 - **Workshop title teaser** (PR #41, merged 2026-09-25) — a cropped Chapter 1 board, one-command slip and one legal move invite players into the game without revealing the full maze or solution. Start Game has no arrow. Issue #37 is closed; see `docs/briefs/issue-37-title-screen-plan.md`.
 - **Optional onboarding** (#30) — Tutorial opens a four-step spotlight guide to a separate practice maze. Chapters 2–4 each open a guided example maze once on first entry; Skip reaches the selected level and Replay intro is always available. Practice does not change campaign progress. See `docs/design.md` §14 and the issue-30 briefs.
+- **Live loop progress** (#36, PR #43) — Active counted loops show separate `n left` badges, including the current iteration, alongside their authored counts. Nested loops update independently; stop/reset/results clear the badges. Sensed loops have no countdown. Labels are inspectable without live announcements. See `docs/briefs/issue-36-loop-progress.md`.
 
 25 merged levels across four chapters; Chapter 4 appends five levels
 (`ch4-01..05`) without changing the existing IDs.
@@ -70,7 +72,7 @@ with no test framework or dependencies.
 
 ## What's next
 
-Roadmap follow-ups as of 2026-09-27:
+Roadmap follow-ups as of 2026-10-01:
 
 | # | What | Note |
 |---|---|---|
@@ -80,13 +82,14 @@ Roadmap follow-ups as of 2026-09-27:
 | **#33** | Android and iOS distribution | Assess app options |
 | **#34** | Head-to-head multiplayer | Race to solve a level |
 | **#35** | Faster run speeds | Up to 8× |
-| **#36** | Loop iteration progress | Show progress while running |
 | **#38** | Larger maps on small screens | Board navigation |
 | **#39** | Future curriculum | Rank programming concepts by game fit |
 | **#40** | First-time player research | Validate the guided tutorial and early Chapter 1 levels with new players; phone feedback has already led to step-by-step spotlights and chapter examples |
 
-Issue **#30** implements the basic tutorial and chapter examples; this merge
-closes its implementation work. First-time-player observation remains in #40.
+Issue **#30** shipped in PR #42 and is closed. First-time-player observation
+remains in #40. Issue **#36** passed retained executor, browser, accessibility,
+mobile-layout and contrast checks. Jonas accepted the preview and authorized
+PR #43, merge and push on 2026-10-01; see its brief for the release record.
 Previously shipped and closed: **#17** (Chapter 3 — front wall sensor + constructed loop
 condition, two operand slots, five levels, no hole sensor) in PR #24; **#18**
 (Chapter 4 — conditional branching, five levels, structural validation and

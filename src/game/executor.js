@@ -23,6 +23,8 @@
               fires for EVERY executed line, including control
               lines (loop / end) and
               revisits on each loop iteration
+     loopProgress [{ index, remaining, total }] active counted loops;
+              remaining includes the current iteration; [] clears progress
      moved    { from:{x,y}, to:{x,y}, dir }
      turned   newDir ('N'|'E'|'S'|'W')
      crashed  { at:{x,y}, dir }   robot tile at impact
@@ -152,12 +154,23 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
 
   const intervalMs = () => baseTickMs / speed;
 
+  function publishLoopProgress() {
+    emit('loopProgress', frames.filter(frame => frame.kind === 'loop').map(frame => ({
+      index: frame.head,
+      remaining: frame.remaining,
+      total: lines[frame.head].count,
+    })));
+  }
+
   function halt() {
     running = false;
     if (timer !== null) {
       clearTimeout(timer);
       timer = null;
     }
+    const hadCountedLoops = frames.some(frame => frame.kind === 'loop');
+    frames = [];
+    if (hadCountedLoops) publishLoopProgress();
   }
 
   function restorePose() {
@@ -285,6 +298,9 @@ export function createExecutor({ state, program, onEvent, baseTickMs = BASE_TICK
       }
     }
 
+    // Only counted-loop transitions change the displayed counters. Snapshots
+    // include outer frames while a nested loop is executing.
+    if (line.kind === 'loop') publishLoopProgress();
     timer = setTimeout(tick, intervalMs());
   }
 

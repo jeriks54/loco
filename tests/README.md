@@ -6,6 +6,15 @@ Run from the repo root with Node.js 22 or newer:
 node tests/verify.mjs
 ```
 
+Issue #36 includes `tests/loop-progress.mjs` in the retained check. It verifies
+independent nested counters, sensed/conditional scope, count bounds, all terminal
+cleanup, stop/reset/rerun, speed changes and detached snapshots. With the
+Playwright setting below, run `node tests/loop-progress-browser.mjs` for actual
+application wiring, authored-count preservation, locked steppers, reset/retry,
+early goal/crash/fall, and 280/320/1280px layout with normal/reduced motion. It
+advances executor timers explicitly and saves active-counter screenshots under
+`tests/tmp/`; animation feel still needs human play-testing.
+
 Issue #30 adds `tests/onboarding.mjs` to this retained check. It proves the
 practice maze and three chapter examples are outside the campaign registry,
 have winning routes under the real executor, and the first maze produces

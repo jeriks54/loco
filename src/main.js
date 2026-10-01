@@ -265,6 +265,10 @@ function renderLevels() {
 }
 
 function handleEvent(type, payload) {
+  if (type === 'loopProgress') {
+    editor.setLoopProgress(payload);
+    return;
+  }
   if (type === 'step') {
     editor.highlight(payload);
     return;
