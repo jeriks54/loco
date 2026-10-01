@@ -184,7 +184,7 @@ earlier entry. Exact grids and solutions live in `level-design.md` §§4 and 11.
 | **M22 Workshop (#22, shipped)** | Unified board, robot, sensor feedback, background and controls. PR #28 merged and production deployed 2026-09-23; issue #22 is closed. Contract and review: `briefs/m22-workshop-implementation.md`. |
 | **Title teaser (#37, shipped)** | Cropped Workshop board, one-command reveal and arrow-free Start Game. PR #41 merged 2026-09-25; issue #37 is closed. Contract and review: `briefs/issue-37-title-screen-plan.md`. |
 | **Onboarding (#30, shipped)** | Title practice maze and guided Chapter 2–4 example mazes, outside the campaign registry. PR #42 merged 2026-09-27; issue #30 is closed. Contracts: `briefs/issue-30-tutorial-plan.md` and `briefs/issue-30-chapter-examples.md`. |
-| **Live loop progress (#36)** | Independent `n left` badges for active counted loops, separate from authored counts, with terminal/reset cleanup and accessible labels. Preview accepted 2026-10-01; release record: `briefs/issue-36-loop-progress.md`. |
+| **Live loop progress (#36, PR #43)** | Independent `n left` badges for active counted loops, separate from authored counts, with terminal/reset cleanup and accessible labels. Preview accepted 2026-10-01; release record: `briefs/issue-36-loop-progress.md`. |
 
 The 25 campaign levels, Workshop graphics, title teaser and optional onboarding
 are shipped. Live loop progress preserves the chapter-based `v0.4` version.

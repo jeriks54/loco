@@ -25,7 +25,7 @@ Issue #36 adds live counted-loop progress after Jonas accepted its preview on
 - **M22 Workshop graphics** (PR #28, merged and deployed 2026-09-23) — overhead brass robot, visible front sensor, one-tile sensor marker and reading, walnut board, ivory panels and forest-green controls. The same visual language carries through welcome, level selection and play. Issues #8 and #22 are closed.
 - **Workshop title teaser** (PR #41, merged 2026-09-25) — a cropped Chapter 1 board, one-command slip and one legal move invite players into the game without revealing the full maze or solution. Start Game has no arrow. Issue #37 is closed; see `docs/briefs/issue-37-title-screen-plan.md`.
 - **Optional onboarding** (#30) — Tutorial opens a four-step spotlight guide to a separate practice maze. Chapters 2–4 each open a guided example maze once on first entry; Skip reaches the selected level and Replay intro is always available. Practice does not change campaign progress. See `docs/design.md` §14 and the issue-30 briefs.
-- **Live loop progress** (#36) — Active counted loops show separate `n left` badges, including the current iteration, alongside their authored counts. Nested loops update independently; stop/reset/results clear the badges. Sensed loops have no countdown. Labels are inspectable without live announcements. See `docs/briefs/issue-36-loop-progress.md`.
+- **Live loop progress** (#36, PR #43) — Active counted loops show separate `n left` badges, including the current iteration, alongside their authored counts. Nested loops update independently; stop/reset/results clear the badges. Sensed loops have no countdown. Labels are inspectable without live announcements. See `docs/briefs/issue-36-loop-progress.md`.
 
 25 merged levels across four chapters; Chapter 4 appends five levels
 (`ch4-01..05`) without changing the existing IDs.
@@ -89,7 +89,7 @@ Roadmap follow-ups as of 2026-10-01:
 Issue **#30** shipped in PR #42 and is closed. First-time-player observation
 remains in #40. Issue **#36** passed retained executor, browser, accessibility,
 mobile-layout and contrast checks. Jonas accepted the preview and authorized
-the PR, merge and push on 2026-10-01; see its brief for the release record.
+PR #43, merge and push on 2026-10-01; see its brief for the release record.
 Previously shipped and closed: **#17** (Chapter 3 — front wall sensor + constructed loop
 condition, two operand slots, five levels, no hole sensor) in PR #24; **#18**
 (Chapter 4 — conditional branching, five levels, structural validation and

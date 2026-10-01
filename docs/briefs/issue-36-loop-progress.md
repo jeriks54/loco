@@ -2,6 +2,7 @@
 
 Issue: https://github.com/jeriks54/loco/issues/36  
 Branch: `codex/issue-36-loop-progress`
+Release PR: https://github.com/jeriks54/loco/pull/43
 
 Jonas requested implementation on 2026-10-01 after the proposed separate
 runtime indicator. Keep the authored `loop n` count visible and unchanged.
@@ -51,4 +52,4 @@ Verified locally on 2026-10-01: `node tests/verify.mjs`,
 280px were inspected. Browser checks use an existing Playwright/Chrome runtime
 and offline fallback fonts. Jonas accepted the playable preview on 2026-10-01
 and explicitly authorized creating a PR to `main`, merging it, pushing, and
-updating documentation and issues. Release is tracked by the PR linked below.
+updating documentation and issues. Release is tracked by PR #43 linked above.
