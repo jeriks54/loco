@@ -112,7 +112,8 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       `<span class="loop-count">${entry.count}</span>` +
       `<button type="button" class="step-btn" data-step="1" aria-label="increase loop count"` +
       `${entry.count >= LOOP_MAX ? ' disabled' : ''}>+</button>` +
-      `</span>`
+      `</span>` +
+      `<span class="loop-progress" role="note" hidden></span>`
     );
   }
 
@@ -130,9 +131,11 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
         line.setAttribute('aria-label', `Line ${i + 1}: ${BLOCK_DEFS[entryId(program[i])].label}. Press Delete to remove.`);
         line.setAttribute('aria-keyshortcuts', 'Delete Backspace');
         line.style.setProperty('--indent', String(depths[i]));
+        const codeClass = isConditionEntry(program[i]) ? ' condition-code'
+          : entryId(program[i]) === 'loop' ? ' loop-code' : '';
         line.innerHTML =
           `<span class="line-no">${pad2(i + 1)}</span>` +
-          `<span class="line-code${isConditionEntry(program[i]) ? ' condition-code' : ''}">${codeHTML(program[i], i)}</span>`;
+          `<span class="line-code${codeClass}">${codeHTML(program[i], i)}</span>`;
       } else {
         line.className = 'line empty';
         line.style.setProperty('--indent', String(trailing));
@@ -506,6 +509,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
         clearSelection();
       }
       running = flag;
+      this.setLoopProgress([]);
       paletteEl.classList.toggle('locked', flag);
       programEl.classList.toggle('locked', flag);
       for (const chip of paletteEl.querySelectorAll('.block-chip')) {
@@ -513,6 +517,31 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
         chip.setAttribute('aria-disabled', String(flag));
       }
       for (const line of programEl.querySelectorAll('.line.filled')) line.tabIndex = flag ? -1 : 0;
+      for (const button of programEl.querySelectorAll('.step-btn')) {
+        const entry = program[Number(button.closest('.line').dataset.index)];
+        button.disabled = flag || (Number(button.dataset.step) < 0
+          ? entry.count <= LOOP_MIN : entry.count >= LOOP_MAX);
+      }
+    },
+
+    /** Runtime-only counters; never rebuild lines or modify authored counts. */
+    setLoopProgress(progress) {
+      const active = new Map(progress.map(frame => [frame.index, frame]));
+      lineEls.forEach((line, index) => {
+        const badge = line.querySelector('.loop-progress');
+        if (!badge) return;
+        const frame = active.get(index);
+        badge.hidden = !frame;
+        badge.textContent = frame ? `${frame.remaining} left` : '';
+        if (frame) {
+          const description = `${frame.remaining} of ${frame.total} iterations left, including the current iteration`;
+          badge.setAttribute('aria-label', description);
+          badge.title = description;
+        } else {
+          badge.removeAttribute('aria-label');
+          badge.removeAttribute('title');
+        }
+      });
     },
 
     /** Program pointer: highlight the executing line. */

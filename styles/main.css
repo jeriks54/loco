@@ -1405,6 +1405,25 @@ button {
 }
 
 /* loop-count steppers on the loop line (+/−, no typing) */
+.loop-code {
+  flex-wrap: wrap;
+}
+
+.loop-code > .line-token,
+.loop-code > .stepper {
+  flex: none;
+}
+
+.loop-progress {
+  padding: 0.05rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
 .stepper {
   display: inline-flex;
   align-items: center;

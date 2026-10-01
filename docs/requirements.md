@@ -110,6 +110,7 @@ In:
 - Workshop graphics: overhead brass robot with paired tracks, walnut walls and light floor, recessed holes, persistent start/exit markers, coordinated ivory/forest-green controls, visible sensor equipment, adjacent-tile marker and explicit readings
 - Title teaser: cropped Chapter 1 board and robot, one-command reveal, arrow-free Start Game button
 - Optional title tutorial and Chapter 2–4 example mazes with step-by-step spotlights, skip/replay, keyboard controls and guarded seen-chapter storage
+- Separate live remaining-iteration badges for active counted loops, including nested loops; authored counts stay visible and badges clear on stop/reset/results (#36)
 
 M5 shipped tile types and holes; M6 shipped conditional loops and one front wall sensor; Chapter 4 adds front-wall `if`/`else` branching. M22 unified the board and interface while retaining the same sensor rules.
 Out: hole/distance/terrain sensors, selectable mounting, rewards/shop,
@@ -127,7 +128,8 @@ and ladders. Issues #22 and #37 are closed after their visual updates shipped.
 7. **Workshop graphics shipped — #22 / #8:** The selected warm Workshop design shipped in PR #28 and production deployed on 2026-09-23. It clarifies the overhead robot, equipment and sensor reading, and unifies the board, background and controls. Issues #8 and #22 are closed. Design and implementation record: `briefs/m22-workshop-implementation.md`.
 8. **Sensor equipment and rewards — future intent, 2026-09-08:** allow players to select sensor mounting locations and acquire wall, hole, distance and terrain sensors. Decide later between buying with rewards earned from levels and automatic chapter rewards. No economy or inventory implementation in M6.
 9. **Title teaser shipped — #37, PR #41:** The welcome screen hints at the Workshop through a cropped real board, one command and one legal move. Start Game has no arrow. Issue #37 is closed; see `briefs/issue-37-title-screen-plan.md`.
-10. **Onboarding — #30:** A guided title practice maze teaches map, commands, memory and Run/Reset. Separate guided examples teach Chapter 2 loops, Chapter 3 sensing and Chapter 4 decisions when first selected. The examples are optional, replayable and isolated from campaign progress. See the issue-30 briefs. First-time-player observation remains in #40.
+10. **Onboarding shipped — #30, PR #42:** A guided title practice maze teaches map, commands, memory and Run/Reset. Separate guided examples teach Chapter 2 loops, Chapter 3 sensing and Chapter 4 decisions when first selected. The examples are optional, replayable and isolated from campaign progress. See the issue-30 briefs. First-time-player observation remains in #40.
+11. **Live counted-loop progress — #36:** Active counted-loop lines show separate `n left` badges while preserving the authored count. Remaining includes the current iteration; nested loops update independently and sensed loops have no countdown. Badges clear on stop, reset and all results without live announcements. Jonas accepted the preview on 2026-10-01; release and checks are recorded in `briefs/issue-36-loop-progress.md`.
 
 ## 6. Non-functional requirements
 
