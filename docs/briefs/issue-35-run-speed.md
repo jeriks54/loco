@@ -1,7 +1,11 @@
 # Issue #35 — Faster run speeds
 
-Issue: https://github.com/jeriks54/loco/issues/35  
-Branch: `codex/issue-35-run-speed`  
+Issue: https://github.com/jeriks54/loco/issues/35
+
+Branch: `codex/issue-35-run-speed`
+
+Release PR: https://github.com/jeriks54/loco/pull/44
+
 Status: Jonas accepted the playable preview and authorized PR creation, merge,
 documentation updates and issue closure on 2026-10-07.
 
@@ -147,6 +151,6 @@ Jonas requested implementation after reviewing this brief on 2026-10-07. The
 accepted contract uses the five discrete stops, 75%-of-tick animation cap,
 settlement on speed changes, existing terminal-effect durations and session-only
 selection. After playing the local preview, Jonas accepted the implementation
-and explicitly authorized creating and merging the PR, updating documentation
-and closing #35 on the same date. Merging `main` triggers the normal Vercel
-production deployment.
+and explicitly authorized creating and merging PR #44, updating documentation
+and closing #35 on the same date. Release is tracked by the PR linked above;
+merging `main` triggers the normal Vercel production deployment.

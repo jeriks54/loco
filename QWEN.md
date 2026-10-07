@@ -26,6 +26,7 @@ Issue #36 adds live counted-loop progress after Jonas accepted its preview on
 - **Workshop title teaser** (PR #41, merged 2026-09-25) — a cropped Chapter 1 board, one-command slip and one legal move invite players into the game without revealing the full maze or solution. Start Game has no arrow. Issue #37 is closed; see `docs/briefs/issue-37-title-screen-plan.md`.
 - **Optional onboarding** (#30) — Tutorial opens a four-step spotlight guide to a separate practice maze. Chapters 2–4 each open a guided example maze once on first entry; Skip reaches the selected level and Replay intro is always available. Practice does not change campaign progress. See `docs/design.md` §14 and the issue-30 briefs.
 - **Live loop progress** (#36, PR #43) — Active counted loops show separate `n left` badges, including the current iteration, alongside their authored counts. Nested loops update independently; stop/reset/results clear the badges. Sensed loops have no countdown. Labels are inspectable without live announcements. See `docs/briefs/issue-36-loop-progress.md`.
+- **Faster run speeds** (#35, PR #44) — A native slider offers 0.5×, 1×, 2×, 4× and 8× with visible/accessibly named multipliers. High-speed move/turn animations finish within 75% of a tick, bounded by the old duration maxima. Live changes settle the committed pose while preserving execution state. Selection lasts for the session; terminal effects and reduced motion retain their rules. Jonas accepted the preview and authorized release on 2026-10-07. See `docs/briefs/issue-35-run-speed.md`.
 
 25 merged levels across four chapters; Chapter 4 appends five levels
 (`ch4-01..05`) without changing the existing IDs.
@@ -72,16 +73,7 @@ with no test framework or dependencies.
 
 ## What's next
 
-**#35 approved for release on 2026-10-07:** Jonas approved implementation of the
-brief in `docs/briefs/issue-35-run-speed.md`. Branch `codex/issue-35-run-speed`
-replaces speed buttons with a native slider at 0.5×, 1×, 2×, 4× and 8×. Movement
-and turn animations finish within 75% of each tick, with the old duration maxima.
-Live changes settle the committed pose and preserve execution state. Selection
-lasts for the session; terminal effects and reduced motion retain their rules.
-Jonas accepted the playable preview and authorized the PR, merge, documentation
-updates and issue closure on the same date. Release is being prepared.
-
-Roadmap follow-ups as of 2026-10-01:
+Roadmap follow-ups as of 2026-10-07:
 
 | # | What | Note |
 |---|---|---|
@@ -90,11 +82,13 @@ Roadmap follow-ups as of 2026-10-01:
 | **#32** | Sensor loadouts and progression | Equipment and unlocks |
 | **#33** | Android and iOS distribution | Assess app options |
 | **#34** | Head-to-head multiplayer | Race to solve a level |
-| **#35** | Faster run speeds | Up to 8× |
 | **#38** | Larger maps on small screens | Board navigation |
 | **#39** | Future curriculum | Rank programming concepts by game fit |
 | **#40** | First-time player research | Validate the guided tutorial and early Chapter 1 levels with new players; phone feedback has already led to step-by-step spotlights and chapter examples |
 
+Issue **#35** is tracked by release PR #44 after Jonas accepted the preview and
+authorized merge and issue closure on 2026-10-07. Verification and release
+approval are recorded in its brief.
 Issue **#30** shipped in PR #42 and is closed. First-time-player observation
 remains in #40. Issue **#36** passed retained executor, browser, accessibility,
 mobile-layout and contrast checks. Jonas accepted the preview and authorized
