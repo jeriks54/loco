@@ -6,8 +6,8 @@ Branch: `codex/issue-35-run-speed`
 
 Release PR: https://github.com/jeriks54/loco/pull/44
 
-Status: Jonas accepted the playable preview and authorized PR creation, merge,
-documentation updates and issue closure on 2026-10-07.
+Status: merged in PR #44 on 2026-10-07; issue #35 closed.
+Merge commit: `293a78bbbc5d9957ef09120572bf5930b0e7928b`.
 
 ## Player behavior
 
@@ -152,5 +152,6 @@ accepted contract uses the five discrete stops, 75%-of-tick animation cap,
 settlement on speed changes, existing terminal-effect durations and session-only
 selection. After playing the local preview, Jonas accepted the implementation
 and explicitly authorized creating and merging PR #44, updating documentation
-and closing #35 on the same date. Release is tracked by the PR linked above;
-merging `main` triggers the normal Vercel production deployment.
+and closing #35 on the same date. PR #44 merged to `main` after its Vercel
+checks passed, and GitHub closed #35 automatically. The merge triggers the
+normal Vercel production deployment.

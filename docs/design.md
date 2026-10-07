@@ -109,7 +109,7 @@ as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
 - Structure is validated before movement; the analyzer returns matching `end`
   and `else` positions. The 200-executed-line guard emits terminal `runaway`.
 - The executor is a tick machine: one block per tick; a timer drives ticks so animation can pace them (speed control changes the tick interval).
-- Issue #35: the native Run speed slider maps five
+- Issue #35 (shipped in PR #44): the native Run speed slider maps five
   positions to 0.5×, 1×, 2×, 4× and 8×; interval is `600ms / speed` and the first
   line runs immediately. Changing speed replaces the pending timeout with one
   full new interval without advancing the program. The scene caps move/turn

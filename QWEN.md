@@ -86,9 +86,9 @@ Roadmap follow-ups as of 2026-10-07:
 | **#39** | Future curriculum | Rank programming concepts by game fit |
 | **#40** | First-time player research | Validate the guided tutorial and early Chapter 1 levels with new players; phone feedback has already led to step-by-step spotlights and chapter examples |
 
-Issue **#35** is tracked by release PR #44 after Jonas accepted the preview and
-authorized merge and issue closure on 2026-10-07. Verification and release
-approval are recorded in its brief.
+Issue **#35** shipped in PR #44 and is closed. Jonas accepted the preview and
+authorized release on 2026-10-07. The PR's Vercel preview checks passed before
+merge `293a78b`. Verification and release approval are recorded in its brief.
 Issue **#30** shipped in PR #42 and is closed. First-time-player observation
 remains in #40. Issue **#36** passed retained executor, browser, accessibility,
 mobile-layout and contrast checks. Jonas accepted the preview and authorized
