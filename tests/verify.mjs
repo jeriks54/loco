@@ -15,6 +15,7 @@ import './spiral-proof.mjs';
 import './decisions.mjs';
 import './onboarding.mjs';
 import './loop-progress.mjs';
+import './speed.mjs';
 
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 const chapter1 = levels.filter(l => l.id.startsWith('ch1-'));

@@ -108,7 +108,7 @@ try {
     await desktop.keyboard.press('Space');
   }
   async function winExample(expectedLevel) {
-    await desktop.locator('#speed [data-speed="2"]').click();
+    await desktop.locator('#speed-slider').fill('2');
     await desktop.locator('#btn-run').click();
     await desktop.locator('#result-overlay').waitFor({ state: 'visible' });
     assert.match(await desktop.locator('#result-text').textContent(), /EXAMPLE COMPLETE/);
@@ -131,7 +131,7 @@ try {
   await spotlightCovers(desktop, '.panel-section.controls');
   await desktop.locator('#btn-tour-next').click();
   for (const id of ['loop', 'move', 'end']) await keyAdd(id);
-  await desktop.locator('#speed [data-speed="2"]').click();
+  await desktop.locator('#speed-slider').fill('2');
   await desktop.locator('#btn-run').click();
   await desktop.locator('#result-overlay').waitFor({ state: 'visible' });
   assert.match(await desktop.locator('#result-text').textContent(), /FELL SHORT/);

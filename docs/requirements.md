@@ -46,6 +46,10 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 
 - The program runs step by step with visible robot animation.
 - Run controls: **run**, **stop/reset**, and speed control (no step-through in MVP).
+- Issue #35: a native Run speed slider offers 0.5×, 1×,
+  2×, 4× and 8× before/during execution, with visible and accessible multiplier.
+  Movement/turn durations shorten at high speed; the same program trace and
+  outcome apply at every stop. Speed is a session preference, not a rating factor.
 - While running, a **program pointer** highlights the block currently executing so the player always sees where in the program the robot is.
 
 ### 3.5 Fail states
@@ -130,6 +134,7 @@ and ladders. Issues #22 and #37 are closed after their visual updates shipped.
 9. **Title teaser shipped — #37, PR #41:** The welcome screen hints at the Workshop through a cropped real board, one command and one legal move. Start Game has no arrow. Issue #37 is closed; see `briefs/issue-37-title-screen-plan.md`.
 10. **Onboarding shipped — #30, PR #42:** A guided title practice maze teaches map, commands, memory and Run/Reset. Separate guided examples teach Chapter 2 loops, Chapter 3 sensing and Chapter 4 decisions when first selected. The examples are optional, replayable and isolated from campaign progress. See the issue-30 briefs. First-time-player observation remains in #40.
 11. **Live counted-loop progress — #36, PR #43:** Active counted-loop lines show separate `n left` badges while preserving the authored count. Remaining includes the current iteration; nested loops update independently and sensed loops have no countdown. Badges clear on stop, reset and all results without live announcements. Jonas accepted the preview on 2026-10-01; release and checks are recorded in `briefs/issue-36-loop-progress.md`.
+12. **Faster run speeds — #35, PR #44:** Native Run speed slider at 0.5×, 1×, 2×, 4× and 8×, with speed-aware move/turn animations and live changes that preserve execution state. Selection lasts for the session. Jonas accepted the playable preview and authorized release on 2026-10-07; verification and approval are recorded in `briefs/issue-35-run-speed.md`.
 
 ## 6. Non-functional requirements
 

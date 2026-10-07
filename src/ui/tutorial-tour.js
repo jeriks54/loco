@@ -27,7 +27,7 @@ const TUTORIAL_STEPS = [
   },
   {
     title: 'Run and try again',
-    copy: 'Run starts the program at the entrance. The current line lights up while the robot moves. Reset stops it and returns it to the start, keeping your commands. The speed buttons only change how quickly you watch.',
+    copy: 'Run starts the program at the entrance. The current line lights up while the robot moves. Reset stops it and returns it to the start, keeping your commands. The speed slider changes how quickly you watch.',
     mobileCopy: 'Run starts at the entrance. The current line lights up. Reset returns the robot to start without erasing commands. Open the panel to change speed.',
     target: '.panel-section.controls',
     mobileTarget: '#sheet-peek',

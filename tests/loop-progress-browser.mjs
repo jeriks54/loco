@@ -33,7 +33,7 @@ try {
       const pending = new Map();
       let id = -1;
       window.setTimeout = (fn, delay, ...args) => {
-        if ([300, 600, 1200].includes(delay)) {
+        if ([75, 150, 300, 600, 1200].includes(delay)) {
           const key = id--;
           pending.set(key, () => fn(...args));
           return key;
@@ -130,7 +130,7 @@ try {
     assert.deepEqual(await visibleProgress(), ['1 left']);
     await page.evaluate(() => window.__loopClock.next());
     assert.deepEqual(await visibleProgress(), ['1 left', '3 left']);
-    await page.locator('#speed [data-speed="2"]').click();
+    await page.locator('#speed-slider').fill('2');
     assert.deepEqual(await visibleProgress(), ['1 left', '3 left'], 'speed change reset counters');
     await page.locator(mobile ? '#btn-reset-peek' : '#btn-reset').click();
     assert.deepEqual(await visibleProgress(), []);
