@@ -2,7 +2,8 @@
    LoCo — program executor (design.md §2, §4; M3 counted-loops brief)
    Pure tick machine, DOM-free (Node-importable for tests).
    One program line per tick; base tick 600 ms scaled by speed
-   (x1/2 -> 1200 ms, x1 -> 600 ms, x2 -> 300 ms).
+   (0.5× -> 1200 ms, 1× -> 600 ms, 2× -> 300 ms,
+   4× -> 150 ms, 8× -> 75 ms).
 
    Program entries: plain strings for simple blocks,
    { id: 'loop', count } for counted loop (count 1..99, default 2),

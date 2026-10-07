@@ -46,6 +46,10 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 
 - The program runs step by step with visible robot animation.
 - Run controls: **run**, **stop/reset**, and speed control (no step-through in MVP).
+- Issue #35: a native Run speed slider offers 0.5×, 1×,
+  2×, 4× and 8× before/during execution, with visible and accessible multiplier.
+  Movement/turn durations shorten at high speed; the same program trace and
+  outcome apply at every stop. Speed is a session preference, not a rating factor.
 - While running, a **program pointer** highlights the block currently executing so the player always sees where in the program the robot is.
 
 ### 3.5 Fail states

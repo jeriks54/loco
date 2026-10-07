@@ -1505,37 +1505,47 @@ button {
 
 .speed {
   grid-column: 1 / -1;
-  display: flex;
+  min-width: 0;
   border: 1px solid var(--border);
   border-radius: 10px;
-  overflow: hidden;
+  padding: 0.5rem 0.75rem;
 }
 
-.speed button {
-  appearance: none;
-  flex: 1;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-family: var(--font-mono);
+.speed-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
   font-size: 0.8rem;
-  padding: 0.5rem 0;
-  cursor: pointer;
 }
 
-.speed button + button {
-  border-left: 1px solid var(--border);
-}
-
-.speed button:hover {
-  color: var(--text);
-  background: var(--surface-2);
-}
-
-.speed button.active {
+.speed-heading output {
   color: var(--accent);
-  background: var(--accent-dim);
-  text-shadow: 0 0 8px var(--accent-glow);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+#speed-slider {
+  display: block;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+#speed-slider:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.speed-stops {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
 }
 
 .btn-small {
@@ -1552,8 +1562,7 @@ button {
   .level-item,
   .block-chip,
   .line,
-  .step-btn,
-  .speed button {
+  .step-btn {
     transition: background-color 0.15s ease, border-color 0.15s ease,
       box-shadow 0.2s ease, color 0.15s ease;
   }

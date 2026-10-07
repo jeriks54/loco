@@ -162,10 +162,16 @@
             <div class="panel-section controls">
               <button id="btn-run" class="btn btn-primary" data-role="run">▶ Run</button>
               <button id="btn-reset" class="btn btn-secondary" data-role="reset">Reset</button>
-              <div id="speed" class="speed" role="group" aria-label="Run speed">
-                <button data-speed="0.5">×½</button>
-                <button data-speed="1" class="active">×1</button>
-                <button data-speed="2">×2</button>
+              <div id="speed" class="speed">
+                <div class="speed-heading">
+                  <label for="speed-slider">Run speed</label>
+                  <output id="speed-value" for="speed-slider" aria-live="off">1×</output>
+                </div>
+                <input id="speed-slider" type="range" min="0" max="4" step="1" value="1"
+                       aria-valuetext="1 times">
+                <div class="speed-stops" aria-hidden="true">
+                  <span>0.5×</span><span>1×</span><span>2×</span><span>4×</span><span>8×</span>
+                </div>
               </div>
             </div>
           </div>

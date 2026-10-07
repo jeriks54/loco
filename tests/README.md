@@ -6,6 +6,17 @@ Run from the repo root with Node.js 22 or newer:
 node tests/verify.mjs
 ```
 
+Issue #35 adds `tests/speed.mjs` to the retained check. It compares the real
+executor's traces and final poses at 0.5×/1×/2×/4×/8× for loops, sensing,
+branches, moves/turns and every terminal outcome; checks interval/total pacing;
+and verifies live timer replacement, loop-state preservation and stop/reset.
+With the Playwright setting below, run `node tests/speed-browser.mjs` for the
+native range's keyboard/pointer/touch behavior, accessible/visible values,
+session selection, real-paced results/live changes, and seven desktop/phone
+layouts in normal/reduced motion. Scene probes defer animation frames to check
+movement/turn durations, committed-pose settlement and fall/reset feedback.
+Screenshots are saved in `tests/tmp/`. Human play-testing judges animation feel.
+
 Issue #36 includes `tests/loop-progress.mjs` in the retained check. It verifies
 independent nested counters, sensed/conditional scope, count bounds, all terminal
 cleanup, stop/reset/rerun, speed changes and detached snapshots. With the

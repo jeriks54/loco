@@ -1,6 +1,6 @@
 /* ============================================================
    LoCo — HUD: run controls + result overlay (brief §6)
-   Run/Reset, speed group x1/2 x1 x2, and the terminal result
+   Run/Reset, a five-stop speed slider (0.5×–8×), and the terminal result
    overlay in the board panel. Copy is terminal boot voice
    (design.md §11). Next level only appears after reaching the
    goal (and never on the last level). M2 adds the two loop-era
@@ -20,6 +20,7 @@ const RESULT_COPY = {
 };
 
 const pad2 = (n) => String(n).padStart(2, '0');
+const SPEEDS = [0.5, 1, 2, 4, 8];
 
 export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
   const runBtns = document.querySelectorAll('[data-role="run"]');
@@ -29,7 +30,8 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
   const nextBtn = document.getElementById('btn-next');
   const overlayEl = document.getElementById('result-overlay');
   const resultText = document.getElementById('result-text');
-  const speedEl = document.getElementById('speed');
+  const speedSlider = document.getElementById('speed-slider');
+  const speedValue = document.getElementById('speed-value');
   const levelNameEl = document.getElementById('level-name');
   const progressEl = document.getElementById('level-progress');
   const sensorNote = document.getElementById('sensor-note');
@@ -59,13 +61,16 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
   retryBtn.addEventListener('click', () => onRetry());
   nextBtn.addEventListener('click', () => onNext());
 
-  speedEl.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-speed]');
-    if (!btn) return;
-    for (const b of speedEl.querySelectorAll('button')) {
-      b.classList.toggle('active', b === btn);
-    }
-    onSpeed(parseFloat(btn.dataset.speed, 10));
+  function setSpeed(speed) {
+    speedSlider.value = String(SPEEDS.indexOf(speed));
+    speedSlider.setAttribute('aria-valuetext', `${speed} times`);
+    speedValue.textContent = `${speed}×`;
+  }
+
+  speedSlider.addEventListener('input', () => {
+    const speed = SPEEDS[Number(speedSlider.value)];
+    setSpeed(speed);
+    onSpeed(speed);
   });
 
   return {
@@ -91,11 +96,7 @@ export function createHud({ onRun, onReset, onRetry, onNext, onSpeed }) {
       updateMemoryCount();
     },
 
-    setSpeedButtons(speed) {
-      for (const b of speedEl.querySelectorAll('button')) {
-        b.classList.toggle('active', parseFloat(b.dataset.speed, 10) === speed);
-      }
-    },
+    setSpeed,
 
     showResult(type, { hasNext, reason, tutorial = false, example = false, nextLabel = null }) {
       resultText.textContent = (tutorial || example) && type === 'goal'

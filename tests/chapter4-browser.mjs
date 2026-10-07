@@ -26,7 +26,7 @@ try {
     await page.addInitScript(() => {
       localStorage.setItem('loco.onboarding.v1', JSON.stringify({ seen: ['ch2', 'ch3', 'ch4'] }));
       const timeout = window.setTimeout.bind(window);
-      window.setTimeout = (fn, delay, ...args) => timeout(fn, [300, 600, 1200].includes(delay) ? 10 : delay, ...args);
+      window.setTimeout = (fn, delay, ...args) => timeout(fn, [75, 150, 300, 600, 1200].includes(delay) ? 10 : delay, ...args);
     });
     await page.goto(url);
     await page.locator('#btn-play').click();

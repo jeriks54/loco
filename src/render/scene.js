@@ -1,4 +1,5 @@
 import { isWallAhead } from '../game/state.js';
+import { BASE_TICK_MS } from '../game/executor.js';
 import { WORKSHOP, drawWorkshopRobot } from './workshop-art.js';
 
 const MIN_TILE = 14;
@@ -55,6 +56,7 @@ export function createScene({ canvas, onSensorChange = () => {} }) {
   const settled = { x: 0, y: 0, dir: 'E' };
   let angle = 0;
   let anim = null;
+  let speed = 1;
   let pendingFall = null;
   let fall = null;
   let robotHidden = false;
@@ -276,11 +278,23 @@ export function createScene({ canvas, onSensorChange = () => {} }) {
     if (fall) { const t = Math.min(1, (now - fall.t0) / fall.dur); const k = easeOutCubic(t); alpha = 1 - k; scale = 1 - .75 * k; }
     drawWorkshopRobot(ctx, { cx: p.cx, cy: p.cy, size: tile, angle: robotAngle(now), equipped: sensorEquipped(), alpha, scale }); return p;
   }
+  function settleAnimation() {
+    // Late frames and live speed changes must not carry an old pose forward.
+    if (!anim) return;
+    if (anim.kind === 'turn') {
+      angle = anim.to;
+    } else {
+      settled.x = anim.to.x;
+      settled.y = anim.to.y;
+    }
+    settled.dir = robot.dir;
+    anim = null;
+    emitSensor();
+  }
+  const animationMs = maximum => Math.min(maximum, BASE_TICK_MS / speed * .75);
   function advance(now) {
     if (anim && now - anim.t0 >= anim.dur) {
-      if (anim.kind === 'turn') { angle = anim.to; settled.dir = robot.dir; } else { settled.x = anim.to.x; settled.y = anim.to.y; settled.dir = robot.dir; }
-      anim = null;
-      emitSensor();
+      settleAnimation();
     }
     if (!anim && pendingFall) { pendingFall = null; if (reducedMotion) { fall = null; robotHidden = true; emitSensor('unavailable'); } else { fall = { t0: now, dur: FALL_MS }; emitSensor('unavailable'); } }
     if (fall && now - fall.t0 >= fall.dur) { fall = null; robotHidden = true; emitSensor('unavailable'); }
@@ -303,16 +317,24 @@ export function createScene({ canvas, onSensorChange = () => {} }) {
   new ResizeObserver(refresh).observe(panel);
 
   return {
+    setSpeed(newSpeed) {
+      if (newSpeed === speed) return;
+      settleAnimation();
+      speed = newSpeed;
+      invalidate();
+    },
     render(newState) {
       state = newState; robot.x = state.robot.x; robot.y = state.robot.y; robot.dir = state.robot.dir; settled.x = robot.x; settled.y = robot.y; settled.dir = robot.dir; angle = DIR_ANGLE[robot.dir]; anim = null; pendingFall = null; fall = null; robotHidden = false; fx.crash = -1; fx.goal = -1; fitted = null; emitSensor('ready'); refresh();
     },
     handleEvent(type, payload) {
       if (!state) return; const now = performance.now();
       if (type === 'moved') {
-        const from = { ...payload.from }; robot.x = payload.to.x; robot.y = payload.to.y; anim = reducedMotion ? null : { kind: 'move', from, to: payload.to, t0: now, dur: MOVE_MS };
+        settleAnimation();
+        const from = { ...payload.from }; robot.x = payload.to.x; robot.y = payload.to.y; anim = reducedMotion ? null : { kind: 'move', from, to: payload.to, t0: now, dur: animationMs(MOVE_MS) };
         if (reducedMotion) { settled.x = robot.x; settled.y = robot.y; settled.dir = robot.dir; emitSensor('ready'); } else emitSensor('moving'); invalidate();
       } else if (type === 'turned') {
-        const from = angle; robot.dir = payload; angle = DIR_ANGLE[payload]; anim = reducedMotion ? null : { kind: 'turn', from, to: angle, t0: now, dur: TURN_MS };
+        settleAnimation();
+        const from = angle; robot.dir = payload; angle = DIR_ANGLE[payload]; anim = reducedMotion ? null : { kind: 'turn', from, to: angle, t0: now, dur: animationMs(TURN_MS) };
         if (reducedMotion) { settled.dir = robot.dir; emitSensor('ready'); } else emitSensor('turning'); invalidate();
       } else if (type === 'crashed') { if (!reducedMotion) fx.crash = now; invalidate();
       } else if (type === 'goal') { if (!reducedMotion) fx.goal = now; invalidate();

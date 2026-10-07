@@ -9,7 +9,7 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-10-01
+## State as of 2026-10-07
 
 The guided tutorial and Chapter 2–4 examples shipped in PR #42 (`f3a5211`).
 Issue #36 adds live counted-loop progress after Jonas accepted its preview on
@@ -71,6 +71,15 @@ and browser play-testing. These use the real executor plus independent path sear
 with no test framework or dependencies.
 
 ## What's next
+
+**#35 approved for release on 2026-10-07:** Jonas approved implementation of the
+brief in `docs/briefs/issue-35-run-speed.md`. Branch `codex/issue-35-run-speed`
+replaces speed buttons with a native slider at 0.5×, 1×, 2×, 4× and 8×. Movement
+and turn animations finish within 75% of each tick, with the old duration maxima.
+Live changes settle the committed pose and preserve execution state. Selection
+lasts for the session; terminal effects and reduced motion retain their rules.
+Jonas accepted the playable preview and authorized the PR, merge, documentation
+updates and issue closure on the same date. Release is being prepared.
 
 Roadmap follow-ups as of 2026-10-01:
 

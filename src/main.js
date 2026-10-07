@@ -206,6 +206,7 @@ const hud = createHud({
       : selectLevel(currentIndex + 1, document.getElementById('btn-next')),
   onSpeed: (value) => {
     speed = value;
+    scene.setSpeed(value);
     if (executor) executor.setSpeed(value);
   },
 });
@@ -311,7 +312,7 @@ function loadLevel(index) {
   executor = null;
   editor.loadLevel(level);
   hud.setLevel(level, index, levels.length);
-  hud.setSpeedButtons(speed);
+  hud.setSpeed(speed);
   hud.hideOverlay();
   hud.setRunning(false);
   sheet.collapse(); // a level always opens with the board unobstructed
@@ -337,7 +338,7 @@ function loadTutorial() {
   backButton.textContent = '← Exit tutorial';
   editor.loadLevel(tutorialLevel);
   hud.setLevel(tutorialLevel, 0, 1);
-  hud.setSpeedButtons(speed);
+  hud.setSpeed(speed);
   hud.hideOverlay();
   hud.setRunning(false);
   sheet.collapse();
@@ -367,7 +368,7 @@ function loadExample(prefix, destination, trigger = null) {
   backButton.textContent = '← Exit example';
   editor.loadLevel(level);
   hud.setLevel(level, 0, 1);
-  hud.setSpeedButtons(speed);
+  hud.setSpeed(speed);
   hud.hideOverlay();
   hud.setRunning(false);
   sheet.collapse();
@@ -391,6 +392,7 @@ function run() {
   hud.setRunning(true);
   if (mode !== 'campaign') setTutorialHint('running');
   sheet.collapse(); // the run plays out on the board, not behind an expanded sheet
+  scene.setSpeed(speed);
   executor.start(speed);
 }
 

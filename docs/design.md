@@ -109,6 +109,14 @@ as `sensor: level.sensor ?? null`, so earlier chapters have no equipment.
 - Structure is validated before movement; the analyzer returns matching `end`
   and `else` positions. The 200-executed-line guard emits terminal `runaway`.
 - The executor is a tick machine: one block per tick; a timer drives ticks so animation can pace them (speed control changes the tick interval).
+- Issue #35: the native Run speed slider maps five
+  positions to 0.5×, 1×, 2×, 4× and 8×; interval is `600ms / speed` and the first
+  line runs immediately. Changing speed replaces the pending timeout with one
+  full new interval without advancing the program. The scene caps move/turn
+  interpolation at 75% of the interval, bounded by 220ms/160ms, and settles
+  committed animations on a speed change or before a new movement/turn event.
+  Fall/crash/goal effects retain 180ms/340ms/750ms durations. Reduced motion
+  settles directly. Selection persists across levels within the session.
 - Each tick first emits `step` with the index of the executing block — the editor uses it to highlight the current block (program pointer).
 - A counted-loop header then emits `loopProgress`, a detached array of active
   counted frames `{ index, remaining, total }`. Remaining includes the current
@@ -240,8 +248,9 @@ Decisions:
   while watching the maze; no expand-collapse dance. Reset sits in the peek bar too so a run
   can be aborted without expanding the sheet mid-run — amended 2026-09-05 while closing out
   the M1 issues, which surfaced that `executor.stop()` has no user-facing control at all, so
-  Reset is the only abort and it always rewinds. The ×½/×1/×2 speed group stays inside the
-  expanded sheet.
+  Reset is the only abort and it always rewinds. Run speed stays inside the
+  expanded sheet; #35 replaces the original ×½/×1/×2 buttons with the five-stop
+  0.5×–8× slider. Reopening the sheet during a run permits a live speed change.
 - **On run — sheet auto-collapses** so nothing obscures the maze while the robot moves. The
   board's size does not change: with the overlay model it is detent-independent. Snaps instead
   of animating under `prefers-reduced-motion`.
