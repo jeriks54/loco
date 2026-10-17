@@ -28,7 +28,7 @@ src/
     chapter1.js      level definitions (one module per chapter)
     chapter2.js      eight counted-loop levels
     chapter3.js      five front-wall sensing levels (M6)
-    chapter4.js      five conditional-branching levels (M7)
+    chapter4.js      seven Decisions levels (M7 plus #38 capstones)
     index.js         ordered registry of all levels
   game/
     state.js         level state: grid, robot pose, goal, memory size
@@ -194,8 +194,9 @@ earlier entry. Exact grids and solutions live in `level-design.md` §§4 and 11.
 | **Onboarding (#30, shipped)** | Title practice maze and guided Chapter 2–4 example mazes, outside the campaign registry. PR #42 merged 2026-09-27; issue #30 is closed. Contracts: `briefs/issue-30-tutorial-plan.md` and `briefs/issue-30-chapter-examples.md`. |
 | **Live loop progress (#36, PR #43)** | Independent `n left` badges for active counted loops, separate from authored counts, with terminal/reset cleanup and accessible labels. Preview accepted 2026-10-01; release record: `briefs/issue-36-loop-progress.md`. |
 
-The 25 campaign levels, Workshop graphics, title teaser and optional onboarding
-are shipped. Live loop progress preserves the chapter-based `v0.4` version.
+The campaign has 27 levels with #38's two Decisions capstones; board navigation
+and the capstones were approved for release on 2026-10-14. Workshop graphics,
+title teaser, onboarding and live loop progress retain the chapter-based `v0.4` version.
 Memory upgrades and explicit ladder `climb` remain future work.
 
 ### 8.1 M4 — mobile layout (shipped in PR #20; issue #15)
@@ -467,3 +468,19 @@ players. No level is gated. The revised contract is in
 Palette chips support Enter/Space as well as pointer tap/drag, and filled program
 lines support Delete/Backspace. See both issue-30 briefs for guide copy, flow
 and acceptance checks.
+
+## 15. Navigable boards (#38)
+
+Gameplay uses a clipped canvas viewport with zoom, pan, Fit map and Follow robot.
+Overview shows the complete maze; Follow robot zooms to at least 24px tiles and
+tracks the robot, with a 64px maximum. Drag/pinch/wheel and focusable-board arrow,
++/−, Home/0 and F keys supplement the visible buttons. Manual panning suspends
+following; Run, Reset and Retry restore following at the selected zoom. New levels
+open in overview; resize preserves the selected view as bounds allow. Mobile sheet
+detents do not resize the board. Camera changes add no inertia or easing.
+
+`render/camera.js` owns viewport bounds and transforms; `ui/board-navigation.js`
+owns controls and gestures; `render/scene.js` applies the transform without changing
+executor/sensor coordinates. The optional controls argument leaves the title
+teaser's original fit behavior intact. See `briefs/issue-38-large-maps.md` for
+level contracts and verification.

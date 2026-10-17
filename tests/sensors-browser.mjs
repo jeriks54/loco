@@ -27,7 +27,7 @@ try {
     });
     await page.goto(url);
     await page.locator('#btn-play').click();
-    assert.equal(await page.locator('.level-item').count(), 25);
+    assert.equal(await page.locator('.level-item').count(), 27);
     assert.equal(await page.locator('.chapter-header').nth(2).textContent(), 'CHAPTER 3 — SENSING');
     await page.locator('.level-item').first().click();
     assert.equal(await page.locator('#sensor-note').isVisible(), false);

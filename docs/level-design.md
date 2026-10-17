@@ -412,3 +412,27 @@ settled pose rather than the destination; a fall makes it unavailable until rese
 This presentation does not add a hole sensor, equipment inventory, mounting choices,
 or a new player decision. For palette and layout details see `design.md` §13 and
 `briefs/m22-workshop-implementation.md`.
+
+## 13. Larger Decisions capstones (#38)
+
+Jonas requested two larger, tricky maps on 2026-10-14. Chapter 4 now appends
+`ch4-06` Blind Switchyard (31×21, 20-line budget) and `ch4-07` The Folded Circuit
+(21×31, 30-line budget); the first 25 campaign entries stay unchanged. The board
+viewport supports full-map overview plus readable zoom, pan and robot following.
+
+After Jonas solved the first draft of level 26 in ten lines, both maps were
+rebuilt around sideways inspection. Blind Switchyard counts variable-length bays,
+uses the front sensor in two orientations, then breaks the pattern for the exit.
+The Folded Circuit adds two kinds of junction and a connector between repeated
+pairs. Both retain front-wall-only sensing and fatal holes. Intended programs
+take 165/163 ticks, below the unchanged 200-tick guard; independent primitive
+routes cost 49/47 lines. Tests reject Jonas's exact shortcut, both previous
+capstone solutions and 1,224 compact follower variants per map. Replacing reusable
+sensor loops with fixed counts also fails. These checks establish solvability
+and resistance to those shortcuts, not uniqueness or global optimality. The
+release was authorized by Jonas on 2026-10-14 after the difficulty revision.
+
+The detailed contract and verification record are in
+[`briefs/issue-38-large-maps.md`](briefs/issue-38-large-maps.md). Exact grids are in
+`src/levels/chapter4.js`, with solutions independently retained in
+`tests/chapter4-solutions.mjs`. Ladders and Chapter 5 remain future work.

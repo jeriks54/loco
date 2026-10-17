@@ -182,6 +182,7 @@ const screens = createScreens({
 const equipment = createEquipment();
 const scene = createScene({
   canvas: document.getElementById('board'),
+  controls: document.getElementById('board-controls'),
   onSensorChange: equipment.update,
 });
 
@@ -304,7 +305,7 @@ function loadLevel(index) {
   exampleContext = null;
   document.getElementById('screen-game').classList.remove('is-tutorial', 'is-example');
   tutorialHints.classList.add('hidden');
-  document.getElementById('board').setAttribute('aria-describedby', 'sensor-note sensor-reading');
+  document.getElementById('board').setAttribute('aria-describedby', 'sensor-note sensor-reading board-navigation-help');
   backButton.textContent = '← Levels';
   currentIndex = index;
   const level = levels[index];
@@ -334,7 +335,7 @@ function loadTutorial() {
   tutorialHintPhase = '';
   tutorialHints.classList.add('hidden');
   document.getElementById('btn-tutorial-skip').textContent = 'Skip tutorial';
-  document.getElementById('board').setAttribute('aria-describedby', 'tutorial-board-description');
+  document.getElementById('board').setAttribute('aria-describedby', 'tutorial-board-description board-navigation-help');
   backButton.textContent = '← Exit tutorial';
   editor.loadLevel(tutorialLevel);
   hud.setLevel(tutorialLevel, 0, 1);
@@ -364,7 +365,7 @@ function loadExample(prefix, destination, trigger = null) {
   document.getElementById('btn-tutorial-skip').textContent = 'Skip example';
   document.getElementById('example-board-description').textContent = level.description;
   document.getElementById('board').setAttribute('aria-describedby',
-    level.sensor ? 'example-board-description sensor-note sensor-reading' : 'example-board-description');
+    level.sensor ? 'example-board-description sensor-note sensor-reading board-navigation-help' : 'example-board-description board-navigation-help');
   backButton.textContent = '← Exit example';
   editor.loadLevel(level);
   hud.setLevel(level, 0, 1);

@@ -8,7 +8,7 @@ import { execute, loop, withClock } from './helpers.mjs';
 
 const untilWall = () => ({ id: 'loopUntil', sensor: 'wallSensor', value: 'blocked' });
 
-assert.equal(new Set(chapter4.map(level => level.grid.join('\n'))).size, 5,
+assert.equal(new Set(chapter4.map(level => level.grid.join('\n'))).size, 7,
   'Chapter 4 levels must not reuse the same map');
 
 for (let i = 0; i < chapter4.length; i += 1) {

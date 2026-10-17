@@ -2252,3 +2252,26 @@ button {
     height: calc(70svh + env(safe-area-inset-bottom, 0px));
   }
 }
+
+/* The controls occupy reserved space, never cover a maze tile. */
+.board-panel { position: relative; padding-top: 48px; overflow: hidden; }
+.board-controls {
+  position: absolute; top: 4px; left: 4px; right: 4px;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  min-height: 40px; color: var(--text); font-size: .72rem;
+}
+.board-controls button {
+  min-width: 32px; min-height: 40px; padding: 4px 8px;
+  border: 1px solid var(--muted); border-radius: 7px;
+  background: var(--surface); color: var(--text); font: inherit; cursor: pointer;
+}
+.board-controls button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.board-controls button:disabled { opacity: .45; cursor: default; }
+.board-controls button:focus-visible, #board:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.board-controls output { min-width: 3.4em; text-align: center; font-variant-numeric: tabular-nums; }
+#board { touch-action: none; cursor: grab; }
+#board:active { cursor: grabbing; }
+@media (max-width: 360px) {
+  .board-controls { gap: 3px; font-size: .65rem; }
+  .board-controls button { padding: 4px 6px; }
+}

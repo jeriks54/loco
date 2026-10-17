@@ -159,3 +159,21 @@ nested Chapter 4 `else` indentation check aligns it with its matching `if`, rath
 than incorrectly expecting the outermost indentation inside a counted loop. These
 browser checks passed for the Workshop release merged as PR #28 on 2026-09-23;
 Jonas accepted the desktop and phone preview before merge.
+
+Issue #38 appends two Decisions capstones (27 campaign levels). `large-maps.mjs`
+is included in `verify.mjs`: previous-25 hash preservation, real winning programs,
+independent safe shortest routes, wrong-count/shortcut checks and camera bounds.
+Run `node tests/navigation-browser.mjs` with `LOCO_PLAYWRIGHT_MODULE` as above for
+native pinch, pointer/wheel/keyboard navigation, camera following during both
+solutions, reset/retry, normal/reduced motion and phone/landscape/desktop resizing.
+It also enters the 20- and 30-line programs through the scrolled editor, covering clipped
+condition slots incorrectly intercepting palette clicks. Browser screenshots are
+written under `tests/tmp/large-*.png`; use the local game server to judge puzzle
+feel. Automated checks establish the specified solutions, not unique solutions.
+
+The harder revision retains Jonas's ten-line shortcut from play-testing and
+rejects 1,224 compact follower variants per map, including all fixed travel counts
+1–99, sensed travel, both turn preferences and side probes. It checks variable
+scan/drop spans, incorrect grouping counts, a flattened grouping, always taking
+one branch arm, and replacing each reusable sensed loop with a fixed count.
+These targeted adversarial checks are not a global minimum-program proof.
