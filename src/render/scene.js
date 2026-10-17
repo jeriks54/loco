@@ -1,6 +1,8 @@
 import { isWallAhead } from '../game/state.js';
 import { BASE_TICK_MS } from '../game/executor.js';
 import { WORKSHOP, drawWorkshopRobot } from './workshop-art.js';
+import { createCamera } from './camera.js';
+import { createBoardNavigation } from '../ui/board-navigation.js';
 
 const MIN_TILE = 14;
 const MAX_TILE = 64;
@@ -40,7 +42,7 @@ function markerCorner(ctx, x, y, sx, sy, size, light = false) {
   ctx.stroke();
 }
 
-export function createScene({ canvas, onSensorChange = () => {} }) {
+export function createScene({ canvas, controls = null, onSensorChange = () => {} }) {
   const ctx = canvas.getContext('2d');
   const wrap = canvas.parentElement;
   const panel = wrap.parentElement;
@@ -63,6 +65,23 @@ export function createScene({ canvas, onSensorChange = () => {} }) {
   const fx = { crash: -1, goal: -1 };
   let frameId = null;
   let lastSensor = null;
+  const camera = controls ? createCamera() : null;
+  let resetCamera = true;
+  const navigation = controls ? createBoardNavigation({ canvas, controls, camera,
+    changed() { tile = camera.view.tile; invalidate(); },
+    follow: followRobot,
+  }) : null;
+
+  function followRobot(detail = false) {
+    if (!camera || !state) return;
+    if (detail && camera.view.tile < 24) camera.zoom(24 / camera.view.tile);
+    tile = camera.view.tile;
+    camera.view.following = true;
+    const p = tileCenter(robot.x, robot.y);
+    camera.track(p.cx, p.cy);
+    navigation.update();
+    invalidate();
+  }
 
   function sensorEquipped() { return Boolean(state && state.sensor === 'frontWall'); }
   function sensorBlockedAt(x, y, dir) {
@@ -88,6 +107,21 @@ export function createScene({ canvas, onSensorChange = () => {} }) {
     const availW = panel.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     const availH = panel.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
     if (availW <= 0 || availH <= 0) return;
+    if (camera) {
+      const width = Math.max(1, Math.floor(availW - 4));
+      const height = Math.max(1, Math.floor(availH - 4));
+      const nextDpr = window.devicePixelRatio || 1;
+      if (!resetCamera && fitted?.width === width && fitted?.height === height && dpr === nextDpr) return;
+      camera.resize(width, height, state.cols, state.rows, resetCamera);
+      resetCamera = false;
+      fitted = { width, height };
+      tile = camera.view.tile; dpr = nextDpr;
+      canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
+      canvas.style.width = `${width}px`; canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      navigation.update();
+      return;
+    }
     const nextTile = tileThatFits(availW, availH, state.cols, state.rows);
     const nextDpr = window.devicePixelRatio || 1;
     if (fitted && fitted.tile === nextTile && fitted.dpr === nextDpr && fitted.cols === state.cols && fitted.rows === state.rows) return;
@@ -302,7 +336,14 @@ export function createScene({ canvas, onSensorChange = () => {} }) {
   }
   function draw(now) {
     if (!state) return; advance(now); const pad = framePad(tile); const width = state.cols * tile + pad * 2; const height = state.rows * tile + pad * 2;
-    ctx.save(); ctx.fillStyle = C.bg; ctx.fillRect(0, 0, width, height);
+    ctx.save(); ctx.fillStyle = C.bg;
+    ctx.fillRect(0, 0, camera ? camera.view.width : width, camera ? camera.view.height : height);
+    if (camera) {
+      const position = robotPixel(now);
+      camera.track(position.cx, position.cy);
+      ctx.translate(camera.view.x, camera.view.y);
+      navigation.update();
+    }
     if (fx.crash >= 0 && !reducedMotion) { const p = (now - fx.crash) / CRASH_MS; if (p < 1) { const amp = 5 * (1 - p); ctx.translate((Math.random() * 2 - 1) * amp, (Math.random() * 2 - 1) * amp); } }
     drawFrame(); drawBoard(); drawTarget(); const p = drawRobot(now);
     if (fx.crash >= 0 && p) { const t = (now - fx.crash) / CRASH_MS; if (t < 1) { ctx.save(); ctx.globalAlpha = .5 * (1 - t); ctx.fillStyle = WORKSHOP.sensor; ctx.beginPath(); ctx.arc(p.cx, p.cy, tile * (.35 + .35 * t), 0, Math.PI * 2); ctx.fill(); ctx.restore(); } }
@@ -317,6 +358,7 @@ export function createScene({ canvas, onSensorChange = () => {} }) {
   new ResizeObserver(refresh).observe(panel);
 
   return {
+    followRobot,
     setSpeed(newSpeed) {
       if (newSpeed === speed) return;
       settleAnimation();
@@ -324,6 +366,11 @@ export function createScene({ canvas, onSensorChange = () => {} }) {
       invalidate();
     },
     render(newState) {
+      if (camera) {
+        resetCamera = state !== newState;
+        navigation.reset();
+        if (!resetCamera) camera.view.following = true;
+      }
       state = newState; robot.x = state.robot.x; robot.y = state.robot.y; robot.dir = state.robot.dir; settled.x = robot.x; settled.y = robot.y; settled.dir = robot.dir; angle = DIR_ANGLE[robot.dir]; anim = null; pendingFall = null; fall = null; robotHidden = false; fx.crash = -1; fx.goal = -1; fitted = null; emitSensor('ready'); refresh();
     },
     handleEvent(type, payload) {

@@ -9,17 +9,29 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-10-07
+## State as of 2026-10-14
+
+Release-approved work for #38 (2026-10-14): `codex/issue-38-large-maps`
+adds pan/pinch/keyboard board navigation, Fit map and Follow robot controls,
+plus ch4-06 Blind Switchyard (31×21, 20 lines) and ch4-07 The Folded Circuit
+(21×31, 30 lines). Jonas solved the first level-26 draft in ten lines; both maps
+were rebuilt around sideways sensing, varied bay lengths, grouped junctions and
+a separate exit phase. The registry has 27 levels; the previous 25 are
+unchanged. Intended solutions win in 165/163 ticks under the existing
+200-tick guard. Tests reject 1,224 follower variants per map plus Jonas's exact
+program. No global minimum is claimed.
+Jonas explicitly authorized the PR to main, merge and issue closure on 2026-10-14.
+See `docs/briefs/issue-38-large-maps.md` for the release record and verification.
 
 The guided tutorial and Chapter 2–4 examples shipped in PR #42 (`f3a5211`).
 Issue #36 adds live counted-loop progress after Jonas accepted its preview on
 2026-10-01. The product version remains
-`v0.4`; the 25 campaign levels and their IDs are unchanged. Features:
+`v0.4`; #38 extends Chapter 4 without changing the previous 25 levels. Features:
 
 - **Chapter 1 — Sequence**, 7 levels (`ch1-01..07`), move / turn left / turn right.
 - **Chapter 2 — Loops**, 8 levels (`ch2-01..08`), programs rendered as numbered mono lines. Counted `loop n` / `end` replaced historical M2 `repeat` / `while front clear` in PR #21.
 - **Chapter 3 — Sensing**, 5 levels (`ch3-01..05`), automatic front wall sensor and player-constructed `loop until [wall sensor] = [blocked]` / `end` via two typed operand slots. Shipped in PR #24.
-- **Chapter 4 — Decisions**, 5 levels (`ch4-01..05`), explicit `if` / `else` / `end` branching that reuses the Chapter 3 condition slots. Shipped in PR #27 as `v0.4`.
+- **Chapter 4 — Decisions**, 7 levels (`ch4-01..07`), explicit `if` / `else` / `end` branching that reuses the Chapter 3 condition slots. The original five shipped in PR #27 as `v0.4`; #38 adds two capstones combining existing concepts.
 - **Persistence** — `localStorage['loco.progress.v1']` stores completed level ids only. Programs are never saved, so block renames have no migration cost.
 - **M4 mobile editor** (PR #20) — under `max-width: 900px`, the board stays a stable size above a two-detent editor sheet. The current sheet uses opaque ivory surfaces; Run / Reset / memory count remain available at the collapsed detent, and the sheet auto-collapses on run.
 - **M22 Workshop graphics** (PR #28, merged and deployed 2026-09-23) — overhead brass robot, visible front sensor, one-tile sensor marker and reading, walnut board, ivory panels and forest-green controls. The same visual language carries through welcome, level selection and play. Issues #8 and #22 are closed.
@@ -28,9 +40,9 @@ Issue #36 adds live counted-loop progress after Jonas accepted its preview on
 - **Live loop progress** (#36, PR #43) — Active counted loops show separate `n left` badges, including the current iteration, alongside their authored counts. Nested loops update independently; stop/reset/results clear the badges. Sensed loops have no countdown. Labels are inspectable without live announcements. See `docs/briefs/issue-36-loop-progress.md`.
 - **Faster run speeds** (#35, PR #44) — A native slider offers 0.5×, 1×, 2×, 4× and 8× with visible/accessibly named multipliers. High-speed move/turn animations finish within 75% of a tick, bounded by the old duration maxima. Live changes settle the committed pose while preserving execution state. Selection lasts for the session; terminal effects and reduced motion retain their rules. Jonas accepted the preview and authorized release on 2026-10-07. See `docs/briefs/issue-35-run-speed.md`.
 
-25 merged levels across four chapters; Chapter 4 appends five levels
-(`ch4-01..05`) without changing the existing IDs.
-Widest grids are 16 cells (ch2-01, ch2-08, ch3-03, ch3-05).
+27 levels across four chapters. The largest boards are 31×21 and 21×31.
+Gameplay supports drag/pinch/wheel/keyboard navigation, Fit map and Follow robot;
+Run/Reset/Retry preserve zoom and restore following, while manual pan pauses it.
 
 **Completed revision #16:** `feat/m3-counted-loops`, approved for implementation on
 2026-09-06, play-tested and merged on 2026-09-07 in PR #21 (`6a67e86`). The runtime uses only
@@ -73,7 +85,7 @@ with no test framework or dependencies.
 
 ## What's next
 
-Roadmap follow-ups as of 2026-10-07:
+Roadmap follow-ups as of 2026-10-14:
 
 | # | What | Note |
 |---|---|---|
@@ -82,7 +94,6 @@ Roadmap follow-ups as of 2026-10-07:
 | **#32** | Sensor loadouts and progression | Equipment and unlocks |
 | **#33** | Android and iOS distribution | Assess app options |
 | **#34** | Head-to-head multiplayer | Race to solve a level |
-| **#38** | Larger maps on small screens | Board navigation |
 | **#39** | Future curriculum | Rank programming concepts by game fit |
 | **#40** | First-time player research | Validate the guided tutorial and early Chapter 1 levels with new players; phone feedback has already led to step-by-step spotlights and chapter examples |
 

@@ -65,7 +65,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Difficulty rises via maze complexity **and** tight memory budgets.
 - Later chapters unlock new blocks and larger memories in step with mazes that require them.
 - Progress (completed levels) persists in the browser.
-- The merged registry has 25 stable IDs: the original 20 plus ch4-01..05 from Chapter 4, keeping all prior level data and completion marks. Chapter 3 and Chapter 4 automatically supply the front-wall sensor without requiring earlier chapter completion. Chapter 4's five levels require branching within their memory budgets; retain independent real-executor cross-checks.
+- The registry has 27 stable IDs, including ch4-01..07. Issue #38 appends two larger capstones while preserving the previous 25 levels and completion marks. Chapters 3 and 4 automatically supply the front-wall sensor without requiring earlier chapter completion. Chapter 4 combines branching, sensed traversal and counted repetition; retain independent real-executor cross-checks without claiming all solutions require a particular construct.
 - Optional onboarding uses separate practice mazes: the title Tutorial teaches the basic controls, while Chapters 2–4 introduce loops, sensing and decisions with guided examples. Players can skip or replay the examples without gating level selection or marking campaign completion.
 
 ### 3.7 Layout & controls
@@ -75,6 +75,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - Commands are dragged into memory on desktop, or tapped to append on touch;
   Enter/Space on a focused palette command also appends it.
 - Shipped M4 mobile layout: at widths up to 900px the board keeps a stable size as the two-detent program sheet opens, with grip/chevron, Run/Reset/memory peek bar, tap-to-add and auto-collapse on run. At short heights the expanded sheet may cover part of the board; the collapsed board remains usable. Workshop uses opaque ivory sheet surfaces.
+- Large boards use a clipped viewport with drag/pinch/wheel zoom and pan, keyboard controls, Fit map and Follow robot. Overview shows the entire map; Follow robot restores detail at a minimum 24px tile size, with a 64px zoom ceiling. Manual pan pauses tracking; Run/Reset/Retry restore it at the current zoom. New levels open in overview and sheet detents keep viewport geometry stable.
 
 ### 3.8 Visual clarity and sensor feedback
 
@@ -85,7 +86,7 @@ Players do not steer the robot — they **program** it. Commands are dragged and
 - During movement and turns, do not imply the sensor has already read the destination tile. During a fall, the reading is unavailable.
 - Reduced-motion behavior preserves the same reading semantics and usable controls.
 
-## 4. Current scope (through issue #30 onboarding)
+## 4. Current scope (through issue #38 board navigation)
 
 The last feature merge before onboarding was PR #41 (`fee2bda`). M2 shipped loops and M4 shipped mobile;
 the counted-only chapter-2 revision #16 was play-tested and merged in PR #21 on
@@ -108,13 +109,14 @@ In:
 - Drag & drop program editor with memory-slot limit
 - Executor for `move` / `turn left` / `turn right`, counted `loop` / `end`, sensed `loop until` / `end`, and `if` / `else` / `end`, with run/reset/speed controls
 - Crash + fall-short fail states with retry
-- **25 hand-crafted levels**: seven sequence, eight counted-loop, five sensing and five decision levels, with per-level palettes and memory budgets
+- **27 hand-crafted levels**: seven sequence, eight counted-loop, five sensing and seven Decisions levels, with per-level palettes and memory budgets
 - Level select screen; progress saved to `localStorage`
 - Mobile bottom-sheet editor and touch controls
 - Workshop graphics: overhead brass robot with paired tracks, walnut walls and light floor, recessed holes, persistent start/exit markers, coordinated ivory/forest-green controls, visible sensor equipment, adjacent-tile marker and explicit readings
 - Title teaser: cropped Chapter 1 board and robot, one-command reveal, arrow-free Start Game button
 - Optional title tutorial and Chapter 2–4 example mazes with step-by-step spotlights, skip/replay, keyboard controls and guarded seen-chapter storage
 - Separate live remaining-iteration badges for active counted loops, including nested loops; authored counts stay visible and badges clear on stop/reset/results (#36)
+- Navigable boards and two large Decisions capstones (31×21 and 21×31), with sideways sensing, variable spans, grouped junctions and a changed exit phase (#38)
 
 M5 shipped tile types and holes; M6 shipped conditional loops and one front wall sensor; Chapter 4 adds front-wall `if`/`else` branching. M22 unified the board and interface while retaining the same sensor rules.
 Out: hole/distance/terrain sensors, selectable mounting, rewards/shop,
@@ -136,6 +138,8 @@ and ladders. Issues #22 and #37 are closed after their visual updates shipped.
 11. **Live counted-loop progress — #36, PR #43:** Active counted-loop lines show separate `n left` badges while preserving the authored count. Remaining includes the current iteration; nested loops update independently and sensed loops have no countdown. Badges clear on stop, reset and all results without live announcements. Jonas accepted the preview on 2026-10-01; release and checks are recorded in `briefs/issue-36-loop-progress.md`.
 12. **Shipped — faster run speeds, #35, PR #44:** Native Run speed slider at 0.5×, 1×, 2×, 4× and 8×, with speed-aware move/turn animations and live changes that preserve execution state. Selection lasts for the session. Jonas accepted the playable preview and authorized release on 2026-10-07; PR #44 merged and #35 closed on the same date. Verification and approval are recorded in `briefs/issue-35-run-speed.md`.
 
+13. **Release approved — larger maps, #38:** Pan/pinch/wheel/keyboard navigation, Fit map and Follow robot, plus ch4-06/07. Existing levels, sensor semantics and the 200-tick guard are unchanged. Jonas authorized the PR, merge and issue closure on 2026-10-14. Implementation and checks: `briefs/issue-38-large-maps.md`.
+
 ## 6. Non-functional requirements
 
 - Pure client-side: vanilla HTML/CSS/JS, no build step, deployable as static files (Vercel).
@@ -147,4 +151,4 @@ and ladders. Issues #22 and #37 are closed after their visual updates shipped.
 ## 7. Open questions
 
 - Star rating / par block-count per level? (Lean: post-MVP.)
-- Future chapter counts and difficulty curves — defined in `level-design.md`; the current 25 IDs remain stable.
+- Future chapter counts and difficulty curves — defined in `level-design.md`; the current 27 IDs remain stable.

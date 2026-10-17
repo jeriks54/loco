@@ -30,7 +30,7 @@ try {
     });
     await page.goto(url);
     await page.locator('#btn-play').click();
-    assert.equal(await page.locator('.level-item').count(), 25);
+    assert.equal(await page.locator('.level-item').count(), 27);
     const command = id => page.locator(`#palette [data-block="${id}"]`);
     const operand = id => page.locator(`#palette [data-condition="${id}"]`);
     const run = page.locator(mobile ? '#btn-run-peek' : '#btn-run');

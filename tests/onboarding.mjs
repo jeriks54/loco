@@ -3,7 +3,7 @@ import { levels } from '../src/levels/index.js';
 import { tutorialLevel, chapterExamples } from '../src/onboarding.js';
 import { execute, shortestSequence } from './helpers.mjs';
 
-assert.equal(levels.length, 25);
+assert.equal(levels.length, 27);
 assert.equal(levels.some(level => level.id === tutorialLevel.id), false);
 const route = ['move', 'turnRight', 'move', 'turnLeft', 'move'];
 assert.deepEqual(shortestSequence(tutorialLevel), route);

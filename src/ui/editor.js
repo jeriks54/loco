@@ -285,6 +285,10 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
   }
 
   function slotAt(clientX, clientY, eventTarget = null) {
+    // Scrolled-out lines still have rectangles, sometimes behind the palette.
+    // Only the visible program viewport can receive a condition drop.
+    const viewport = programEl.getBoundingClientRect();
+    if (clientX < viewport.left || clientX > viewport.right || clientY < viewport.top || clientY > viewport.bottom) return null;
     const direct = eventTarget && eventTarget.closest && eventTarget.closest('.condition-slot');
     if (direct && programEl.contains(direct)) return direct;
     const pointed = document.elementFromPoint && document.elementFromPoint(clientX, clientY);
@@ -476,6 +480,9 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       setMessage('');
       renderPalette(paletteEl, level.blocks, level.sensor);
       renderLines();
+      // Level loading happens before the game screen is shown; hidden scrollers
+      // cannot reset their retained position until their layout exists again.
+      requestAnimationFrame(() => { programEl.scrollTop = 0; });
       this.clearHighlight();
       programEl.classList.remove('locked');
       paletteEl.classList.remove('locked');
@@ -498,6 +505,7 @@ export function createEditor({ paletteEl, programEl, countEl, onChange }) {
       clearSelection();
       program = [];
       renderLines();
+      programEl.scrollTop = 0;
       notify();
       setMessage('');
     },

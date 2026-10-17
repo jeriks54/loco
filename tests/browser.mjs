@@ -50,7 +50,7 @@ try {
     });
     await page.goto(url);
     await page.locator('#btn-play').click();
-    assert.equal(await page.locator('.level-item').count(), 25);
+    assert.equal(await page.locator('.level-item').count(), 27);
     for (let i = 0; i < chapter2.length; i++) {
       await page.locator('.level-item').nth(7 + i).click();
       const before = await page.locator('#board').boundingBox();

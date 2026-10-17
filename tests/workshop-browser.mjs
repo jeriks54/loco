@@ -126,7 +126,7 @@ try {
       }
       await page.locator('#btn-back').click();
     }
-    console.log(`PASS all 25 Workshop levels fit at ${width}x${height}; detent geometry stable.`);
+    console.log(`PASS all ${levels.length} Workshop levels fit at ${width}x${height}; detent geometry stable.`);
   }
   await context.close();
 } finally {

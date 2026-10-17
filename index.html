@@ -109,8 +109,16 @@
       <div class="game-layout">
         <div class="world-panel">
           <div class="board-panel">
+          <div id="board-controls" class="board-controls" role="group" aria-label="Map navigation">
+            <button type="button" data-camera="out" aria-label="Zoom out">−</button>
+            <output aria-label="Map zoom" aria-live="off">100%</output>
+            <button type="button" data-camera="in" aria-label="Zoom in">+</button>
+            <button type="button" data-camera="fit">Fit map</button>
+            <button type="button" data-camera="follow" aria-pressed="false">Follow robot</button>
+          </div>
+          <p id="board-navigation-help" class="sr-only">Drag to pan, pinch or scroll to zoom. With the board focused, use arrow keys to pan, plus and minus to zoom, Home to fit the map, and F to follow the robot. Panning pauses following.</p>
           <div class="canvas-wrap">
-            <canvas id="board" aria-label="Maze board" aria-describedby="sensor-note sensor-reading"></canvas>
+            <canvas id="board" tabindex="0" aria-label="Maze board" aria-details="board-navigation-help" aria-describedby="sensor-note sensor-reading"></canvas>
             <div id="result-overlay" class="result-overlay hidden">
               <p id="result-text" class="result-text"></p>
               <div class="result-actions">
