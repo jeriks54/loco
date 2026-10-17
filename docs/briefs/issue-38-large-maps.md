@@ -107,3 +107,9 @@ both new solutions, editor scroll reset and seven viewport layouts passed on
 the final implementation. Prior Workshop, condition-slot and onboarding browser
 regressions also passed during this work. Version remains v0.4 because no new
 curriculum chapter was added. The PR links and closes #38 on merge.
+
+Release delivery resumed on 2026-10-17 in
+[PR #45](https://github.com/jeriks54/loco/pull/45), targeting main. The feature
+commit is `8bb83f9`; Vercel deployment and preview-comment checks passed before
+the release-documentation follow-up. The merge closes
+[issue #38](https://github.com/jeriks54/loco/issues/38).

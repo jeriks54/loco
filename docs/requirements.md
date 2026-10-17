@@ -138,7 +138,7 @@ and ladders. Issues #22 and #37 are closed after their visual updates shipped.
 11. **Live counted-loop progress — #36, PR #43:** Active counted-loop lines show separate `n left` badges while preserving the authored count. Remaining includes the current iteration; nested loops update independently and sensed loops have no countdown. Badges clear on stop, reset and all results without live announcements. Jonas accepted the preview on 2026-10-01; release and checks are recorded in `briefs/issue-36-loop-progress.md`.
 12. **Shipped — faster run speeds, #35, PR #44:** Native Run speed slider at 0.5×, 1×, 2×, 4× and 8×, with speed-aware move/turn animations and live changes that preserve execution state. Selection lasts for the session. Jonas accepted the playable preview and authorized release on 2026-10-07; PR #44 merged and #35 closed on the same date. Verification and approval are recorded in `briefs/issue-35-run-speed.md`.
 
-13. **Release approved — larger maps, #38:** Pan/pinch/wheel/keyboard navigation, Fit map and Follow robot, plus ch4-06/07. Existing levels, sensor semantics and the 200-tick guard are unchanged. Jonas authorized the PR, merge and issue closure on 2026-10-14. Implementation and checks: `briefs/issue-38-large-maps.md`.
+13. **Larger maps — #38, [PR #45](https://github.com/jeriks54/loco/pull/45):** Pan/pinch/wheel/keyboard navigation, Fit map and Follow robot, plus ch4-06/07. Existing levels, sensor semantics and the 200-tick guard are unchanged. Jonas authorized the PR, merge and issue closure on 2026-10-14; release delivery resumed on 2026-10-17. Implementation and checks: `briefs/issue-38-large-maps.md`.
 
 ## 6. Non-functional requirements
 

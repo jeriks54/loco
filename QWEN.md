@@ -9,9 +9,9 @@ Read this, then `docs/design.md` §9 (workflow, roles, delegation protocol). Eve
 indexed below. **Do not write code until jonas gives an explicit green light** — docs are
 reviewed first, every time.
 
-## State as of 2026-10-14
+## State as of 2026-10-17
 
-Release-approved work for #38 (2026-10-14): `codex/issue-38-large-maps`
+Release #38 ([PR #45](https://github.com/jeriks54/loco/pull/45), 2026-10-17)
 adds pan/pinch/keyboard board navigation, Fit map and Follow robot controls,
 plus ch4-06 Blind Switchyard (31×21, 20 lines) and ch4-07 The Folded Circuit
 (21×31, 30 lines). Jonas solved the first level-26 draft in ten lines; both maps
@@ -21,6 +21,7 @@ unchanged. Intended solutions win in 165/163 ticks under the existing
 200-tick guard. Tests reject 1,224 follower variants per map plus Jonas's exact
 program. No global minimum is claimed.
 Jonas explicitly authorized the PR to main, merge and issue closure on 2026-10-14.
+Delivery resumed on 2026-10-17; PR #45 targets main and closes #38 on merge.
 See `docs/briefs/issue-38-large-maps.md` for the release record and verification.
 
 The guided tutorial and Chapter 2–4 examples shipped in PR #42 (`f3a5211`).
